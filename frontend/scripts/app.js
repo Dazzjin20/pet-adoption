@@ -1,6 +1,6 @@
-import { SignupForm } from './registerAdopter.js';
-import { RegisterStaff } from './registerStaff.js';
-import { VolunteerSignUp } from './registerVolunteer.js';
+import { SignupForm } from './modules/registerAdopter.js';
+import { RegisterStaff } from './modules/registerStaff.js';
+import { VolunteerSignUp } from './modules/registerVolunteer.js';
 import {ToggleLogin} from './utils/toggleLoginForm.js';
 import {toggleButton} from './utils/toggleRegistration.js';
 
