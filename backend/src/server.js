@@ -26,6 +26,9 @@ app.post('/api/auth/register/volunteer', (req, res) => authController.handleRegi
 // Staff Registration
 app.post('/api/auth/register/staff', (req, res) => authController.handleRegistration(req, res, staffRepository));
 
+// Universal Login
+app.post('/api/auth/login', authController.handleLogin);
+
 // Password Reset Routes
 app.post('/api/auth/forgot-password', authController.handleForgotPassword);
 app.post('/api/auth/reset-password', authController.handleResetPassword);

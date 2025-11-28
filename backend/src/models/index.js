@@ -44,7 +44,7 @@ const volunteerSchema = new mongoose.Schema({
   }],
   activities: [{
     type: String,
-    'enum': ['dog_care', 'cat_care', 'administrative', 'event_management'] // COMMENT: This was the line causing the crash.
+    'enum': ['dog_care', 'cat_care', 'administrative', 'event_management'] 
   }],
   status: {
     type: String,
@@ -63,7 +63,7 @@ const staffSchema = new mongoose.Schema({
   ...baseUserSchema.obj,
   role: {
     type: String,
-    'enum': ['admin', 'manager', 'coordinator'], // COMMENT: And finally, for the staff schema.
+    'enum': ['admin', 'manager', 'coordinator'], 
     default: 'coordinator'
   },
   department: String,
