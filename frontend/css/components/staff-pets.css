@@ -18,9 +18,7 @@
 .staff-pet-form-label { font-weight:600; margin-bottom:6px; display:block; }
 .staff-pet-form-group { margin-bottom:12px; }
 
-.staff-pet-tag { display:inline-block; background:#f1f3ff; color:#5e4fe6; padding:6px 8px; border-radius:18px; margin-right:6px; font-size:0.85rem; border:2px solid transparent; cursor:pointer; transition:all 0.2s ease; }
-.staff-pet-tag:hover { background:#e6e9ff; border-color:#b5a8ff; }
-.staff-pet-tag.selected { background:#5e4fe6; color:#fff; border-color:#5e4fe6; box-shadow: 0 2px 6px rgba(94,79,230,0.3); }
+.staff-pet-tag { display:inline-block; background:#f1f3ff; color:#5e4fe6; padding:6px 8px; border-radius:18px; margin-right:6px; font-size:0.85rem; }
 
 /* Search & filter box styling similar to mock */
 .staff-pet-container .bg-white.border { border-radius:12px; border:1px solid rgba(102,118,234,0.14); }

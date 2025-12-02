@@ -48,24 +48,20 @@
           ]
       };
       
-    // Update statistics (guard against missing elements)
-    const animalsEl = document.getElementById('animalsInCare');
-    if (animalsEl) animalsEl.textContent = dashboardData.animalsInCare;
-    const volunteersEl = document.getElementById('activeVolunteers');
-    if (volunteersEl) volunteersEl.textContent = dashboardData.activeVolunteers;
-    const monthlyEl = document.getElementById('monthlyAdoptions');
-    if (monthlyEl) monthlyEl.textContent = dashboardData.monthlyAdoptions;
-    const urgentEl = document.getElementById('urgentCare');
-    if (urgentEl) urgentEl.textContent = dashboardData.urgentCare;
+      // Update statistics
+      document.getElementById('animalsInCare').textContent = dashboardData.animalsInCare;
+      document.getElementById('activeVolunteers').textContent = dashboardData.activeVolunteers;
+      document.getElementById('monthlyAdoptions').textContent = dashboardData.monthlyAdoptions;
+      document.getElementById('urgentCare').textContent = dashboardData.urgentCare;
       
       // Update subtitle
       const subtitle = document.getElementById('staffSubtitle');
       if (subtitle) subtitle.textContent = dashboardData.subtitle;
       
-    // Update alerts (guard existence)
-    const alert1 = document.getElementById('alert1'); if (alert1) alert1.textContent = dashboardData.alerts[0] || '';
-    const alert2 = document.getElementById('alert2'); if (alert2) alert2.textContent = dashboardData.alerts[1] || '';
-    const alert3 = document.getElementById('alert3'); if (alert3) alert3.textContent = dashboardData.alerts[2] || '';
+      // Update alerts
+      document.getElementById('alert1').textContent = dashboardData.alerts[0] || '';
+      document.getElementById('alert2').textContent = dashboardData.alerts[1] || '';
+      document.getElementById('alert3').textContent = dashboardData.alerts[2] || '';
   }
 
   function setupEventListeners() {

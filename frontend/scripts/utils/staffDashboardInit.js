@@ -1,6 +1,4 @@
 import { initializePage, getUserRoleDisplay } from './dashboardUtils.js';
-import { initVolunteerDashboard } from '../modules/Capacity';
-
 
 // Initialize staff dashboard page with user data from localStorage
 initializePage(user => {

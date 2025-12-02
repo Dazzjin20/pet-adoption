@@ -18,8 +18,7 @@ function handleLoginForm(formId, userType, dashboardUrl) {
             console.error('Email or password input not found in form');
             return;
         }
-
-
+        
         const email = emailInput.value;
         const password = passwordInput.value;
         const submitButton = form.querySelector('button[type="submit"]');

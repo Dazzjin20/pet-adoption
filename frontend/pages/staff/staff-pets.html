@@ -10,7 +10,7 @@
 
 </head>
 
-<body class="bg-light" data-required-role="staff">
+<body class="bg-light">
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
     <div class="container">
@@ -41,21 +41,12 @@
           <li class="nav-item me-lg-3 mt-2 mt-lg-0">
             <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
-              <div class="text-white small lh-1">
-                <div id="staffNavbarName"></div>
-                <div id="staffNavbarRole"></div>
-              </div>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="profileDropdown">
-              <li><a class="dropdown-item" href="#">Profile</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
-              <li><a class="dropdown-item" href="#">Reports & Analytics</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="/frontend/pages/login-form.html">Logout</a></li>
-            </ul>
+          <li class="nav-item d-flex align-items-center mt-2 mt-lg-0">
+            <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
+            <div class="text-white small lh-1">
+              <div id="staffNavbarName">Dazzjin Lee</div>
+              <div id="staffNavbarRole">Staff Member</div>
+            </div>
           </li>
         </ul>
       </div>
@@ -134,6 +125,7 @@
               <option>All Types</option>
               <option>Dog</option>
               <option>Cat</option>
+              <option>Other</option>
             </select>
           </div>
           
@@ -167,7 +159,7 @@
           <!-- Pet Card 1 -->
           <div class="col-md-6 col-lg-4">
             <div class="staff-pet-card" data-pet-id="1" data-pet-type="dog" data-pet-status="available">
-              <img src="../../image/photo/pet1.jpg" alt="Sadness" class="staff-pet-card-img">
+              <img src="/image/photo/pet1.jpg" alt="Sadness" class="staff-pet-card-img">
               <div class="staff-pet-card-body">
                 <div class="staff-pet-card-name">Sadness</div>
                 <div class="staff-pet-card-details">Approx. 3 years old - Female</div>
@@ -183,7 +175,7 @@
           <!-- Pet Card 2 -->
           <div class="col-md-6 col-lg-4">
             <div class="staff-pet-card" data-pet-id="2" data-pet-type="dog" data-pet-status="pending">
-              <img src="../../image/photo/pet2.jpg" alt="Anger" class="staff-pet-card-img">
+              <img src="/image/photo/pet2.jpg" alt="Anger" class="staff-pet-card-img">
               <div class="staff-pet-card-body">
                 <div class="staff-pet-card-name">Anger</div>
                 <div class="staff-pet-card-details">4 years - Male</div>
@@ -199,7 +191,7 @@
           <!-- Pet Card 3 -->
           <div class="col-md-6 col-lg-4">
             <div class="staff-pet-card" data-pet-id="3" data-pet-type="dog" data-pet-status="medical">
-              <img src="../../image/photo/pet3.jpg" alt="Space" class="staff-pet-card-img">
+              <img src="/image/photo/pet3.jpg" alt="Space" class="staff-pet-card-img">
               <div class="staff-pet-card-body">
                 <div class="staff-pet-card-name">Space</div>
                 <div class="staff-pet-card-details">Approx. 3 years old - Male</div>
@@ -241,6 +233,7 @@
                   <select class="form-select" id="petType">
                     <option selected>Dog</option>
                     <option>Cat</option>
+                    <option>Other</option>
                   </select>
                 </div>
                 
@@ -255,11 +248,6 @@
                 <div class="staff-pet-form-group">
                   <label class="staff-pet-form-label">Age</label>
                   <input type="text" class="form-control" placeholder="Approx. 3 years old" id="petAge">
-                </div>
-                
-                <div class="staff-pet-form-group">
-                  <label class="staff-pet-form-label">Weight (kg)</label>
-                  <input type="number" class="form-control" placeholder="e.g., 5.4" id="petWeight">
                 </div>
                 
                 <div class="staff-pet-form-group">
@@ -288,17 +276,17 @@
                 
                 <div class="staff-pet-form-group">
                   <label class="staff-pet-form-label">Before Image *</label>
-                  <div class="before-image-area">
-                    <input type="file" accept="image/*" id="beforeImageInput" style="display:none" />
-                    <button type="button" class="btn staff-pet-btn mb-2" id="beforeImageBtn">Upload Before Image</button>
+                  <div class="staff-pet-upload-area" id="beforeImageUpload">
+                    <p>Upload Before Image</p>
+                    <small class="text-muted">Click to upload or drag and drop</small>
                   </div>
                 </div>
                 
                 <div class="staff-pet-form-group">
                   <label class="staff-pet-form-label">After Image</label>
-                  <div class="after-image-area">
-                    <input type="file" accept="image/*" id="afterImageInput" style="display:none" />
-                    <button type="button" class="btn staff-pet-btn mb-2" id="afterImageBtn">Upload After Image</button>
+                  <div class="staff-pet-upload-area" id="afterImageUpload">
+                    <p>Upload After Image</p>
+                    <small class="text-muted">Click to upload or drag and drop</small>
                   </div>
                 </div>
                 
@@ -307,13 +295,13 @@
                 
                 <div class="staff-pet-form-group">
                   <div id="personalityTags">
-                    <button type="button" class="staff-pet-tag" data-trait="friendly">Friendly</button>
-                    <button type="button" class="staff-pet-tag" data-trait="energetic">Energetic</button>
-                    <button type="button" class="staff-pet-tag" data-trait="calm">Calm</button>
-                    <button type="button" class="staff-pet-tag" data-trait="playful">Playful</button>
-                    <button type="button" class="staff-pet-tag" data-trait="shy">Shy</button>
-                    <button type="button" class="staff-pet-tag" data-trait="loyal">Loyal</button>
-                    <button type="button" class="staff-pet-tag" data-trait="independent">Independent</button>
+                    <span class="staff-pet-tag" data-trait="friendly">Friendly</span>
+                    <span class="staff-pet-tag" data-trait="energetic">Energetic</span>
+                    <span class="staff-pet-tag" data-trait="calm">Calm</span>
+                    <span class="staff-pet-tag" data-trait="playful">Playful</span>
+                    <span class="staff-pet-tag" data-trait="shy">Shy</span>
+                    <span class="staff-pet-tag" data-trait="loyal">Loyal</span>
+                    <span class="staff-pet-tag" data-trait="independent">Independent</span>
                   </div>
                 </div>
                 
@@ -348,8 +336,6 @@
   <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- JavaScript for staff pet database -->
-  <script src="/frontend/js/auth/auth.js"></script>
-  <script type="module" src="../../scripts/pages/staffPets.js"></script>
-
+  <script src="/frontend/js/staff/user-info/user-info.js"> </script>
 </body>
 </html>
