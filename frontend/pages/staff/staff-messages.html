@@ -1,210 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Staff Messages - Pet Adoption</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Messages - Staff Dashboard</title>
   <link rel="stylesheet" href="/frontend/bootstrap/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/frontend/css/base/general.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/frontend/css/base/general.css">
+
 </head>
+
 <body class="bg-light">
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-4" href="#">🐾 Staff Dashboard</a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#staffNavbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-  <header>
-    <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
-      <div class="container">
-        <a class="navbar-brand fw-bold fs-4" href="#">🐾 Staff Dashboard</a>
-
-        <div class="collapse navbar-collapse" id="staffNavbarNav">
-          <ul class="navbar-nav ms-auto align-items-lg-center">
-            <li class="nav-item"><a class="nav-link" href="staff-dashboard.html">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link active" href="#">Messages</a></li>
-            <li class="nav-item"><a class="nav-link" href="staff-pets.html">Pets</a></li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Management
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="staff-pet-assignment.html">Pet Assignment</a></li>
-                <li><a class="dropdown-item" href="#">Task Assignment</a></li>
-                <li><a class="dropdown-item" href="#">Care Tracking</a></li>
-                <li><a class="dropdown-item" href="#">Volunteers</a></li>
-              </ul>
-            </li>
-
+      <div class="collapse navbar-collapse" id="staffNavbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="staff-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link fw-medium" href="staff-pets.html">Pets</a></li>
+          <li class="nav-item"><a class="nav-link fw-medium" href="staff-messages.html">Messages</a></li>
+         <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Management
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="staff-pet-assignment.html">Pet Assignment</a></li>
+              <li><a class="dropdown-item" href="#">Task Assignment</a></li>
+              <li><a class="dropdown-item" href="#">Care Tracking</a></li>
+              <li><a class="dropdown-item" href="#">Volunteers</a></li>
+            </ul>
+          </li>
             <li class="nav-item me-lg-3">
               <i class="fa-regular fa-bell text-white" style="font-size:1.1rem"></i>
             </li>
+          <li class="nav-item me-lg-3 mt-2 mt-lg-0">
+            <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
+          </li>
+          <li class="nav-item d-flex align-items-center mt-2 mt-lg-0">
+            <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
+            <div class="text-white small lh-1">
+              <div id="staffNavbarName"></div>
+              <div id="staffNavbarRole"></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-            <li class="nav-item d-flex align-items-center">
-              <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
-               <div class="text-white small lh-1">
-                <div id="name-user"></div>
-                <div id="user-role"></div>
+  <!-- Messages Content -->
+  <div class="container my-4 staff-messages-container">
+    <!-- Messages Header -->
+    <div class="staff-overview-box text-white p-4 mb-4">
+      <h4 class="fw-bold mb-1" id="messagesHeader">Messages</h4>
+      <p class="mb-0" id="messagesSubtitle">Stay connected with adopters and volunteers</p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Sidebar -->
+      <div class="col-md-4">
+        <div class="staff-messages-sidebar">
+          <!-- Search -->
+          <div class="staff-messages-search-box">
+            <h6 class="fw-bold mb-3">Search conversation</h6>
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search conversation" id="searchConversations">
+              <button class="btn btn-outline-secondary" type="button" id="searchConversationsBtn">
+                🔍
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="p-3">
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <div class="staff-messages-stats-card">
+                  <div class="staff-messages-stats-number" id="totalConversations">3</div>
+                  <div class="staff-messages-stats-label">Total</div>
+                </div>
               </div>
-            </li>
-          </ul>
+              <div class="col-6">
+                <div class="staff-messages-stats-card">
+                  <div class="staff-messages-stats-number" id="adoptionConversations">2</div>
+                  <div class="staff-messages-stats-label">Adoption</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="staff-messages-stats-card">
+                  <div class="staff-messages-stats-number" id="volunteerConversations">1</div>
+                  <div class="staff-messages-stats-label">Volunteer</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="staff-messages-stats-card">
+                  <div class="staff-messages-stats-number" id="unreadConversations">2</div>
+                  <div class="staff-messages-stats-label">Unread</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- New Message Section -->
+          <div class="staff-messages-new-message">
+            <h6 class="fw-bold mb-3">New Message</h6>
+            <div class="d-flex flex-wrap">
+              <button class="staff-messages-filter-btn" id="filterAll">All Message</button>
+              <button class="staff-messages-filter-btn" id="filterAdoption">Adoption</button>
+              <button class="staff-messages-filter-btn" id="filterVolunteer">Volunteer</button>
+            </div>
+          </div>
+
+          <!-- Conversations List -->
+          <div class="p-3">
+            <h6 class="fw-bold mb-3">Recent Conversations</h6>
+            
+            <div class="staff-messages-conversation active" data-user="kenji" data-type="adoption" id="conversationKenji">
+              <div class="staff-messages-conversation-name">
+                Pet Adopter - Kenji Webbo
+                <span class="staff-messages-conversation-badge">2</span>
+              </div>
+              <div class="staff-messages-conversation-preview">
+                Hello Kenji! I'd be happy to help you meet Luna. She's a wonderful cat and I think you two would be a great match. Are y...
+              </div>
+            </div>
+            
+            <div class="staff-messages-conversation" data-user="daks" data-type="volunteer" id="conversationDaks">
+              <div class="staff-messages-conversation-name">
+                Volunteer - Daks Pangilinan
+              </div>
+              <div class="staff-messages-conversation-preview">
+                Hi! I'm interested in adopting Anger. Can we schedule a meet and greet?
+              </div>
+            </div>
+            
+            <div class="staff-messages-conversation" data-user="ada" data-type="adoption" id="conversationAda">
+              <div class="staff-messages-conversation-name">
+                Pet Adopter - Ada Wong
+              </div>
+              <div class="staff-messages-conversation-preview">
+                Yes, Saturday afternoon would work perfectly! What time works best for you?
+              </div>
+            </div>
+          </div>
+
+          <!-- Help Tool -->
+          <div class="staff-messages-help-tool">
+            <h6 class="fw-bold mb-2"></h6>
+            <p class="small text-muted mb-0"><br></p>
+          </div>
         </div>
       </div>
-    </nav>
-  </header>
 
-  <!-- Main Content -->
-  <main class="container my-5">
+      <!-- Chat Area -->
+      <div class="col-md-8">
+        <div class="staff-messages-chat">
+          <!-- Chat Header -->
+          <div class="staff-messages-chat-header">
+            <h5 class="fw-bold mb-0" id="chatUserName">Pet Adopter - Kenji Webbo</h5>
+            <small class="text-muted" id="chatUserStatus">Online</small>
+          </div>
 
-    <!-- Page Header -->
-    <section class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold">Messages</h2>
-    </section>
+          <!-- Chat Messages -->
+          <div class="staff-messages-chat-messages" id="chatMessages">
+            <!-- Received Message -->
+            <div class="staff-message staff-message-received">
+              <div>Hi! Just wanted to say thank you for your time and dedication. Your care for the animals truly makes a difference, and we're lucky to have you on the team.</div>
+              <div class="staff-message-time">10:30 AM</div>
+            </div>
+            
+            <!-- Sent Message -->
+            <div class="staff-message staff-message-sent">
+              <div>Thank you so much, Kenji! I'm really grateful to be part of this mission. Helping these dogs and cats has been such a meaningful experience.</div>
+              <div class="staff-message-time">10:32 AM</div>
+            </div>
+            
+            <!-- Received Message -->
+            <div class="staff-message staff-message-received">
+              <div>Hello Kenji! I'd be happy to help you meet Luna. She's a wonderful cat and I think you two would be a great match. Are you available this weekend?</div>
+              <div class="staff-message-time">10:35 AM</div>
+            </div>
+          </div>
 
-    <!-- Search + buttons -->
-    <section class="row g-3 mb-4 align-items-center">
-
-      <div class="col-12 d-flex align-items-center">
-        <!-- Search -->
-        <div class="input-group me-3 flex-grow-1">
-          <span class="input-group-text bg-white">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </span>
-          <input class="form-control" placeholder="Search conversation" aria-label="Search conversation" />
+          <!-- Chat Input -->
+          <div class="staff-messages-chat-input">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Type your message..." id="messageInput">
+              <button class="btn staff-messages-btn" id="sendMessageBtn">
+                Send
+              </button>
+            </div>
+          </div>
         </div>
-
-        <!-- New Message Button -->
-        <button class="btn staff-view-dashboard-btn me-2">+ New Message</button>
-
-        <!-- All Message Filter -->
-        <div class="btn-group">
-          <button class="btn btn-outline-secondary">All Message</button>
-          <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden">Toggle</span>
-          </button>
-
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">All</a></li>
-            <li><a class="dropdown-item" href="#">Unread</a></li>
-            <li><a class="dropdown-item" href="#">Adoption</a></li>
-            <li><a class="dropdown-item" href="#">Volunteer</a></li>
-          </ul>
-        </div>
-      </div>
-
-    </section>
-
-   <!-- Category Boxes -->
-<section class="row g-3 mb-4">
-  <div class="col-12 d-flex justify-content-between flex-wrap">
-
-    <div class="msg-category-box d-flex align-items-center p-3">
-      <div class="icon bg-purple text-white me-3"><i class="fa-regular fa-comment fa-lg"></i></div>
-      <div>
-        <div class="small text-muted">Total</div>
-        <div class="fw-bold">3</div>
       </div>
     </div>
-
-    <div class="msg-category-box d-flex align-items-center p-3">
-      <div class="icon bg-pink text-white me-3"><i class="fa-regular fa-heart fa-lg"></i></div>
-      <div>
-        <div class="small text-muted">Adoption</div>
-        <div class="fw-bold">2</div>
-      </div>
-    </div>
-
-    <div class="msg-category-box d-flex align-items-center p-3">
-      <div class="icon bg-green text-white me-3"><i class="fa-regular fa-user fa-lg"></i></div>
-      <div>
-        <div class="small text-muted">Volunteer</div>
-        <div class="fw-bold">1</div>
-      </div>
-    </div>
-
-    <div class="msg-category-box d-flex align-items-center p-3">
-      <div class="icon bg-purple-light text-white me-3"><i class="fa-regular fa-clock fa-lg"></i></div>
-      <div>
-        <div class="small text-muted">Unread</div>
-        <div class="fw-bold">2</div>
-      </div>
-    </div>
-
   </div>
-</section>
 
-
-    <!-- Messages List -->
-    <section class="card messages-list p-3">
-
-      <h5 class="mb-3">Recent Conversations</h5>
-
-      <nav class="list-group">
-
-        <!-- Conversation 1 -->
-        <a href="#" class="list-group-item list-group-item-action d-flex align-items-start">
-          <img src="/frontend/assets/image/photo/BoyIcon.jpg" class="rounded-circle me-3" width="54" height="54" alt="avatar" />
-
-          <article class="flex-grow-1">
-            <div class="d-flex justify-content-between align-items-start">
-              
-              <div>
-                <h6 class="fw-bold m-0">Pet Adopter - Kenji Webbo</h6>
-                <p class="text-muted m-0">
-                  Hello Kenji! I'd be happy to help you meet Luna. She's a wonderful cat and I think you two would be a great match...
-                </p>
-              </div>
-
-              <div class="text-muted text-end small">
-                <div>30m ago</div>
-                <div><span class="badge bg-warning text-dark">2</span></div>
-              </div>
-
-            </div>
-          </article>
-        </a>
-
-        <!-- Conversation 2 -->
-        <a href="#" class="list-group-item list-group-item-action d-flex align-items-start">
-          <img src="/frontend/assets/image/photo/BoyIcon.jpg" class="rounded-circle me-3" width="54" height="54" alt="avatar" />
-
-          <article class="flex-grow-1">
-            <div class="d-flex justify-content-between align-items-start">
-
-              <div>
-                <h6 class="fw-bold m-0">Volunteer - Daks Pangilinan</h6>
-                <p class="text-muted m-0">Hi! I'm interested in adopting Anger. Can we schedule a meet and greet?</p>
-              </div>
-
-              <div class="text-muted text-end small">
-                <div>2h ago</div>
-              </div>
-
-            </div>
-          </article>
-        </a>
-
-        <!-- Conversation 3 -->
-        <a href="#" class="list-group-item list-group-item-action d-flex align-items-start">
-          <img src="/frontend/assets/image/photo/BoyIcon.jpg" class="rounded-circle me-3" width="54" height="54" alt="avatar" />
-
-          <article class="flex-grow-1">
-            <div class="d-flex justify-content-between align-items-start">
-
-              <div>
-                <h6 class="fw-bold m-0">Pet Adopter - Ada Wong</h6>
-                <p class="text-muted m-0">Yes, Saturday afternoon would work perfectly! What time works best for you?</p>
-              </div>
-
-              <div class="text-muted text-end small">1d ago</div>
-
-            </div>
-          </article>
-        </a>
-
-      </nav>
-
-    </section>
-
-  </main>
-
+  <!-- Load Bootstrap JavaScript -->
   <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script type="module" src="../../scripts/utils/staffDashboardInit.js"></script>
+
+  <!-- JavaScript for staff messages -->
+  <script src="/frontend/js/staff/messages/#"></script>
+   <script src="/frontend/js/staff/user-info/user-info.js"></script>
 </body>
 </html>

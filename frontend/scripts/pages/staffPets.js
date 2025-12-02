@@ -60,16 +60,8 @@ function updateStats(pets) {
 function attachActionHandlers() {
   document.querySelectorAll('.viewPetBtn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
-      const id = btn.dataset.petId;
-      try {
-        const res = await getPets(); // simple: reload full list and find id
-        const pet = (res.pets || []).find(x => x._id === id);
-        if (!pet) return alert('Pet not found');
-        // show a quick details modal or alert for now
-        alert(`${pet.pet_name}\nStatus: ${pet.status}\nType: ${pet.pet_type}\nLocation: ${pet.location}`);
-      } catch (err) {
-        console.error(err);
-      }
+      const petId = e.currentTarget.dataset.petId;
+      window.location.href = `/frontend/pages/staff/pets-page/staff-view-details.html?id=${petId}`;
     });
   });
 

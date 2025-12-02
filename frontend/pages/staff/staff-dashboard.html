@@ -6,23 +6,23 @@
   <title>Staff Dashboard</title>
   <link rel="stylesheet" href="/frontend/bootstrap/css/bootstrap.min.css" />
   <link rel="stylesheet" href="/frontend/css/base/general.css">
-
 </head>
 <body class="bg-light">
 
-  <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
-    <div class="container">
-      <a class="navbar-brand fw-bold fs-4" href="#">🐾 Staff Dashboard</a>
-      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#staffNavbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="staffNavbarNav">
-        <ul class="navbar-nav ms-auto align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="staff-dashboard.html">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="staff-pets.html">Pets</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="staff-messages.html">Messages</a></li>
-         <li class="nav-item dropdown">
+  <!-- Header with navigation -->
+  <header>
+    <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
+      <div class="container">
+        <a class="navbar-brand fw-bold fs-4" href="#">🐾 Staff Dashboard</a>
+        <div class="collapse navbar-collapse" id="staffNavbarNav">
+          <ul class="navbar-nav ms-auto align-items-lg-center">
+            <li class="nav-item"><a class="nav-link" href="staff-dashboard.html">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#">Messages</a></li>
+            <li class="nav-item"><a class="nav-link" href="staff-pets.html">Pets</a></li>
+            <li class="nav-item me-lg-3">
+              <i class="fa-regular fa-bell text-white" style="font-size:1.1rem"></i>
+            </li>
+                  <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Management
             </a>
@@ -33,104 +33,105 @@
               <li><a class="dropdown-item" href="#">Volunteers</a></li>
             </ul>
           </li>
-            <li class="nav-item me-lg-3">
-              <i class="fa-regular fa-bell text-white" style="font-size:1.1rem"></i>
+
+            <li class="nav-item d-flex align-items-center">
+              <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
+              <div class="text-white small lh-1">
+                <div id="staffNavbarName"></div>
+                <div id="staffNavbarRole"></div>
+              </div>
             </li>
-          <li class="nav-item me-lg-3 mt-2 mt-lg-0">
-            <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
-          </li>
-          <li class="nav-item d-flex align-items-center mt-2 mt-lg-0">
-            <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
-            <div class="text-white small lh-1">
-              <div id="staffNavbarName">Dazzjin Lee</div>
-              <div id="staffNavbarRole">Staff Member</div>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main content -->
+  <main class="container my-5">
+    <!-- Overview section -->
+    <section class="staff-overview-box text-white p-4">
+      <h1 class="fw-bold mb-1">Shelter Overview</h1>
+      <p class="mb-0">Managing care for 156 animals with 23 active volunteers</p>
+    </section>
+
+    <!-- Statistics section -->
+    <section class="mt-5">
+      <h2 class="visually-hidden">Shelter Statistics</h2>
+      <div class="row g-4">
+        <div class="col-md-3 col-sm-6">
+          <article class="staff-stat-card bg-white text-center p-4">
+            <div class="fs-1 text-primary mb-3">🐾</div>
+            <h3 class="fw-bold mb-2">156</h3>
+            <p class="text-muted mb-0">Animals in Care</p>
+          </article>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <article class="staff-stat-card bg-white text-center p-4">
+            <div class="fs-1 text-success mb-3">👥</div>
+            <h3 class="fw-bold mb-2">223</h3>
+            <p class="text-muted mb-0">Active Volunteers</p>
+          </article>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <article class="staff-stat-card bg-white text-center p-4">
+            <div class="fs-1 text-danger mb-3">❤️</div>
+            <h3 class="fw-bold mb-2">34</h3>
+            <p class="text-muted mb-0">Adoptions This Month</p>
+          </article>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <article class="staff-stat-card bg-white text-center p-4">
+            <div class="fs-1 text-info mb-3">⚠️</div>
+            <h3 class="fw-bold mb-2">8</h3>
+            <p class="text-muted mb-0">Urgent Care Needed</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard content section -->
+    <section class="mt-5">
+      <h2 class="visually-hidden">Dashboard Content</h2>
+      <div class="row g-4">
+        <!-- Recent Alerts section -->
+        <div class="col-lg-6">
+          <section class="staff-card-container">
+            <h3 class="fw-bold">Recent Alerts</h3>
+            <div class="staff-alerts-container">
+              <article class="d-flex align-items-center">
+                <span class="staff-alert-label staff-alert-urgent me-3">Urgent</span>
+                <span class="flex-grow-1">Bella needs medication in 2 hours</span>
+              </article>
+              <article class="d-flex align-items-center">
+                <span class="staff-alert-label staff-alert-medical me-3">Medical</span>
+                <span class="flex-grow-1">Max has vet appointment tomorrow</span>
+              </article>
+              <article class="d-flex align-items-center">
+                <span class="staff-alert-label staff-alert-update me-3">Update</span>
+                <span class="flex-grow-1">New volunteer application received</span>
+              </article>
             </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+            <button class="btn staff-view-dashboard-btn text-white w-100 mt-4">View Care Dashboard →</button>
+          </section>
+        </div>
 
-
-  <div class="container my-4">
-    <div class="staff-overview-box text-white p-4">
-      <h4 class="fw-bold mb-1" id="staffWelcomeMessage">Shelter Overview</h4>
-      <p class="mb-0" id="staffSubtitle">Managing care for 156 animals with 23 active volunteers</p>
-    </div>
-
-
-    <div class="row mt-4 g-3">
-      <div class="col-md-3 col-sm-6">
-        <div class="staff-stat-card bg-white border rounded-4 text-center p-4">
-          <div class="fs-1 text-primary mb-2">🐾</div>
-          <h3 class="fw-bold mb-1" id="animalsInCare">156</h3>
-          <p class="text-muted mb-0">Animals in Care</p>
+        <!-- Quick Actions section -->
+        <div class="col-lg-6">
+          <section class="staff-card-container">
+            <h3 class="fw-bold">Quick Actions</h3>
+            <button class="btn staff-quick-btn w-100 text-start mb-2">🐾 Add New Pet</button>
+            <button class="btn staff-quick-btn w-100 text-start mb-2">👥 Manage Volunteers</button>
+            <button class="btn staff-quick-btn w-100 text-start mb-2">📊 Generate Reports</button>
+            <button class="btn staff-quick-btn w-100 text-start">🗓️ Schedule Care Tasks</button>
+          </section>
         </div>
       </div>
-      <div class="col-md-3 col-sm-6">
-        <div class="staff-stat-card bg-white border rounded-4 text-center p-4">
-          <div class="fs-1 text-success mb-2">👥</div>
-          <h3 class="fw-bold mb-1" id="activeVolunteers">223</h3>
-          <p class="text-muted mb-0">Active Volunteers</p>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6">
-        <div class="staff-stat-card bg-white border rounded-4 text-center p-4">
-          <div class="fs-1 text-danger mb-2">❤️</div>
-          <h3 class="fw-bold mb-1" id="monthlyAdoptions">34</h3>
-          <p class="text-muted mb-0">Adoptions This Month</p>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6">
-        <div class="staff-stat-card bg-white border rounded-4 text-center p-4">
-          <div class="fs-1 text-warning mb-2">🔔</div>
-          <h3 class="fw-bold mb-1" id="urgentCare">8</h3>
-          <p class="text-muted mb-0">Urgent Care Needed</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="row mt-4 g-4">
- 
-      <div class="col-md-6">
-        <div class="bg-white border rounded-4 p-4">
-          <h5 class="fw-bold mb-3">Recent Alerts</h5>
-
-          <div class="d-flex align-items-center border rounded p-2 mb-2">
-            <span class="staff-alert-label staff-alert-urgent me-2">Urgent</span>
-            <span id="alert1">Bella needs medication in 2 hours</span>
-          </div>
-          <div class="d-flex align-items-center border rounded p-2 mb-2">
-            <span class="staff-alert-label staff-alert-medical me-2">Medical</span>
-            <span id="alert2">Max has vet appointment tomorrow</span>
-          </div>
-          <div class="d-flex align-items-center border rounded p-2 mb-2">
-            <span class="staff-alert-label staff-alert-update me-2">Update</span>
-            <span id="alert3">New volunteer application received</span>
-          </div>
-
-          <a href="#" class="btn staff-view-dashboard-btn text-white w-100 mt-3" id="viewCareDashboardBtn">View Care Dashboard</a>
-        </div>
-      </div>
-
-
-      <div class="col-md-6">
-        <div class="bg-white border rounded-4 p-4">
-          <h5 class="fw-bold mb-3">Quick Action</h5>
-
-          <button class="btn btn-light border w-100 text-start mb-2 staff-quick-btn" id="addPetBtn">🐾 Add New Pet</button>
-          <button class="btn btn-light border w-100 text-start mb-2 staff-quick-btn" id="manageVolunteerBtn">👥 Manage Volunteer</button>
-          <button class="btn btn-light border w-100 text-start mb-2 staff-quick-btn" id="generateReportsBtn">📄 Generate Reports</button>
-          <button class="btn btn-light border w-100 text-start staff-quick-btn" id="scheduledTasksBtn">🗓 Scheduled Care Task</button>
-        </div>
-      </div>
-    </div>
-
+    </section>
+  </main>
   <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="../../scripts/app.js"></script>
+  <script type="module" src="../../scripts/utils/staffDashboardInit.js"></script>
 
-  <!-- JavaScript for staff dashboard -->
-  <script src="/frontend/js/staff/user-info/user-info.js">
- 
-  </script>
 </body>
 </html>

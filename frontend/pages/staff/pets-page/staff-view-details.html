@@ -21,15 +21,15 @@
 
       <div class="collapse navbar-collapse" id="staffNavbarNav">
         <ul class="navbar-nav ms-auto align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="staff-dashboard.html">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="staff-pets.html">Pets</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="staff-messages.html">Messages</a></li>
+          <li class="nav-item"><a class="nav-link" href="/frontend/pages/staff/staff-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link fw-medium" href="/frontend/pages/staff/staff-pets.html">Pets</a></li>
+          <li class="nav-item"><a class="nav-link fw-medium" href="/frontend/pages/staff/staff-messages.html">Messages</a></li>
          <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Management
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="staff-pet-assignment.html">Pet Assignment</a></li>
+              <li><a class="dropdown-item" href="/frontend/pages/staff/staff-pet-assignment.html">Pet Assignment</a></li>
               <li><a class="dropdown-item" href="#">Task Assignment</a></li>
               <li><a class="dropdown-item" href="#">Care Tracking</a></li>
               <li><a class="dropdown-item" href="#">Volunteers</a></li>
@@ -44,8 +44,8 @@
           <li class="nav-item d-flex align-items-center mt-2 mt-lg-0">
             <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
             <div class="text-white small lh-1">
-              <div id="staffNavbarName">Dazzjin Lee</div>
-              <div id="staffNavbarRole">Staff Member</div>
+              <div id="staffNavbarName"></div>
+              <div id="staffNavbarRole"></div>
             </div>
           </li>
         </ul>
@@ -55,115 +55,108 @@
   </header>
 
 
-<!-- HEADER BAR -->
-<div class="header-bar">
-    <div class="container d-flex align-items-center gap-3">
-        <a href="#" class="text-white text-decoration-none fw-bold">< Back</a>
-
-        <h4 class="mb-0">Sadness</h4>
-
-        <span class="tag">Vaccinated</span>
-        <span class="tag">Available</span>
-    </div>
-    <div class="container text-white mt-1">
-        3 years • Male
-    </div>
-</div>
-
-<div class="container mt-4">
-
-    <!-- TABS -->
-    <div class="d-flex gap-2 mb-4">
-        <button class="tab-btn active">Overview</button>
-        <button class="tab-btn">Medical</button>
-        <button class="tab-btn">Adoption</button>
-        <button class="tab-btn">Adoption</button>
+<div class="container my-4">
+    <!-- PET PROFILE HEADER -->
+    <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <a href="/frontend/pages/staff/staff-pets.html" class="text-secondary text-decoration-none mb-2 d-block">
+                    &larr; Back to All Pets
+                </a>
+                <h2 class="fw-bold" id="petNameHeader">Loading...</h2>
+                <p class="text-muted" id="petSubHeader">Loading details...</p>
+                <div class="d-flex gap-2" id="petTagsHeader">
+                    <!-- Tags will be loaded here -->
+                </div>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <button class="btn staff-pet-secondary-btn" id="updatePetBtn">Update Pet</button>
+                <button class="btn btn-outline-danger" id="deletePetBtn">Delete Pet</button>
+            </div>
+        </div>
     </div>
 
+    <!-- TABS NAVIGATION -->
+    <ul class="nav nav-tabs nav-fill mb-4" id="pet-details-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#" data-tab="overview">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-tab="medical">Medical</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-tab="care-log">Care Log</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-tab="adoption">Adoption</a>
+        </li>
+    </ul>
+    
     <!-- BEFORE / AFTER IMAGES -->
     <div class="row mb-4">
-
         <div class="col-md-6">
             <span class="before-after-label mb-2">Before</span>
-            <img class="custom-img mt-2" src="https://via.placeholder.com/600x350" alt="Before Image">
+            <img class="custom-img mt-2" id="beforeImage" src="/frontend/assets/image/photo/placeholder.jpg" alt="Before Image">
         </div>
 
         <div class="col-md-6">
             <span class="before-after-label mb-2">After</span>
-            <img class="custom-img mt-2" src="https://via.placeholder.com/600x350" alt="After Image">
+            <img class="custom-img mt-2" id="afterImage" src="/frontend/assets/image/photo/placeholder.jpg" alt="After Image">
         </div>
     </div>
 
-    <div class="row">
-
+    <div class="row g-4">
         <!-- LEFT INFO BOX -->
-        <div class="col-md-6 mb-4">
-            <div class="info-box">
-
+        <div class="col-lg-5">
+            <div class="info-box h-100">
                 <div class="section-title">Basic Information</div>
 
                 <div class="row mb-2">
                     <div class="col-6">
                         <small>Age</small><br>
-                        <strong>Approx. 3 years old</strong>
+                        <strong id="petInfoAge"></strong>
                     </div>
                     <div class="col-6">
-                        <small>Color</small><br>
-                        <strong>Golden</strong>
+                        <small>Weight</small><br>
+                        <strong id="petInfoWeight"></strong>
                     </div>
                 </div>
 
                 <div class="row mb-2">
                     <div class="col-6">
                         <small>Sex</small><br>
-                        <strong>Male</strong>
+                        <strong id="petInfoSex"></strong>
                     </div>
                     <div class="col-6">
-                        <small>Weight</small><br>
-                        <strong>65 lbs</strong>
+                        <small>Location</small><br>
+                        <strong id="petInfoLocation"></strong>
                     </div>
                 </div>
 
                 <div class="d-flex align-items-center gap-2 mt-3">
                     <i class="bi bi-calendar"></i>
-                    <small>Arrived 1/15/2024</small>
+                    <small id="petInfoArrival">Arrived on...</small>
                 </div>
-
             </div>
         </div>
 
         <!-- RIGHT INFO BOX -->
-        <div class="col-md-6 mb-4">
-            <div class="info-box">
-
+        <div class="col-lg-7">
+            <div class="info-box h-100">
                 <div class="section-title">Personality & Traits</div>
 
-                <div class="mb-2">
-                    <span class="trait-tag">Friendly</span>
-                    <span class="trait-tag">Energetic</span>
+                <div class="mb-2" id="petPersonalityTags">
+                    <!-- Personality tags will be loaded here -->
                 </div>
 
-                <div class="section-title mt-3">About Sadness</div>
-
-                <p style="text-align: justify;">
-                    Spade may have been dealt a rough hand—neglected, abandoned, and left tied to a tree at the illegal POGO Boss Mansion—but this gentle giant never let that define him.
-                    Despite everything, he still holds onto hope that kindness and love are still in the cards for him.
-                </p>
-
-                <p style="text-align: justify;">
-                    Though his size and stoic looks may seem intimidating at first,
-                    Spade is actually a big softie. He lives for gentle pets and lots of play,
-                    and he’s always ready to show his affectionate side to those who take a chance on him.
-                </p>
-
+                <div class="section-title mt-4" id="petAboutTitle">About...</div>
+                <p style="text-align: justify;" id="petAbout"></p>
             </div>
         </div>
-
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="""></script>
+<script src="/frontend/scripts/pages/staffViewPet.js" type="module"></script>
 </body>
 </html>
