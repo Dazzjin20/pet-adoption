@@ -170,6 +170,32 @@ async function setupAddPet() {
   }
 }
 
+async function applyFilters() {
+  const name = document.getElementById('searchPetName').value.trim();
+  const type = document.getElementById('filterPetType').value;
+  const status = document.getElementById('filterPetStatus').value;
+  const vaccinated = document.getElementById('vaccinatedFilter').checked ? 'true' : undefined;
+
+  const params = {};
+  if (name) params.name = name;
+  if (type && type !== 'All Types') params.type = type;
+  if (status && status !== 'All Status') params.status = status;
+  if (vaccinated) params.vaccinated = vaccinated;
+
+  try {
+    const res = await getPets(params);
+    const pets = res.pets || [];
+    const grid = document.getElementById('petsGrid');
+    grid.innerHTML = '';
+    pets.forEach(p => grid.appendChild(createCard(p)));
+    updateStats(pets);
+    attachActionHandlers();
+  } catch (err) {
+    console.error('Failed to apply filters:', err);
+    alert('Could not load filtered pets.');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadPets();
   setupAddPet();
@@ -234,26 +260,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (beforeBtn && beforeInput) beforeBtn.addEventListener('click', () => beforeInput.click());
   if (afterBtn && afterInput) afterBtn.addEventListener('click', () => afterInput.click());
 
-  // hook filter apply
-  document.getElementById('applyFiltersBtn')?.addEventListener('click', async () => {
-    const name = document.getElementById('searchPetName').value;
-    const type = document.getElementById('filterPetType').value;
-    const status = document.getElementById('filterPetStatus').value;
-    const vaccinated = document.getElementById('vaccinatedFilter').checked ? 'true' : undefined;
-    const params = {};
-    if (type && type !== 'All Types') params.type = type;
-    if (status && status !== 'All Status') params.status = status;
-    if (vaccinated) params.vaccinated = vaccinated;
-    try {
-      const res = await getPets(params);
-      const pets = res.pets || [];
-      const grid = document.getElementById('petsGrid');
-      grid.innerHTML = '';
-      pets.forEach(p => grid.appendChild(createCard(p)));
-      updateStats(pets);
-      attachActionHandlers();
-    } catch (err) {
-      console.error(err);
-    }
-  });
+  // Live filtering event listeners
+  document.getElementById('searchPetName')?.addEventListener('input', applyFilters);
+  document.getElementById('filterPetType')?.addEventListener('change', applyFilters);
+  document.getElementById('filterPetStatus')?.addEventListener('change', applyFilters);
+  document.getElementById('vaccinatedFilter')?.addEventListener('change', applyFilters);
+
+  // The "Apply Filters" button can now be a fallback or be removed if you prefer live filtering.
+  // For now, I'll keep it functional.
+  document.getElementById('applyFiltersBtn')?.addEventListener('click', applyFilters);
 });
