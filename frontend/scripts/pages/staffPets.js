@@ -17,8 +17,10 @@ function createCard(pet) {
         <div class="staff-pet-card-details">${pet.age || 'N/A'} - ${pet.sex || ''}</div>
         <div class="staff-pet-card-location">${pet.location || ''}</div>
         <div class="staff-pet-card-location">Arrived ${pet.arrival_date || ''}</div>
-        <div class="mt-3">
-          <button class="btn staff-pet-btn btn-sm w-100 viewPetBtn" data-pet-id="${pet._id}">View Details</button>
+        <div class="mt-3 d-flex gap-2">
+          <button class="btn staff-pet-btn btn-sm flex-grow-1 viewPetBtn" data-pet-id="${pet._id}">View</button>
+          <button class="btn staff-pet-secondary-btn btn-sm updatePetBtn" data-pet-id="${pet._id}">Update</button>
+          <button class="btn btn-outline-danger btn-sm deletePetBtn" data-pet-id="${pet._id}">Delete</button>
         </div>
       </div>
     </div>`;
@@ -35,7 +37,7 @@ async function loadPets() {
     pets.forEach(p => grid.appendChild(createCard(p)));
 
     updateStats(pets);
-    attachViewHandlers();
+    attachActionHandlers();
   } catch (err) {
     console.error('Failed to load pets', err);
   }
@@ -55,7 +57,7 @@ function updateStats(pets) {
   document.getElementById('adoptedPets').textContent = adopted;
 }
 
-function attachViewHandlers() {
+function attachActionHandlers() {
   document.querySelectorAll('.viewPetBtn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const id = btn.dataset.petId;
@@ -67,6 +69,31 @@ function attachViewHandlers() {
         alert(`${pet.pet_name}\nStatus: ${pet.status}\nType: ${pet.pet_type}\nLocation: ${pet.location}`);
       } catch (err) {
         console.error(err);
+      }
+    });
+  });
+
+  document.querySelectorAll('.updatePetBtn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = e.target.dataset.petId;
+      // For now, this will show an alert. A full implementation
+      // would open a modal pre-filled with this pet's data.
+      alert(`Update functionality for pet ID: ${id} is not yet fully implemented.`);
+      console.log(`Trigger update for pet ${id}`);
+    });
+  });
+
+  document.querySelectorAll('.deletePetBtn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const id = e.target.dataset.petId;
+      if (confirm('Are you sure you want to delete this pet? This action cannot be undone.')) {
+        try {
+          await deletePet(id);
+          await loadPets(); // Reload the list to reflect the deletion
+        } catch (err) {
+          console.error(`Failed to delete pet ${id}`, err);
+          alert(`Error: ${err.message}`);
+        }
       }
     });
   });
@@ -232,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
       grid.innerHTML = '';
       pets.forEach(p => grid.appendChild(createCard(p)));
       updateStats(pets);
-      attachViewHandlers();
+      attachActionHandlers();
     } catch (err) {
       console.error(err);
     }
