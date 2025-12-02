@@ -9,7 +9,10 @@ const petRoutes = require('./routes/petRoutes');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+// Accept larger JSON payloads for base64 image uploads
+app.use(express.json({ limit: '12mb' }));
+// Also support URL-encoded form bodies at larger size
+app.use(express.urlencoded({ limit: '12mb', extended: true }));
 
 // Generic registration handler to reduce code duplication
 async function handleRegistration(req, res, repository) {
