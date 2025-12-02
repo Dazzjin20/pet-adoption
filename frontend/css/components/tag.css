@@ -1,0 +1,28 @@
+.staff-pet-tag {
+  padding: 8px 16px;
+  margin: 6px;
+  border: none;
+  border-radius: 20px;
+  background: #f1f1f1;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-size: 14px;
+}
+
+.staff-pet-tag:hover {
+  transform: scale(1.1);
+  background: #e0e0e0;
+}
+
+.staff-pet-tag:active {
+  transform: scale(0.9);
+  background: #d6d6d6;
+}
+
+.staff-pet-tag.selected {
+  background: linear-gradient(135deg, #6A5ACD, #4A3AFF);
+
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

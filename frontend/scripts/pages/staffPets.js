@@ -1,5 +1,9 @@
 import { getPets, createPet, updatePet, deletePet } from '../utils/staffPetsApi.js';
 
+// Hold base64 image data for create/update
+let beforeImageData = null;
+let afterImageData = null;
+
 function createCard(pet) {
   const col = document.createElement('div');
   col.className = 'col-md-6 col-lg-4';
@@ -77,8 +81,9 @@ function readAddForm() {
     vaccinated: !!document.getElementById('petVaccinated').checked,
     about_pet: document.getElementById('petDescription').value,
     status: document.getElementById('petStatus').value,
-    before_image: null,
-    after_image: null
+    before_image: beforeImageData,
+    after_image: afterImageData,
+    personality: Array.from(document.querySelectorAll('.staff-pet-tag.selected')).map(el => el.dataset.trait || el.textContent.trim())
   };
 }
 
@@ -96,6 +101,14 @@ async function setupAddPet() {
         if (bsModal) bsModal.hide();
         // clear form
         document.getElementById('addPetForm').reset();
+        // clear previews and stored images
+        beforeImageData = null; afterImageData = null;
+        const beforePreview = document.getElementById('beforeImagePreview');
+        const afterPreview = document.getElementById('afterImagePreview');
+        if (beforePreview) beforePreview.src = '/frontend/assets/image/photo/BoyIcon.jpg';
+        if (afterPreview) afterPreview.src = '/frontend/assets/image/photo/BoyIcon.jpg';
+        // clear selected personality tags
+        document.querySelectorAll('.staff-pet-tag.selected').forEach(t => t.classList.remove('selected'));
         await loadPets();
       } catch (err) {
         console.error('Failed to add pet', err);
@@ -108,6 +121,51 @@ async function setupAddPet() {
 document.addEventListener('DOMContentLoaded', () => {
   loadPets();
   setupAddPet();
+  // file input handlers for images: read as base64 and preview
+  const beforeInput = document.getElementById('beforeImageInput');
+  const afterInput = document.getElementById('afterImageInput');
+  const beforePreview = document.getElementById('beforeImagePreview');
+  const afterPreview = document.getElementById('afterImagePreview');
+  if (beforeInput) {
+    beforeInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) {
+        beforeImageData = null; return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        beforeImageData = reader.result; // data URL
+        if (beforePreview) beforePreview.src = beforeImageData;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  if (afterInput) {
+    afterInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) { afterImageData = null; return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        afterImageData = reader.result;
+        if (afterPreview) afterPreview.src = afterImageData;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // personality tag toggle
+  document.querySelectorAll('.staff-pet-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      tag.classList.toggle('selected');
+    });
+  });
+
+  // Upload buttons trigger hidden file inputs (preserve design while enabling upload)
+  const beforeBtn = document.getElementById('beforeImageBtn');
+  const afterBtn = document.getElementById('afterImageBtn');
+  if (beforeBtn && beforeInput) beforeBtn.addEventListener('click', () => beforeInput.click());
+  if (afterBtn && afterInput) afterBtn.addEventListener('click', () => afterInput.click());
+
   // hook filter apply
   document.getElementById('applyFiltersBtn')?.addEventListener('click', async () => {
     const name = document.getElementById('searchPetName').value;

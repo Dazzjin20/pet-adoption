@@ -125,7 +125,6 @@
               <option>All Types</option>
               <option>Dog</option>
               <option>Cat</option>
-              <option>Other</option>
             </select>
           </div>
           
@@ -233,7 +232,6 @@
                   <select class="form-select" id="petType">
                     <option selected>Dog</option>
                     <option>Cat</option>
-                    <option>Other</option>
                   </select>
                 </div>
                 
@@ -276,17 +274,17 @@
                 
                 <div class="staff-pet-form-group">
                   <label class="staff-pet-form-label">Before Image *</label>
-                  <div class="staff-pet-upload-area" id="beforeImageUpload">
-                    <p>Upload Before Image</p>
-                    <small class="text-muted">Click to upload or drag and drop</small>
+                  <div class="before-image-area">
+                    <input type="file" accept="image/*" id="beforeImageInput" style="display:none" />
+                    <button type="button" class="btn staff-pet-btn mb-2" id="beforeImageBtn">Upload Before Image</button>
                   </div>
                 </div>
                 
                 <div class="staff-pet-form-group">
                   <label class="staff-pet-form-label">After Image</label>
-                  <div class="staff-pet-upload-area" id="afterImageUpload">
-                    <p>Upload After Image</p>
-                    <small class="text-muted">Click to upload or drag and drop</small>
+                  <div class="after-image-area">
+                    <input type="file" accept="image/*" id="afterImageInput" style="display:none" />
+                    <button type="button" class="btn staff-pet-btn mb-2" id="afterImageBtn">Upload After Image</button>
                   </div>
                 </div>
                 
@@ -295,13 +293,13 @@
                 
                 <div class="staff-pet-form-group">
                   <div id="personalityTags">
-                    <span class="staff-pet-tag" data-trait="friendly">Friendly</span>
-                    <span class="staff-pet-tag" data-trait="energetic">Energetic</span>
-                    <span class="staff-pet-tag" data-trait="calm">Calm</span>
-                    <span class="staff-pet-tag" data-trait="playful">Playful</span>
-                    <span class="staff-pet-tag" data-trait="shy">Shy</span>
-                    <span class="staff-pet-tag" data-trait="loyal">Loyal</span>
-                    <span class="staff-pet-tag" data-trait="independent">Independent</span>
+                    <button type="button" class="staff-pet-tag" data-trait="friendly">Friendly</button>
+                    <button type="button" class="staff-pet-tag" data-trait="energetic">Energetic</button>
+                    <button type="button" class="staff-pet-tag" data-trait="calm">Calm</button>
+                    <button type="button" class="staff-pet-tag" data-trait="playful">Playful</button>
+                    <button type="button" class="staff-pet-tag" data-trait="shy">Shy</button>
+                    <button type="button" class="staff-pet-tag" data-trait="loyal">Loyal</button>
+                    <button type="button" class="staff-pet-tag" data-trait="independent">Independent</button>
                   </div>
                 </div>
                 
@@ -338,5 +336,6 @@
   <!-- JavaScript for staff pet database -->
   <script src="/frontend/js/staff/user-info/user-info.js"> </script>
   <script type="module" src="../../scripts/pages/staffPets.js"></script>
+  <script type="module" src="../../scripts/components/tag.js"></script>
 </body>
 </html>
