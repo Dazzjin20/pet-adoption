@@ -6,11 +6,6 @@ const staffRepository = require('../repositories/staffRepository');
 
 const SALT_ROUNDS = 10;
 
-// --- Generic Handlers (Internal to this file) ---
-
-/**
- * Generic registration handler. Hashes the password before saving.
- */
 async function handleRegistration(req, res, repository) {
   try {
     const { email, password } = req.body;
@@ -36,9 +31,7 @@ async function handleRegistration(req, res, repository) {
   }
 }
 
-/**
- * Generic login handler. Compares hashed passwords securely.
- */
+
 async function handleLogin(req, res, repository, role) {
   try {
     const { email, password } = req.body;
@@ -78,7 +71,7 @@ async function handleLogin(req, res, repository, role) {
   }
 }
 
-// --- Exported Controller Functions ---
+// Exported Controller Functions
 
 // Registration Controllers
 exports.registerAdopter = (req, res) => handleRegistration(req, res, adopterRepository);
