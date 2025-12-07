@@ -500,6 +500,22 @@ function initializeAdoptionModal(petId, petName) {
                             <div class="form-text">Please provide at least 20 characters</div>
                         </div>
                         
+                        <h6 class="fw-bold mb-3 border-bottom pb-2">Interview Preference</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Preferred Interview Date</label>
+                                <input type="date" class="form-control" id="interviewDate">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Preferred Interview Time</label>
+                                <input type="time" class="form-control" id="interviewTime">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Additional Details (Optional)</label>
+                            <textarea class="form-control" id="additionalDetails" rows="2" placeholder="Anything else we should know?"></textarea>
+                        </div>
+
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="termsAgreement" required>
                             <label class="form-check-label">
@@ -562,15 +578,19 @@ function setupAdoptionForm() {
     // Form submission
     const form = document.getElementById('adoptionForm');
     if (form) {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                showFormMessage('You must be logged in to apply.', 'danger');
+                return;
+            }
             
             // Get form data
             const formData = {
-                petId: document.getElementById('petId').value,
-                petName: document.getElementById('petNameHidden').value,
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
+                pet: document.getElementById('petId').value, // Changed to 'pet' to match schema
+                adopter: currentUser._id, // FIX: Changed from adopterId to adopter to match backend
                 phoneNumber: document.getElementById('phoneNumber').value,
                 email: document.getElementById('email').value,
                 city: document.getElementById('city').value,
@@ -578,54 +598,62 @@ function setupAdoptionForm() {
                 streetAddress: document.getElementById('streetAddress').value,
                 adoptionReason: document.getElementById('adoptionReason').value,
                 termsAgreement: document.getElementById('termsAgreement').checked,
-                applicationDate: new Date().toISOString(),
-                status: 'pending'
+                interviewDate: document.getElementById('interviewDate').value,
+                interviewTime: document.getElementById('interviewTime').value,
+                additionalDetails: document.getElementById('additionalDetails').value,
             };
             
-            // Validate phone number
+            // Validation
             if (!/^[0-9]{11}$/.test(formData.phoneNumber)) {
                 showFormMessage('Please enter a valid 11-digit phone number', 'danger');
                 return;
             }
             
-            // Validate adoption reason length
             if (formData.adoptionReason.length < 20) {
                 showFormMessage('Please provide at least 20 characters for adoption reason', 'danger');
                 return;
             }
             
-            console.log('Adoption application submitted:', formData);
+            showFormMessage('Submitting your application...', 'info');
             
-            // Show success message
-            showFormMessage('Application submitted successfully! We will contact you soon.', 'success');
-            
-            // In a real application, you would send this to your backend
-            // Example: sendToBackend(formData);
-            
-            // Reset form after 3 seconds and close modal
-            setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('adoptionModal'));
-                if (modal) modal.hide();
-                form.reset();
-                document.getElementById('barangay').disabled = true;
-                document.getElementById('barangay').innerHTML = '<option value="" selected disabled>Select City first</option>';
-            }, 3000);
+            try {
+                const response = await fetch('http://localhost:3000/api/applications/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || 'Submission failed');
+                
+                showFormMessage('Application submitted successfully!', 'success');
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('adoptionModal'));
+                    if (modal) modal.hide();
+                }, 3000);
+            } catch (error) {
+                showFormMessage(`Error: ${error.message}`, 'danger');
+            }
         });
     }
+}
+
+/**
+ * Helper function to show messages inside the adoption form modal.
+ * @param {string} text The message to display.
+ * @param {'success'|'danger'|'info'} type The type of message.
+ */
+function showFormMessage(text, type) {
+    const messageDiv = document.getElementById('formMessage');
+    if (!messageDiv) return;
+
+    const alertType = type === 'info' ? 'alert-info' : type === 'success' ? 'alert-success' : 'alert-danger';
     
-    /**
-     * Show message in form
-     */
-    function showFormMessage(message, type) {
-        const messageDiv = document.getElementById('formMessage');
-        messageDiv.textContent = message;
-        messageDiv.className = `alert alert-${type}`;
-        messageDiv.classList.remove('d-none');
-        
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            messageDiv.classList.add('d-none');
-        }, 5000);
+    messageDiv.innerHTML = text;
+    messageDiv.className = `alert ${alertType} mt-3`; // Make it visible
+
+    // Hide the message after 5 seconds if it's not an info/loading message
+    if (type !== 'info') {
+        setTimeout(() => { messageDiv.className = 'alert d-none'; }, 5000);
     }
 }
 
@@ -642,7 +670,7 @@ function loadAdoptionModalAndOpen(petId, petName) {
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: #F39C12; color: white;">
                         <h5 class="modal-title fw-bold">Adoption Application</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        <button id="btn-submit-form" type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body text-center p-5">
                         <div class="spinner-border text-primary mb-3" role="status">

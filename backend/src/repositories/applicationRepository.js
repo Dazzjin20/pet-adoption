@@ -1,4 +1,5 @@
 const Application = require('../models/application.Schema');
+const mongoose = require('mongoose');
 const Counter = require('../models/counter.Schema'); 
 const { Pet } = require('../models/base/infoPetSchema');
 const { Adopter } = require('../models');
@@ -15,7 +16,7 @@ class ApplicationRepository{
             }
 
             // Fetch Adopter details
-            const adopter = await Adopter.findById(applicationData.adopter);
+            const adopter = await Adopter.findById(applicationData.adopter); // This now correctly receives the ID
             if (!adopter) {
                 throw new Error('Adopter not found.');
             }
@@ -27,17 +28,20 @@ class ApplicationRepository{
                 
                 // Populate pet details from fetched pet
                 pet_name: pet.pet_name,
-                pet_gender: pet.sex, // Assuming pet.sex maps to pet_gender
+                pet_gender: pet.sex,
 
                 // Populate adopter details from fetched adopter
                 adopter_first_name: adopter.first_name,
                 adopter_last_name: adopter.last_name,
-                adopter_contact_no: adopter.phone, // Assuming adopter.phone maps to contact_no
+                adopter_contact_no: applicationData.phoneNumber, // Use phone from form
 
-                message: applicationData.message, // Adopter's message
+                message: applicationData.adoptionReason, // Adopter's message
                 status: 'Pending', // Default status
                 date_submitted: new Date(),
                 last_update: new Date(),
+                preferred_interview_date: applicationData.interviewDate,
+                preferred_interview_time: applicationData.interviewTime,
+                additional_details: applicationData.additionalDetails,
                 
                 // Staff-managed fields are initially empty
                 interview_date: null,
@@ -46,7 +50,11 @@ class ApplicationRepository{
                 staff_notes: null,
             });
 
-            return await newApplication.save();
+            const savedApplication = await newApplication.save();
+            // After saving the application, update the pet's status to 'Pending'
+            await Pet.findByIdAndUpdate(pet._id, { status: 'Pending' });
+
+            return savedApplication;
         }catch(error){
              throw new Error(`Failed to submit application: ${error.message}`);
         }
@@ -80,6 +88,14 @@ class ApplicationRepository{
             return await Application.find({ adopter: adopterId }).populate('pet').sort({ date_submitted: -1 });
         } catch (error) {
             throw new Error(`Failed to find applications for adopter: ${error.message}`);
+        }
+    }
+
+    async findAll() {
+        try {
+            return await Application.find({}).populate('pet').populate('adopter').sort({ date_submitted: -1 });
+        } catch (error) {
+            throw new Error(`Failed to find all applications: ${error.message}`);
         }
     }
 }

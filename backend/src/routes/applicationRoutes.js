@@ -1,14 +1,15 @@
 const express = require('express');
-const router = express.Router();
 const applicationController = require('../controller/applicationController');
 
-// Route to submit a new adoption application
-router.post('/applications', applicationController.createApplication);
+const router = express.Router();
+
+// Route for submitting a new application
+router.post('/submit', applicationController.submitApplication);
 
 // Route to get all applications for a specific adopter
-router.get('/applications/adopter/:adopterId', applicationController.getApplicationsForAdopter);
+router.get('/adopter/:adopterId', applicationController.getAdopterApplications);
 
-// Route to get a single application by its ID (either Mongo _id or custom application_id)
-router.get('/applications/:id', applicationController.getApplicationById);
+// Route to get a single application by its ID
+router.get('/:applicationId', applicationController.getApplicationById);
 
 module.exports = router;

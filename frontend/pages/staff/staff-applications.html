@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Applications - Staff</title>
+    <link rel="stylesheet" href="/frontend/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/frontend/css/base/general.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-light">
+    <!-- Staff Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="staff-dashboard.html">🐾 Staff Dashboard</a>
+            <div class="ms-auto">
+                <a href="staff-pets.html" class="nav-link d-inline">Manage Pets</a>
+                <a href="staff-applications.html" class="nav-link d-inline fw-bold text-primary">Manage Applications</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="fw-bold">All Adoption Applications</h1>
+            <div>
+                <!-- Filter Buttons -->
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active" data-status-filter="Pending">Pending</button>
+                    <button type="button" class="btn btn-outline-primary" data-status-filter="Interview Scheduled">Interview</button>
+                    <button type="button" class="btn btn-outline-primary" data-status-filter="Approved">Approved</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Application ID</th>
+                                <th>Pet Name</th>
+                                <th>Adopter Name</th>
+                                <th>Date Submitted</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applications-table-body">
+                            <!-- Rows will be injected here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="/frontend/scripts/pages/staffApplications.js"></script>
+</body>
+</html>

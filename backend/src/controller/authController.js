@@ -46,7 +46,6 @@ async function handleLogin(req, res, repository, role) {
     const isMatch = user && await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: `Invalid credentials or you do not have a ${role} account.` });
       // Use a generic error message for security to avoid revealing which part (email/password) was wrong.
       return res.status(401).json({ error: 'Invalid credentials.' });
     }
@@ -54,7 +53,6 @@ async function handleLogin(req, res, repository, role) {
     // Do not send the password to the client
     user.password = undefined;
 
-    return res.status(200).json({ message: 'Login successful!', user });
     // Create a JWT payload
     const payload = {
       id: user._id, // or user.id depending on your DB schema
@@ -100,7 +98,6 @@ exports.getProfile = async (req, res) => {
     }
 
     user.password = undefined; // Ensure password is not sent
-    res.status(200).json(user);
     res.status(200).json({ user });
   } catch (error) {
     console.error('Get profile error:', error);

@@ -11,24 +11,30 @@
 
 <body class="bg-light">
 
-
+  <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg adopter-navbar" style="background-color: #F39C12;">
   <div class="container">
     <a class="navbar-brand fw-bold text-white" href="#">🐾 Dashboard</a>
+
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#adopterNav">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="adopterNav">
       <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item"><a class="nav-link text-white" href="adopter-dashboard.html">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="adopter-pet.html">Browse Pets</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="adopter-message.html">Messages</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="/frontend/pages/adopters/adopter-application.html">My Applications</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="adopter-messages.html">Messages</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="adopter-application.html">My Applications</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="/frontend/pages/adopters/adopter-favorite.html">Favorites</a></li>
 
+        <!-- Notification -->
         <li class="nav-item mx-3 position-relative">
           <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
         </li>
+
+        <!-- Profile Dropdown (Clean version, no arrow) -->
         <li class="nav-item dropdown">
           <a class="nav-link d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <img id="adopter-profile" src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="rounded-circle me-2 profile-image" width="35" height="35">

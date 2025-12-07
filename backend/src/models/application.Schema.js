@@ -12,19 +12,22 @@ const applicationSchema = new mongoose.Schema({
     // Fields populated from Adopter (for snapshot or easy access)
     adopter_first_name: { type: String, required: true },
     adopter_last_name: { type: String, required: true },
-    adopter_contact_no: { type: String }, // Assuming phone number from adopter profile
+    adopter_contact_no: { type: String }, 
 
     // Application specific fields
     message: { type: String }, // The message from the adopter (maps to 'notes' in old repo)
     status: { type: String, enum: ['Pending', 'Approved', 'Rejected', 'Interview Scheduled', 'Adopted'], default: 'Pending' },
     date_submitted: { type: Date, default: Date.now },
     last_update: { type: Date, default: Date.now },
+    preferred_interview_date: { type: Date },
+    preferred_interview_time: { type: String },
+    additional_details: { type: String },
 
     // Staff-managed fields (initially null)
     interview_date: { type: Date, default: null },
     interview_time: { type: String, default: null },
     next_step: { type: String, default: null },
-    staff_notes: { type: String, default: null }, // Renamed from 'notes' to avoid confusion with adopter's message
+    staff_notes: { type: String, default: null }, 
 });
 
 module.exports = mongoose.model('Application', applicationSchema);
