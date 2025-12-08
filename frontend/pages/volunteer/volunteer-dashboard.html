@@ -9,7 +9,7 @@
 
 </head>
 
-<body class="bg-light">
+<body class="bg-light" data-required-role="volunteer">
 
  
   <nav class="navbar navbar-expand-lg volunteer-navbar">
@@ -22,19 +22,19 @@
 
       <div class="collapse navbar-collapse" id="volunteerNav">
         <ul class="navbar-nav ms-auto align-items-center">
-          <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Browse Pets</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Messages</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">My Schedule</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Tasks</a></li>
+          <li class="nav-item"><a class="nav-link active" href="volunteer-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-pets.html">Browse Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-message.html">Messages</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-schedule.html">My Schedule</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-task.html">Tasks</a></li>
           <li class="nav-item mx-3">
             <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
           </li>
           <li class="nav-item d-flex align-items-center">
             <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="volunteer-profile-img me-2" />
             <div class="text-white small lh-1">
-              <div id="volunteerNavbarName">Dazzjin Lee</div>
-              <div id="volunteerNavbarRole">Volunteer</div>
+              <div id="volunteerNavbarName"></div>
+              <div id="volunteerNavbarRole"></div>
             </div>
           </li>
         </ul>
@@ -116,6 +116,7 @@
   </div>
 
   <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
+   <script src="/frontend/js/auth/auth.js"></script>
 
 
   <script>

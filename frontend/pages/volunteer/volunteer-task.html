@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tasks - Volunteer Dashboard</title>
+  <!-- Same CSS links as volunteer dashboard -->
+  <link rel="stylesheet" href="/frontend/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/frontend/css/base/general.css">
+    <link rel="stylesheet" href="/frontend/css/utils/volunteer-task.css">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg volunteer-navbar">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-white" href="#">🐾 Dashboard</a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#volunteerNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="volunteerNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link active" href="volunteer-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-pets.html">Browse Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-message.html">Messages</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-schedule.html">My Schedule</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-task.html">Tasks</a></li>
+          <li class="nav-item mx-3">
+            <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
+          </li>
+          <li class="nav-item d-flex align-items-center">
+            <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="volunteer-profile-img me-2" />
+            <div class="text-white small lh-1">
+              <div id="volunteerNavbarName"></div>
+              <div id="volunteerNavbarRole"></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Main Content -->
+  <div class="container my-4">
+    <!-- Welcome box with same styling as volunteer dashboard -->
+    <div class="volunteer-welcome-box p-4 mb-4">
+      <h4 class="fw-bold mb-1">Tasks</h4>
+      <p class="mb-0">Manage your assigned pet care tasks</p>
+    </div>
+
+    <!-- Tasks Container -->
+    <div class="tasks-container">
+      <!-- Tabs - Top Navigation -->
+      <div class="tasks-tabs">
+        <button class="tasks-tab active" onclick="showTab('assigned')">Assigned</button>
+        <button class="tasks-tab" onclick="showTab('task')">Task</button>
+        <button class="tasks-tab" onclick="showTab('completed')">Completed</button>
+      </div>
+
+      <!-- Search & Filter - NEW DESIGN -->
+      <div class="search-filter-section">
+        <div class="search-filter-title">Search & Filter</div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="filter-group">
+              <label class="filter-label">Search by name</label>
+              <input type="text" class="search-input" placeholder="Search pets...">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="filter-group">
+              <label class="filter-label">All Status</label>
+              <select class="filter-select">
+                <option value="">Status</option>
+                <option value="pending">Pending</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="filter-group">
+              <label class="filter-label">All Categories</label>
+              <select class="filter-select">
+                <option value="">Categories</option>
+                <option value="feeding">Feeding</option>
+                <option value="exercise">Exercise</option>
+                <option value="grooming">Grooming</option>
+                <option value="medical">Medical Care</option>
+                <option value="socialization">Socialization</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assigned Tab Content (Your Assigned Pets) -->
+      <div id="assignedTab" class="tab-content">
+        <div class="assigned-pets-header">
+          <div class="assigned-pets-title">Your Assigned Pets</div>
+          <div class="assigned-pets-subtitle">
+            These pets have been specifically assigned to you by shelter staff. Daily care tasks are automatically generated based on each pet's needs.
+          </div>
+        </div>
+
+
+        <!-- Sadness Pet Card -->
+        <div class="pet-card">
+          <div class="pet-info-row">
+            <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" 
+                 alt="Sadness" class="pet-photo">
+            <div class="pet-info">
+              <div class="pet-name-card">Sadness</div>
+              <div class="pet-gender">Gender: Male</div>
+              <div class="pet-stats">
+                <div class="pet-stat">
+                  <span class="pet-stat-number">3</span>
+                  <span class="pet-stat-label">active tasks</span>
+                  <span class="pet-stat-check">✓</span>
+                  <span class="pet-stat-number">8</span>
+                  <span class="pet-stat-label">completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Next Task for Sadness -->
+          <div class="next-task-section">
+            <div class="next-task-label">Next Task</div>
+            <div class="next-task-name">Breast Feeding Season</div>
+            <div class="next-task-time">9:00 AM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task Tab Content - NEW DESIGN from image -->
+      <div id="taskTab" class="tab-content" style="display: none;">
+        <!-- Task Card 1 - Charlie -->
+        <div class="task-card">
+          <div class="task-header">
+            <div class="task-title-section">
+              <div class="task-pet-name">Charlie - Morning Exercise Session</div>
+              <div class="task-badge">Daily Task</div>
+            </div>
+            <div class="task-tags">
+              <span class="task-tag">Dog Handling</span>
+              <span class="task-tag">Basic Training</span>
+            </div>
+          </div>
+          
+          <div class="task-description">
+            Daily exercise session for Charlie to help with socialization and physical fitness
+          </div>
+          
+          <div class="task-details">
+            <div class="detail-item">
+              <span class="detail-label">Due</span>
+              <span class="detail-value">1/22/2025</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">Main Exercise Yard</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Generated</span>
+              <span class="detail-value auto-gen">Auto Generated</span>
+            </div>
+          </div>
+          
+          <div class="task-skills">
+            <div class="skills-label">Required Skills</div>
+            <div class="skill-tags">
+              <span class="skill-tag">Dog Handling</span>
+              <span class="skill-tag">Basic Training</span>
+            </div>
+          </div>
+          
+          <div class="task-actions">
+            <div class="action-buttons">
+              <button class="btn-view-details">View Details</button>
+              <!-- COMPLETE BUTTON - From your image design -->
+              <button class="btn-complete-task" onclick="markTaskComplete(this)">
+                <span class="check-icon">✓</span>
+                Complete Task
+              </button>
+            </div>
+            
+            <div class="task-status-section">
+              <div class="priority-badge">High</div>
+              <div class="status-badge">Assigned</div>
+              <div class="task-metrics">
+                <div class="metric-item">
+                  <span class="metric-value">1h</span>
+                  <span class="metric-label">estimated</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-value">30</span>
+                  <span class="metric-label">points</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pet-assignment">
+            <span class="pet-assignment-label">Pet Assignment:</span> Charlie
+          </div>
+        </div>
+
+        <!-- Task Card 2 - Luna -->
+        <div class="task-card">
+          <div class="task-header">
+            <div class="task-title-section">
+              <div class="task-pet-name">Luna - Grooming Session</div>
+              <div class="task-badge">Weekly Task</div>
+            </div>
+            <div class="task-tags">
+              <span class="task-tag">Grooming</span>
+              <span class="task-tag">Cat Care</span>
+            </div>
+          </div>
+          
+          <div class="task-description">
+            Weekly grooming session for Luna including brushing, nail trimming, and ear cleaning
+          </div>
+          
+          <div class="task-details">
+            <div class="detail-item">
+              <span class="detail-label">Due</span>
+              <span class="detail-value">1/23/2025</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">Grooming Station</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Generated</span>
+              <span class="detail-value auto-gen">Auto Generated</span>
+            </div>
+          </div>
+          
+          <div class="task-skills">
+            <div class="skills-label">Required Skills</div>
+            <div class="skill-tags">
+              <span class="skill-tag">Grooming</span>
+              <span class="skill-tag">Cat Handling</span>
+            </div>
+          </div>
+          
+          <div class="task-actions">
+            <div class="action-buttons">
+              <button class="btn-view-details">View Details</button>
+              <!-- COMPLETE BUTTON - From your image design -->
+              <button class="btn-complete-task" onclick="markTaskComplete(this)">
+                <span class="check-icon">✓</span>
+                Complete Task
+              </button>
+            </div>
+            
+            <div class="task-status-section">
+              <div class="priority-badge" style="background-color: #ffa502;">Medium</div>
+              <div class="status-badge">Assigned</div>
+              <div class="task-metrics">
+                <div class="metric-item">
+                  <span class="metric-value">45m</span>
+                  <span class="metric-label">estimated</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-value">25</span>
+                  <span class="metric-label">points</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pet-assignment">
+            <span class="pet-assignment-label">Pet Assignment:</span> Luna
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Tab Content -->
+      <div id="completedTab" class="tab-content" style="display: none;">
+        <div class="assigned-pets-header">
+          <div class="assigned-pets-title">Completed Tasks</div>
+          <div class="assigned-pets-subtitle">Tasks you have marked as completed</div>
+        </div>
+
+        <div class="completed-task-item">
+          <div class="task-header">
+            <div class="task-title-section">
+              <div class="task-pet-name">Morning Feeding - All Cats</div>
+              <div class="task-badge">Daily Task</div>
+            </div>
+            <div class="task-tags">
+              <span class="task-tag">Feeding</span>
+              <span class="task-tag">Cat Care</span>
+            </div>
+          </div>
+          
+          <div class="task-description">
+            Morning feeding for all cats in the shelter, including special dietary needs
+          </div>
+          
+          <div class="task-details">
+            <div class="detail-item">
+              <span class="detail-label">Completed</span>
+              <span class="detail-value">1/21/2025</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">Cat Section</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Generated</span>
+              <span class="detail-value auto-gen">Auto Generated</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="completed-task-item">
+          <div class="task-header">
+            <div class="task-title-section">
+              <div class="task-pet-name">Kennel Cleaning - Dog Section</div>
+              <div class="task-badge">Daily Task</div>
+            </div>
+            <div class="task-tags">
+              <span class="task-tag">Cleaning</span>
+              <span class="task-tag">Maintenance</span>
+            </div>
+          </div>
+          
+          <div class="task-description">
+            Daily cleaning and sanitization of kennels in the dog section
+          </div>
+          
+          <div class="task-details">
+            <div class="detail-item">
+              <span class="detail-label">Completed</span>
+              <span class="detail-value">1/21/2025</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">Kennel Area</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Generated</span>
+              <span class="detail-value auto-gen">Auto Generated</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/frontend/js/auth/auth.js"></script>
+  
+  <script src="/frontend/js/volunteer/task/task.js">
+  
+  </script>
+</body>
+</html>

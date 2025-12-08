@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Messages - Volunteer Dashboard</title>
+  <!-- Same CSS links as volunteer dashboard -->
+  <link rel="stylesheet" href="/frontend/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/frontend/css/base/general.css">
+    <link rel="stylesheet" href="/frontend/css/utils/volunteer-message.css">
+</head>
+
+<body class="bg-light" data-required-role="volunteer">
+
+  <!-- Exact same navigation bar as volunteer dashboard -->
+  <nav class="navbar navbar-expand-lg volunteer-navbar">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-white" href="#">🐾 Dashboard</a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#volunteerNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="volunteerNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link active" href="volunteer-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-pets.html">Browse Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-message.html">Messages</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-schedule.html">My Schedule</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-task.html">Tasks</a></li>
+          <li class="nav-item mx-3">
+            <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
+          </li>
+          <li class="nav-item d-flex align-items-center">
+            <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="volunteer-profile-img me-2" />
+            <div class="text-white small lh-1">
+              <div id="volunteerNavbarName"></div>
+              <div id="volunteerNavbarRole"></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container my-4">
+    <!-- Welcome box with same styling as volunteer dashboard -->
+    <div class="volunteer-welcome-box p-4 mb-4">
+      <h4 class="fw-bold mb-1">Messages</h4>
+      <p class="mb-0">Stay connected with pet owners and staff</p>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="messages-container">
+      <div class="row g-0">
+        <!-- Left sidebar - Conversation list -->
+        <div class="col-lg-5 col-xl-4">
+          <div class="p-3 border-bottom">
+            <h5 class="fw-bold mb-3">Search conversation</h5>
+            <input type="text" class="form-control search-bar" placeholder="Search messages...">
+          </div>
+          
+          <div class="p-3 border-bottom">
+            <h6 class="fw-bold text-muted mb-3">Recent Conversations</h6>
+          </div>
+          
+          <!-- ONLY ONE conversation item for demo -->
+          <div class="conversation-item active">
+            <div class="d-flex align-items-start">
+              <div class="flex-shrink-0 me-3">
+                <div class="user-avatar">DT</div>
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <div class="user-name">Staff Admin - Dasha taran</div>
+                    <div class="user-role">Pet Owner • <span class="pet-emoji">🌟</span> Space</div>
+                  </div>
+                  <span class="badge-unread">2</span>
+                </div>
+                <div class="message-preview">
+                  Hello Kenji! I'd be happy to help you meet Luna. She's a wonderful cat...
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Empty state for other conversations -->
+          <div class="no-messages">
+            <p class="text-muted">No other conversations yet</p>
+          </div>
+        </div>
+        
+        <!-- Right side - Chat area -->
+        <div class="col-lg-7 col-xl-8">
+          <!-- Chat header -->
+          <div class="chat-header">
+            <div class="d-flex align-items-center">
+              <div class="user-avatar me-3">DT</div>
+              <div>
+                <h5 class="fw-bold mb-0">Dasha taran</h5>
+                <p class="text-muted mb-0 small">Pet Owner • <span class="pet-emoji">🌟</span> Space</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Chat messages - Clean demo with ONLY ONE conversation example -->
+          <div class="chat-messages">
+            <!-- Received message -->
+            <div>
+              <div class="message-bubble received">
+                Hello Kenji! I'd be happy to help you meet Luna. She's a wonderful cat and I think you two would be a great match.
+              </div>
+              <div class="message-time">Dasha taran • 10:30 AM</div>
+            </div>
+            
+            <!-- Sent message -->
+            <div class="d-flex justify-content-end">
+              <div>
+                <div class="message-bubble sent">
+                  That's great to hear! I've been looking for a cat that's good with children.
+                </div>
+                <div class="message-time text-end">You • 10:35 AM</div>
+              </div>
+            </div>
+            
+
+          
+          <!-- Message input -->
+          <div class="message-input-container">
+            <div class="d-flex align-items-center">
+              <textarea class="form-control message-input flex-grow-1 me-2" rows="1" placeholder="Type your message..."></textarea>
+              <button class="send-btn">
+                    send
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/frontend/js/auth/auth.js"></script>
+  <script src="/frontend/js/volunteer/message/message.js"> </script>
+</body>
+</html>

@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Volunteer – Browse Pets</title>
-  <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="../../css/base/general.css">
-  <link rel="stylesheet" href="../../css/volunteers/volunteer-pet.css">
+  <link rel="stylesheet" href="/frontend/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/frontend/css/base/general.css">
+  <link rel="stylesheet" href="/frontend/css/volunteers/volunteer-pet.css">
+  <link rel="stylesheet" href="/frontend/css/utils/volunteer-card.css">
 </head>
 
-<body class="bg-light">
+<body class="bg-light" data-required-role="volunteer">
 
    <nav class="navbar navbar-expand-lg volunteer-navbar">
     <div class="container">
@@ -21,19 +22,19 @@
 
       <div class="collapse navbar-collapse" id="volunteerNav">
         <ul class="navbar-nav ms-auto align-items-center">
-          <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Browse Pets</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Messages</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">My Schedule</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Tasks</a></li>
+          <li class="nav-item"><a class="nav-link active" href="volunteer-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-pets.html">Browse Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-message.html">Messages</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-schedule.html">My Schedule</a></li>
+          <li class="nav-item"><a class="nav-link" href="volunteer-task.html">Tasks</a></li>
           <li class="nav-item mx-3">
             <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
           </li>
           <li class="nav-item d-flex align-items-center">
             <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="volunteer-profile-img me-2" />
             <div class="text-white small lh-1">
-              <div id="volunteerNavbarName">Dazzjin Lee</div>
-              <div id="volunteerNavbarRole">Volunteer</div>
+              <div id="volunteerNavbarName"></div>
+              <div id="volunteerNavbarRole"></div>
             </div>
           </li>
         </ul>
@@ -44,11 +45,14 @@
   <!-- MAIN CONTAINER -->
   <div class="container my-4 volunteer-pet-container">
 
-    <!-- HEADER -->
-    <div class="volunteer-pet-header-box text-white p-4">
+    
+  <div class="container my-4">
+    <div class="volunteer-welcome-box p-4 mb-4">
       <h4 class="fw-bold mb-1" id="volunteerWelcomeMessage">Browse Pets</h4>
       <p class="mb-0" id="volunteerSubtitle">Find pets to care for</p>
     </div>
+    <!-- HEADER -->
+
 
     <!-- SEARCH & FILTERS -->
     <div class="row mt-4 g-4">
@@ -114,11 +118,131 @@
 
     </div>
   </div>
+<!-- MODAL HTML - REPLACE THE EXISTING MODAL WITH THIS -->
+<div class="modal fade" id="viewPetModal" tabindex="-1" aria-labelledby="viewPetModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body px-4 pb-4">
+        
+        <!-- PET PROFILE HEADER -->
+        <div class="mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-12">
+              <h2 class="fw-bold mb-1" id="modalPetNameHeader">Loading...</h2>
+              <p class="text-muted mb-2" id="modalPetSubHeader">Loading details...</p>
+              <div class="d-flex flex-wrap gap-2" id="modalPetTagsHeader">
+                <!-- Tags will be loaded here -->
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <script src="../../bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../../js/services/api-service.js"></script>
-  <script src="../../js/services/auth-service.js"></script>
-  <script src="../../js/services/pet-service.js"></script>
-  <script src="../../js/volunteers/volunteer-pet.js"></script>
+        <!-- BEFORE / AFTER IMAGES -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center mb-2">
+              <span class="before-after-label">Before</span>
+            </div>
+            <div class="image-container">
+              <img class="custom-img" id="modalBeforeImage" src="/frontend/assets/image/photo/placeholder.jpg" alt="Before Image">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="d-flex align-items-center mb-2">
+              <span class="before-after-label">After</span>
+            </div>
+            <div class="image-container">
+              <img class="custom-img" id="modalAfterImage" src="/frontend/assets/image/photo/placeholder.jpg" alt="After Image">
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- LEFT INFO BOX -->
+          <div class="col-lg-5">
+            <div class="info-box h-100">
+              <div class="section-title">Basic Information</div>
+
+              <div class="row mb-2">
+                <div class="col-6">
+                  <small class="text-muted">Age</small><br>
+                  <strong id="modalPetInfoAge">...</strong>
+                </div>
+                <div class="col-6">
+                  <small class="text-muted">Weight</small><br>
+                  <strong id="modalPetInfoWeight">...</strong>
+                </div>
+              </div>
+
+              <div class="row mb-2">
+                <div class="col-6">
+                  <small class="text-muted">Sex</small><br>
+                  <strong id="modalPetInfoSex">...</strong>
+                </div>
+                <div class="col-6">
+                  <small class="text-muted">Location</small><br>
+                  <strong id="modalPetInfoLocation">...</strong>
+                </div>
+              </div>
+
+              <div class="row mb-2">
+                <div class="col-6">
+                  <small class="text-muted">Type</small><br>
+                  <strong id="modalPetInfoType">...</strong>
+                </div>
+                <div class="col-6">
+                  <small class="text-muted">Status</small><br>
+                  <strong id="modalPetInfoStatus">...</strong>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center gap-2 mt-3">
+                <i class="bi bi-calendar text-muted"></i>
+                <small class="text-muted" id="modalPetInfoArrival">Arrived: ...</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT INFO BOX -->
+          <div class="col-lg-7">
+            <div class="info-box h-100">
+              <div class="section-title">Personality & Traits</div>
+
+              <div class="mb-2" id="modalPetPersonalityTags">
+                <!-- Personality tags will be loaded here -->
+                <span class="badge bg-light text-dark border me-2 mb-2">Loading...</span>
+              </div>
+
+              <div class="section-title mt-4" id="modalPetAboutTitle">About</div>
+              <p style="text-align: justify;" id="modalPetAbout">
+                Loading pet description...
+              </p>
+
+              <!-- Additional Volunteer Info -->
+              <div class="mt-4 pt-3 border-top">
+                <div class="section-title">Volunteer Notes</div>
+                <p class="text-muted small" id="modalPetVolunteerNotes">
+                  No special notes available.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn volunteer-pet-btn" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+  <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/frontend/js/auth/auth.js"></script>
+  <script src="/frontend/scripts/pages/volunteer-pet.js"></script>
+
 </body>
 </html>
