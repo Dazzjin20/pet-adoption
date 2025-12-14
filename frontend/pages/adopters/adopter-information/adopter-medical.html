@@ -22,22 +22,15 @@
 
     <div class="collapse navbar-collapse" id="adopterNav">
       <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item"><a class="nav-link text-white" href="/frontend/pages/adopters/adopter-dashboard.html">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="/frontend/pages/adopters/adopter-pet.html">Browse Pets</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="/frontend/pages/adopters/adopter-message.html">Messages</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="/frontend/pages/adopters/adopter-application.html">My Applications</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="/frontend/pages/adopters/adopter-favorite.html">Favorites</a></li>
-
-        <!-- Notification -->
-        <li class="nav-item mx-3 position-relative">
-          <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
-        </li>
+        <li class="nav-item"><a class="nav-link text-white" href="../adopter-dashboard.html">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="../adopter-pet.html">Browse Pets</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="../adopter-application.html">My Applications</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="../adopter-favorite.html">Favorites</a></li>
 
         <!-- Profile Dropdown (Clean version, no arrow) -->
         <li class="nav-item dropdown">
           <a class="nav-link d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img id="adopter-profile" src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="rounded-circle me-2 profile-image" width="35" height="35">
+            <img id="adopter-profile" src="../../../assets/image/photo/BoyIcon.jpg" alt="profile" class="rounded-circle me-2 profile-image" width="35" height="35">
             <div class="lh-1">
               <div class="fw-bold text-white" id="navbarUserName"></div>
               <div class="text-light small" id="navbarUserRole"></div>
@@ -49,9 +42,8 @@
               <small class="text-muted" id="dropdownUserRole"></small>
             </li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="adopter-profile.html">Profile</a></li>
-            <li><a class="dropdown-item" href="adopter-setting.html">Settings</a></li>
-            <li><a class="dropdown-item text-danger" href="/frontend/pages/login-form.html">Log out</a></li>
+            <li><a class="dropdown-item" href="../adopter-profile.html">Profile</a></li>
+            <li><a class="dropdown-item text-danger" href="../../login-form.html">Log out</a></li>
           </ul>
         </li>
       </ul>
@@ -64,7 +56,7 @@
   <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <a href="/frontend/pages/adopters/adopter-pet.html" class="text-secondary text-decoration-none mb-2 d-block">
+                <a href="../adopter-pet.html" class="text-secondary text-decoration-none mb-2 d-block">
                     &larr; Back to All Pets
                 </a>
                 <h2 class="fw-bold" id="petNameHeader"></h2>
@@ -112,9 +104,9 @@
 
 </main>
 
-<script src="../../../bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/frontend/js/auth/auth.js"></script>
-<script type="module" src="/frontend/scripts/pages/adopterViewPet.js"></script>
-<script src="/frontend/scripts/pages/staffMedicalRecord.js" type="module"></script>
+<script src="../../../bootstrap/js/bootstrap.bundle.min.js"></script> 
+<script src="../../../js/auth/auth.js"></script>
+<script type="module" src="../../../scripts/pages/adopterViewPet.js"></script>
+<script src="../../../scripts/pages/staffMedicalRecord.js" type="module"></script>
 </body>
 </html>

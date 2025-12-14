@@ -177,13 +177,8 @@ async function loadAndDisplayPets() {
         
         console.log(`Found ${pets.length} total pets`);
         
-        // Filter for available pets only
-        let availablePets = pets.filter(pet => {
-            const status = pet.status ? pet.status.toLowerCase() : '';
-            return status === 'available';
-        });
-        
-        console.log(`Found ${availablePets.length} available pets`);
+        // Use all pets fetched from the API, no client-side status filtering.
+        let availablePets = pets;
         
         // Apply search filter CLIENT-SIDE (since API search isn't working)
         if (searchTerm) {

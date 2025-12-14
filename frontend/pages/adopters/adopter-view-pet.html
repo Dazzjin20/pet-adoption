@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pet Profile</title>
-    <link rel="stylesheet" href="/frontend/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/frontend/css/base/general.css">
+    <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../css/base/general.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
@@ -21,16 +21,12 @@
       <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item"><a class="nav-link text-white" href="adopter-dashboard.html">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="adopter-pet.html">Browse Pets</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="adopter-messages.html">Messages</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="adopter-applications.html">My Applications</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="/frontend/pages/adopters/adopter-favorite.html">Favorites</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="adopter-application.html">My Applications</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="adopter-favorite.html">Favorites</a></li>
 
-        <li class="nav-item mx-3 position-relative">
-          <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
-        </li>
         <li class="nav-item dropdown">
           <a class="nav-link d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img id="adopter-profile" src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="rounded-circle me-2 profile-image" width="35" height="35">
+            <img id="adopter-profile" src="../../assets/image/photo/BoyIcon.jpg" alt="profile" class="rounded-circle me-2 profile-image" width="35" height="35">
             <div class="lh-1">
               <div class="fw-bold text-white" id="navbarUserName"></div>
               <div class="text-light small" id="navbarUserRole"></div>
@@ -43,8 +39,7 @@
             </li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="adopter-profile.html">Profile</a></li>
-            <li><a class="dropdown-item" href="adopter-setting.html">Settings</a></li>
-            <li><a class="dropdown-item text-danger" href="/frontend/pages/login-form.html">Log out</a></li>
+            <li><a class="dropdown-item text-danger" href="../login-form.html">Log out</a></li>
           </ul>
         </li>
       </ul>
@@ -57,7 +52,7 @@
     <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <a href="/frontend/pages/adopters/adopter-pet.html" class="text-secondary text-decoration-none mb-2 d-block">
+                <a href="adopter-pet.html" class="text-secondary text-decoration-none mb-2 d-block">
                     &larr; Back to All Pets
                 </a>
                 <h2 class="fw-bold" id="petNameHeader"></h2>
@@ -88,12 +83,12 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <span class="before-after-label mb-2">Before</span>
-            <img class="custom-img mt-2" id="beforeImage" src="/frontend/assets/image/photo/placeholder.jpg" alt="Before Image">
+            <img class="custom-img mt-2" id="beforeImage" src="../../assets/image/photo/placeholder.jpg" alt="Before Image">
         </div>
 
         <div class="col-md-6">
             <span class="before-after-label mb-2">After</span>
-            <img class="custom-img mt-2" id="afterImage" src="/frontend/assets/image/photo/placeholder.jpg" alt="After Image">
+            <img class="custom-img mt-2" id="afterImage" src="../../assets/image/photo/placeholder.jpg" alt="After Image">
         </div>
     </div>
 
@@ -148,8 +143,8 @@
     </div>
 </div>
 
-<script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/frontend/js/auth/auth.js"></script>
-<script src="/frontend/scripts/pages/adopterViewPet.js" type="module"></script>
+<script src="../../bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/auth/auth.js"></script>
+<script src="../../scripts/pages/adopterViewPet.js" type="module"></script>
 </body>
 </html>

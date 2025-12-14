@@ -39,6 +39,7 @@ class Validate{
 
     return true;
   }
+
     showMessage(text, type) {
     if (!this.msgEl) return;
 

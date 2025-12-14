@@ -410,8 +410,14 @@ async function setupAddPet() {
 
   if (submit) {
     submit.addEventListener('click', async () => {
-      const petData = readAddForm();
       try {
+        // Read the form data inside the async click handler
+        // This ensures that the file reader has had time to process the image
+        const petData = readAddForm();
+        if (!petData.before_image) {
+          throw new Error('Before image is required. Please upload an image.');
+        }
+
         await createPet(petData);
         if (bsModal) bsModal.hide();
         // clear form

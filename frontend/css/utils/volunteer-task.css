@@ -1,0 +1,528 @@
+ body {
+      background-color: #f8f9fa;
+    }
+    
+    .volunteer-welcome-box {
+      background: #41b883;
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(65, 184, 131, 0.2);
+    }
+    
+    /* Tasks Container */
+    .tasks-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+    }
+    
+    /* Tabs - Top Navigation */
+    .tasks-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .tasks-tab {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+    
+    .tasks-tab:hover {
+      color: #41b883;
+    }
+    
+    .tasks-tab.active {
+      color: #41b883;
+      border-bottom: 2px solid #41b883;
+    }
+    
+    /* Search & Filter - NEW DESIGN */
+    .search-filter-section {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #f0f0f0;
+    }
+    
+    .search-filter-title {
+      font-weight: 600;
+      color: #333;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .filter-group {
+      margin-bottom: 1rem;
+    }
+    
+    .filter-label {
+      display: block;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .search-input {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+    
+    .search-input:focus {
+      border-color: #41b883;
+      box-shadow: 0 0 0 3px rgba(65, 184, 131, 0.1);
+    }
+    
+    .filter-select {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      width: 100%;
+      background-color: white;
+      color: #333;
+    }
+    
+    .filter-select:focus {
+      border-color: #41b883;
+      box-shadow: 0 0 0 3px rgba(65, 184, 131, 0.1);
+    }
+    
+    /* Task Cards - NEW DESIGN from image */
+    .task-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #f0f0f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .task-title-section {
+      flex: 1;
+    }
+    
+    .task-pet-name {
+      font-weight: 700;
+      color: #333;
+      font-size: 1.4rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .task-name {
+      font-weight: 600;
+      color: #41b883;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .task-badge {
+      display: inline-block;
+      background-color: rgba(65, 184, 131, 0.1);
+      color: #41b883;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .task-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .task-tag {
+      background-color: #f0f0f0;
+      color: #666;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+    
+    .task-description {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Task Details Section */
+    .task-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .detail-label {
+      font-size: 0.85rem;
+      color: #999;
+      margin-bottom: 0.25rem;
+    }
+    
+    .detail-value {
+      font-weight: 600;
+      color: #333;
+      font-size: 1rem;
+    }
+    
+    .detail-value.auto-gen {
+      color: #41b883;
+    }
+    
+    /* Task Skills Section */
+    .task-skills {
+      margin-bottom: 1.5rem;
+    }
+    
+    .skills-label {
+      font-size: 0.85rem;
+      color: #999;
+      margin-bottom: 0.5rem;
+    }
+    
+    .skill-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .skill-tag {
+      background-color: rgba(65, 184, 131, 0.15);
+      color: #41b883;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    /* Task Actions Section */
+    .task-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid #f0f0f0;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .btn-view-details {
+      background-color: white;
+      border: 1px solid #41b883;
+      color: #41b883;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-view-details:hover {
+      background-color: rgba(65, 184, 131, 0.1);
+    }
+    
+    /* COMPLETE BUTTON DESIGN - From your image */
+    .btn-complete-task {
+      background-color: #41b883;
+      border: none;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 4px rgba(65, 184, 131, 0.2);
+    }
+    
+    .btn-complete-task:hover {
+      background-color: #3aa875;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(65, 184, 131, 0.3);
+    }
+    
+    .btn-complete-task:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(65, 184, 131, 0.2);
+    }
+    
+    .btn-complete-task.completed {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+      cursor: default;
+      box-shadow: none;
+    }
+    
+    .btn-complete-task.completed:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    
+    /* Check icon for complete button */
+    .check-icon {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    
+    /* Task Status Section */
+    .task-status-section {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    
+    .priority-badge {
+      background-color: #ff4757;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .status-badge {
+      background-color: rgba(65, 184, 131, 0.15);
+      color: #41b883;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .task-metrics {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    
+    .metric-item {
+      text-align: center;
+    }
+    
+    .metric-value {
+      font-weight: 600;
+      color: #333;
+      font-size: 1.1rem;
+      display: block;
+    }
+    
+    .metric-label {
+      font-size: 0.85rem;
+      color: #999;
+      display: block;
+    }
+    
+    /* Pet Assignment Section */
+    .pet-assignment {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f0f0f0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .pet-assignment-label {
+      font-weight: 500;
+      color: #333;
+    }
+    
+    /* Your Assigned Pets Section (Assigned Tab) */
+    .assigned-pets-header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+    }
+    
+    .assigned-pets-title {
+      font-weight: 600;
+      color: #333;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .assigned-pets-subtitle {
+      font-size: 0.9rem;
+      color: #666;
+      line-height: 1.5;
+    }
+    
+    /* Pet Cards for Assigned Tab */
+    .pet-card {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #f0f0f0;
+    }
+    
+    .pet-info-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    
+    .pet-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-right: 1rem;
+      flex-shrink: 0;
+    }
+    
+    .pet-info {
+      flex: 1;
+    }
+    
+    .pet-name-card {
+      font-weight: 700;
+      color: #333;
+      font-size: 1.3rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .pet-gender {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    
+    .pet-stats {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .pet-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.9rem;
+    }
+    
+    .pet-stat-number {
+      font-weight: 600;
+      color: #41b883;
+    }
+    
+    .pet-stat-label {
+      color: #666;
+    }
+    
+    .pet-stat-check {
+      color: #41b883;
+      font-size: 1.1rem;
+    }
+    
+    /* Next Task Section */
+    .next-task-section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1rem;
+      border-left: 4px solid #41b883;
+    }
+    
+    .next-task-label {
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    
+    .next-task-name {
+      font-weight: 600;
+      color: #333;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .next-task-time {
+      font-size: 0.9rem;
+      color: #41b883;
+      font-weight: 500;
+    }
+    
+    /* Completed Tasks */
+    .completed-task-item {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #999;
+      opacity: 0.8;
+    }
+    
+    @media (max-width: 768px) {
+      .task-header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .task-actions {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      
+      .action-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .btn-view-details, .btn-complete-task {
+        flex: 1;
+        text-align: center;
+      }
+      
+      .pet-info-row {
+        flex-direction: column;
+      }
+      
+      .pet-photo {
+        margin-right: 0;
+        margin-bottom: 1rem;
+      }
+      
+      .tasks-tabs {
+        flex-wrap: wrap;
+      }
+    }

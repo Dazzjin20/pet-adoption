@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tasks - Volunteer Dashboard</title>
+  <!-- Same CSS links as volunteer dashboard -->
+  <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../../css/base/general.css">
+  <link rel="stylesheet" href="../../css/utils/volunteer-task.css">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg volunteer-navbar" style="background-color: #41b883;">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-white" href="#">🐾 Dashboard</a>
+      
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#volunteerNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="volunteerNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="volunteer-dashboard.html">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="volunteer-pets.html">Browse Pets</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="volunteer-schedule.html">My Schedule</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="volunteer-tasks.html">Tasks</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="../../assets/image/photo/BoyIcon.jpg" alt="profile" class="rounded-circle me-2 profile-image" width="35" height="35">
+              <div class="lh-1">
+                <div class="fw-bold text-white" id="navbarUserName"></div>
+                <div class="text-light small" id="navbarUserRole"></div>
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end mt-2 shadow" aria-labelledby="profileDropdown">
+              <li class="dropdown-header">
+                <strong id="dropdownUserName"></strong><br>
+                <small class="text-muted" id="dropdownUserRole"></small>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="volunteer-profile.html">Account Center</a></li>
+              <li><a class="dropdown-item text-danger" href="../login-form.html">Log out</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Main Content -->
+  <div class="container my-4">
+    <!-- Welcome box with same styling as volunteer dashboard -->
+    <div class="volunteer-welcome-box p-4 mb-4">
+      <h4 class="fw-bold mb-1" id="volunteerWelcomeMessage">Tasks</h4>
+      <p class="mb-0" id="volunteerSubtitle">Manage your assigned pet care tasks</p>
+    </div>
+
+    <!-- Tasks Container -->
+    <div class="tasks-container">
+      <!-- Tabs - Top Navigation -->
+      <div class="tasks-tabs">
+        <button class="tasks-tab active" onclick="showTab('assigned')">Assigned</button>
+        <button class="tasks-tab" onclick="showTab('task')">Task</button>
+        <button class="tasks-tab" onclick="showTab('completed')">Completed</button>
+      </div>
+
+      <!-- Search & Filter - NEW DESIGN -->
+      <div class="search-filter-section">
+        <div class="search-filter-title">Search & Filter</div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="filter-group">
+              <label class="filter-label">Search by name</label>
+              <input type="text" class="search-input" placeholder="Search tasks..." id="taskSearchInput">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="filter-group">
+              <label class="filter-label">All Status</label>
+              <select class="filter-select" id="taskStatusFilter">
+                <option value="">Status</option>
+                <option value="pending">Pending</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="filter-group">
+              <label class="filter-label">All Categories</label>
+              <select class="filter-select" id="taskCategoryFilter">
+                <option value="">Categories</option>
+                <option value="feeding">Feeding</option>
+                <option value="exercise">Exercise</option>
+                <option value="grooming">Grooming</option>
+                <option value="medical">Medical Care</option>
+                <option value="socialization">Socialization</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assigned Tab Content (Your Assigned Pets) -->
+      <div id="assignedTab" class="tab-content">
+        <div class="assigned-pets-header">
+          <div class="assigned-pets-title">Your Assigned Tasks</div>
+          <div class="assigned-pets-subtitle">
+            Tasks assigned to you by shelter staff. Click any task to view details.
+          </div>
+        </div>
+        
+        <!-- Dynamic staff tasks will be inserted here by JavaScript -->
+        <div id="dynamicStaffTasks" class="staff-tasks-container"></div>
+        
+        <!-- Loading state -->
+        <div id="staffTasksLoading" class="text-center py-4" style="display: none;">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading tasks...</span>
+          </div>
+          <p class="mt-2 text-muted">Loading assigned tasks...</p>
+        </div>
+        
+        <!-- Empty state -->
+        <div id="staffTasksEmpty" class="text-center py-5" style="display: none;">
+          <div class="empty-state-icon mb-3">
+            <i class="fas fa-clipboard-list fa-3x text-muted"></i>
+          </div>
+          <h5 class="text-muted">No Staff-Assigned Tasks</h5>
+          <p class="text-muted">Tasks assigned by staff will appear here.</p>
+        </div>
+      </div>
+
+      <!-- Task Tab Content -->
+      <div id="taskTab" class="tab-content" style="display: none;">
+        <!-- Dynamic tasks from API will be inserted here -->
+        <div id="dynamicTaskCards" class="task-cards-container"></div>
+        
+        <!-- Empty state for Task tab -->
+        <div id="taskTabEmpty" class="text-center py-5">
+          <div class="empty-state-icon mb-3">
+            <i class="fas fa-tasks fa-3x text-muted"></i>
+          </div>
+          <h5 class="text-muted">Select a Task</h5>
+          <p class="text-muted">Click on a task in the Assigned tab to view its details.</p>
+        </div>
+      </div>
+
+      <!-- Completed Tab Content -->
+      <div id="completedTab" class="tab-content" style="display: none;">
+        <div class="assigned-pets-header">
+          <div class="assigned-pets-title">Completed Tasks</div>
+          <div class="assigned-pets-subtitle">Tasks you have marked as completed</div>
+        </div>
+        
+        <!-- Dynamic completed tasks will be inserted here -->
+        <div id="dynamicCompletedTasks" class="completed-tasks-container"></div>
+        
+        <!-- Empty state for Completed tab -->
+        <div id="completedTabEmpty" class="text-center py-5">
+          <div class="empty-state-icon mb-3">
+            <i class="fas fa-check-circle fa-3x text-muted"></i>
+          </div>
+          <h5 class="text-muted">No Completed Tasks</h5>
+          <p class="text-muted">Tasks you complete will appear here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/auth/auth.js"></script>
+  <script src="../../js/volunteer/task/task.js"></script>
+  
+  <!-- Integration script -->
+  <script src="../../scripts/pages/task-integration.js"></script>
+</body>
+</html>

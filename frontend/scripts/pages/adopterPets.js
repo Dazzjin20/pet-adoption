@@ -1,6 +1,21 @@
 import { getPets } from '../utils/staffPetsApi.js';
 
 /**
+ * Displays a message inside the adoption form modal.
+ * @param {string} text The message to display.
+ * @param {string} type The type of message ('success', 'danger', 'info').
+ */
+function showFormMessage(text, type) {
+    const msgEl = document.getElementById('formMessage');
+    if (!msgEl) return;
+
+    msgEl.textContent = text;
+    // Make sure to remove d-none to show the alert
+    msgEl.className = `alert alert-${type}`;
+    msgEl.setAttribute('role', 'alert');
+}
+
+/**
  * Creates an HTML card for a single pet.
  * @param {object} pet The pet object from the API.
  * @returns {HTMLDivElement} The pet card element.
@@ -369,9 +384,40 @@ window.viewPetDetails = (petId) => {
 };
 
 // Make applyToAdopt globally accessible - UPDATED VERSION
-window.applyToAdopt = (petId, petName) => {
+window.applyToAdopt = async (petId, petName) => {
     console.log('Global applyToAdopt called:', petId, petName);
     
+    // --- START: LOGIC TO PREVENT DUPLICATE APPLICATIONS ---
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || !currentUser._id) {
+        alert('You must be logged in to apply.');
+        window.location.href = '/frontend/pages/login-form.html';
+        return;
+    }
+
+    try {
+        // Fetch existing applications for the current user
+        const response = await fetch(`http://localhost:3000/api/applications/adopter/${currentUser._id}`);
+        if (!response.ok) {
+            // If fetching fails, let them apply but log an error.
+            console.error('Could not verify existing applications. Proceeding with application form.');
+        } else {
+            const data = await response.json();
+            const existingApplications = data.applications || [];
+
+            // Check if an application for this pet already exists
+            const hasApplied = existingApplications.some(app => app.pet && (app.pet._id === petId || app.pet === petId));
+
+            if (hasApplied) {
+                alert(`You have already submitted an application for ${petName}. You can check its status in the "My Applications" page.`);
+                return; // Stop the process
+            }
+        }
+    } catch (error) {
+        console.error('Error checking for existing applications:', error);
+    }
+    // --- END: LOGIC TO PREVENT DUPLICATE APPLICATIONS ---
+
     // Check if modal exists
     const modalElement = document.getElementById('adoptionModal');
     if (!modalElement) {
@@ -504,7 +550,7 @@ function initializeAdoptionModal(petId, petName) {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn" style="background-color: #F39C12; color: white;">Submit Application</button>
+                        <button type="submit" class="btn-application" style="background-color: #F39C12; color: white;">Submit Application</button>
                     </div>
                 </form>
             </div>
@@ -557,6 +603,7 @@ function setupAdoptionForm() {
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
 
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             if (!currentUser) {
@@ -568,6 +615,8 @@ function setupAdoptionForm() {
             const formData = {
                 pet: document.getElementById('petId').value, // Changed to 'pet' to match schema
                 adopter: currentUser._id, // FIX: Changed from adopterId to adopter to match backend
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
                 phoneNumber: document.getElementById('phoneNumber').value,
                 email: document.getElementById('email').value,
                 city: document.getElementById('city').value,
@@ -592,6 +641,8 @@ function setupAdoptionForm() {
             }
             
             showFormMessage('Submitting your application...', 'info');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...';
             
             try {
                 const response = await fetch('http://localhost:3000/api/applications/submit', {
@@ -602,17 +653,29 @@ function setupAdoptionForm() {
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.message || 'Submission failed');
                 
-                showFormMessage('Application submitted successfully!', 'success');
+                // --- FIX: Provide better feedback and prevent re-submission ---
+                // Disable the form entirely to prevent any further interaction.
+                form.querySelectorAll('input, select, textarea, button').forEach(el => el.disabled = true);
+
+                showFormMessage('Application submitted successfully! Redirecting you to your applications page...', 'success');
+                
+                // Redirect the user to their applications page after a delay.
                 setTimeout(() => {
                     const modal = bootstrap.Modal.getInstance(document.getElementById('adoptionModal'));
                     if (modal) modal.hide();
-                }, 3000);
+                    // Redirect to the "My Applications" page
+                    window.location.href = '/frontend/pages/adopters/adopter-application.html';
+                }, 3500);
             } catch (error) {
                 showFormMessage(`Error: ${error.message}`, 'danger');
+                // --- FIX: Only re-enable the button on failure ---
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit Application';
             }
         });
     }
 }
+
 
 /**
  * Load adoption modal HTML dynamically if not present.

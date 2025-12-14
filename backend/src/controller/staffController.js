@@ -21,7 +21,7 @@ class StaffController {
         return res.status(404).json({ message: 'Staff not found' });
       }
 
-      // Format response with both snake_case and camelCase for compatibility
+   
       const profileData = {
         _id: staff._id,
         firstName: staff.first_name || '',
@@ -61,7 +61,17 @@ class StaffController {
         return res.status(400).json({ message: 'Staff ID is required' });
       }
 
-      const updated = await staffRepository.updateById(staffId, req.body);
+      // Map frontend field names to backend field names
+      const updateData = {
+        first_name: req.body.firstName,
+        middle_name: req.body.middleName,
+        last_name: req.body.lastName,
+        phone: req.body.phone,
+        address: req.body.address,
+        bio: req.body.bio,
+        profilePic: req.body.profilePic
+      };
+      const updated = await staffRepository.updateById(staffId, updateData);
 
       if (!updated) {
         return res.status(404).json({ message: 'Staff not found' });

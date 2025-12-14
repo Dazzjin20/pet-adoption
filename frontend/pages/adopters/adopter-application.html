@@ -33,20 +33,13 @@
       <ul class="navbar-nav ms-auto align-items-center">
         <li class="nav-item"><a class="nav-link text-white" href="adopter-dashboard.html">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="adopter-pet.html">Browse Pets</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="adopter-message.html">Messages</a></li>
         <li class="nav-item"><a class="nav-link text-white fw-bold" href="">My Applications</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="adopter-favorite.html">Favorites</a></li>
-
-        <!-- Notification -->
-        <li class="nav-item mx-3 position-relative">
-          <img id="adopter-profile" src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
-        </li>
 
         <!-- Profile Dropdown -->
         <li class="nav-item dropdown">
           <a class="nav-link d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="rounded-circle me-2 profile-image" width="35" height="35">
+            <img src="../../assets/image/photo/BoyIcon.jpg" alt="profile" class="rounded-circle me-2 profile-image" width="35" height="35">
             <div class="lh-1">
               <div class="fw-bold text-white" id="navbarUserName"></div>
               <div class="text-light small" id="navbarUserRole"></div>
@@ -59,8 +52,7 @@
             </li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="adopter-profile.html">Profile</a></li>
-            <li><a class="dropdown-item" href="adopter-setting.html">Settings</a></li>
-            <li><a class="dropdown-item text-danger" href="/frontend/pages/login-form.html">Log out</a></li>
+            <li><a class="dropdown-item text-danger" href="../login-form.html">Log out</a></li>
           </ul>
         </li>
       </ul>
@@ -129,7 +121,7 @@
     <article class="bg-white border rounded-4 p-4 shadow-sm application-card animate-fadeInUp">
       <div class="d-flex justify-content-between align-items-start">
         <div class="d-flex align-items-center gap-3">
-          <img src="/frontend/assets/image/photo/dog1.jpg" class="rounded-circle" width="75" height="75" alt="pet" />
+          <img src="../../assets/image/photo/dog1.jpg" class="rounded-circle" width="75" height="75" alt="pet" />
           <div>
             <h4 class="fw-bold mb-1">Sadness</h4>
             <p class="text-muted small mb-1">Gender: Male</p>
@@ -243,8 +235,8 @@
 </div>
 
 <script src="../../bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/frontend/js/auth/auth.js"></script>
-<script type="module" src="/frontend/scripts/pages/adopterApplications.js"></script>
+<script src="../../js/auth/auth.js"></script>
+<script type="module" src="../../scripts/pages/adopterApplications.js"></script>
 
 </body>
 </html>

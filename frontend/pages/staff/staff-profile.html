@@ -4,15 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Staff Profile</title>
-  <link rel="stylesheet" href="/frontend/bootstrap/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/frontend/css/base/general.css" />
+  <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../../css/base/general.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 </head>
 
 <body class="bg-light" data-required-role="staff">
   <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
+   <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
     <div class="container">
       <a class="navbar-brand fw-bold fs-4" href="#">🐾 Staff Dashboard</a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#staffNavbarNav">
@@ -21,39 +21,33 @@
 
       <div class="collapse navbar-collapse" id="staffNavbarNav">
         <ul class="navbar-nav ms-auto align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="/frontend/pages/staff/staff-dashboard.html">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="/frontend/pages/staff/staff-pets.html">Pets</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="/frontend/pages/staff/staff-messages.html">Messages</a></li>
+          <li class="nav-item"><a class="nav-link" href="staff-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link fw-medium" href="staff-pets.html">Pets</a></li>
          <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Management
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/frontend/pages/staff/staff-pet-assignment.html">Pet Assignment</a></li>
-              <li><a class="dropdown-item" href="#">Task Assignment</a></li>
-              <li><a class="dropdown-item" href="#">Care Tracking</a></li>
-              <li><a class="dropdown-item" href="#">Volunteers</a></li>
+              <li><a class="dropdown-item" href="staff-pet-assignment.html">Pet Assignment</a></li>
+              <li><a class="dropdown-item" href="staff-task-assignment.html">Task Assignment</a></li>
+              <li><a class="dropdown-item" href="staff-care-tracking.html">Care Tracking</a></li>
             </ul>
           </li>
             <li class="nav-item me-lg-3">
               <i class="fa-regular fa-bell text-white" style="font-size:1.1rem"></i>
-            </li>
-          <li class="nav-item me-lg-3 mt-2 mt-lg-0">
-            <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
-          </li>
+            </li> 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
+              <img src="../../assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
             <div class="lh-1">
               <div class="fw-bold text-white" id="navbarUserName"></div>
               <div class="text-light small" id="navbarUserRole"></div>
             </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="profileDropdown">
-              <li><a class="dropdown-item" href="/frontend/pages/staff/staff-profile.html">Profile</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><a class="dropdown-item" href="staff-profile.html">Profile</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="/frontend/pages/login-form.html">Logout</a></li>
+              <li><a class="dropdown-item text-danger" href="../login-form.html">Logout</a></li>
             </ul>
           </li>
         </ul>
@@ -73,7 +67,7 @@
     <div class="profile-header-section">
       <div class="profile-pic-container">
         <div style="position: relative; width: fit-content;">
-          <img id="profilePic" src="/frontend/assets/image/photo/BoyIcon.jpg" alt="Profile" class="profile-pic">
+          <img id="profilePic" src="../../assets/image/photo/BoyIcon.jpg" alt="Profile" class="profile-pic">
           <button class="profile-camera-btn" type="button" id="changePhotoBtn" title="Change photo">
             <i class="fas fa-camera"></i>
           </button>
@@ -199,8 +193,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="/frontend/js/auth/auth.js"></script>
-  <script type="module" src="/frontend/scripts/pages/staffProfile.js"></script>
+  <script src="../../bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/auth/auth.js"></script>
+  <script type="module" src="../../scripts/pages/staffProfile.js"></script>
 </body>
 </html>

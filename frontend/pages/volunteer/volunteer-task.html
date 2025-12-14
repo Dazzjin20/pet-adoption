@@ -12,30 +12,50 @@
 
 <body class="bg-light">
 
-<nav class="navbar navbar-expand-lg volunteer-navbar">
+  <nav class="navbar navbar-expand-lg volunteer-navbar" style="background-color: #41b883;">
     <div class="container">
       <a class="navbar-brand fw-bold text-white" href="#">🐾 Dashboard</a>
-
+      
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#volunteerNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-
+      
       <div class="collapse navbar-collapse" id="volunteerNav">
         <ul class="navbar-nav ms-auto align-items-center">
-          <li class="nav-item"><a class="nav-link active" href="volunteer-dashboard.html">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="volunteer-pets.html">Browse Pets</a></li>
-          <li class="nav-item"><a class="nav-link" href="volunteer-message.html">Messages</a></li>
-          <li class="nav-item"><a class="nav-link" href="volunteer-schedule.html">My Schedule</a></li>
-          <li class="nav-item"><a class="nav-link" href="volunteer-task.html">Tasks</a></li>
-          <li class="nav-item mx-3">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="volunteer-dashboard.html">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="volunteer-pets.html">Browse Pets</a>
+          </li>
+          <li class="nav-item">
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="volunteer-schedule.html">My Schedule</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white " href="volunteer-task.html">Tasks</a>
+          </li>
+          <li class="nav-item mx-3 position-relative">
             <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
           </li>
-          <li class="nav-item d-flex align-items-center">
-            <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="volunteer-profile-img me-2" />
-            <div class="text-white small lh-1">
-              <div id="volunteerNavbarName"></div>
-              <div id="volunteerNavbarRole"></div>
-            </div>
+          <li class="nav-item dropdown">
+            <a class="nav-link d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="rounded-circle me-2 profile-image" width="35" height="35">
+              <div class="lh-1">
+                <div class="fw-bold text-white" id="volunteerNavbarName">Daks Pangilinan</div>
+                <div class="text-light small" id="volunteerNavbarRole">Volunteer</div>
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end mt-2 shadow" aria-labelledby="profileDropdown">
+              <li class="dropdown-header">
+                <strong>Daks Pangilinan</strong><br>
+                <small class="text-muted">Volunteer</small>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="volunteer-profile.html">Account Center</a></li>
+              <li><a class="dropdown-item text-danger" href="/frontend/pages/login-form.html">Log out</a></li>
+            </ul>
           </li>
         </ul>
       </div>

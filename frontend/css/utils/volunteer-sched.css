@@ -1,0 +1,213 @@
+  body {
+      background-color: #f8f9fa;
+    }
+    
+    .volunteer-welcome-box {
+      background: #41b883;
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(65, 184, 131, 0.2);
+    }
+    
+    /* Schedule Container */
+    .schedule-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+    }
+    
+    /* Stats Cards */
+    .schedule-stat-card {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      height: 100%;
+      border: 1px solid #f0f0f0;
+    }
+    
+    .schedule-stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #41b883;
+      margin-bottom: 0.5rem;
+    }
+    
+    .schedule-stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    
+    .schedule-stat-sub {
+      font-size: 0.8rem;
+      color: #999;
+    }
+    
+    /* Week Navigation */
+    .week-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .week-arrow {
+      background: none;
+      border: none;
+      color: #41b883;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+    
+    .week-arrow:hover {
+      background-color: rgba(65, 184, 131, 0.1);
+      border-radius: 6px;
+    }
+    
+    .current-week {
+      font-weight: 600;
+      color: #333;
+      font-size: 1.1rem;
+    }
+    
+    /* Calendar Grid */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .calendar-day {
+      text-align: center;
+      padding: 1rem 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .calendar-day:hover {
+      background-color: rgba(65, 184, 131, 0.05);
+    }
+    
+    .calendar-day.active {
+      background-color: rgba(65, 184, 131, 0.1);
+      border: 2px solid #41b883;
+    }
+    
+    .calendar-day.today {
+      background-color: rgba(65, 184, 131, 0.15);
+    }
+    
+    .day-name {
+      font-size: 0.8rem;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    
+    .day-number {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    
+    .day-task {
+      font-size: 0.8rem;
+      color: #41b883;
+      font-weight: 500;
+      padding: 0.25rem 0.5rem;
+      background-color: rgba(65, 184, 131, 0.1);
+      border-radius: 4px;
+      margin-top: 0.5rem;
+    }
+    
+    .no-task {
+      font-size: 0.8rem;
+      color: #999;
+      font-style: italic;
+    }
+    
+    /* Tasks Section */
+    .tasks-section {
+      margin-top: 2rem;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .section-title {
+      font-weight: 600;
+      color: #333;
+      font-size: 1.2rem;
+    }
+    
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    /* Upcoming Tasks */
+    .upcoming-task {
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border-left: 4px solid #41b883;
+    }
+    
+    .upcoming-task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .upcoming-task-title {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .upcoming-task-date {
+      font-size: 0.85rem;
+      color: #41b883;
+      font-weight: 500;
+    }
+    
+    .upcoming-task-desc {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .calendar-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .calendar-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }

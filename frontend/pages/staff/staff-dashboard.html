@@ -4,13 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Staff Dashboard</title>
-  <link rel="stylesheet" href="/frontend/bootstrap/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/frontend/css/base/general.css">
+  <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../../css/base/general.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-light" data-required-role="staff">
 
   <!-- Header with navigation -->
-  <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
+   <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
     <div class="container">
       <a class="navbar-brand fw-bold fs-4" href="#">🐾 Staff Dashboard</a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#staffNavbarNav">
@@ -19,39 +20,33 @@
 
       <div class="collapse navbar-collapse" id="staffNavbarNav">
         <ul class="navbar-nav ms-auto align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="/frontend/pages/staff/staff-dashboard.html">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="/frontend/pages/staff/staff-pets.html">Pets</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="/frontend/pages/staff/staff-messages.html">Messages</a></li>
+          <li class="nav-item"><a class="nav-link" href="staff-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link fw-medium" href="staff-pets.html">Pets</a></li>
          <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Management
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/frontend/pages/staff/staff-pet-assignment.html">Pet Assignment</a></li>
-              <li><a class="dropdown-item" href="#">Task Assignment</a></li>
-              <li><a class="dropdown-item" href="#">Care Tracking</a></li>
-              <li><a class="dropdown-item" href="#">Volunteers</a></li>
+              <li><a class="dropdown-item" href="staff-pet-assignment.html">Pet Assignment</a></li>
+              <li><a class="dropdown-item" href="staff-task-assignment.html">Task Assignment</a></li>
+              <li><a class="dropdown-item" href="staff-care-tracking.html">Care Tracking</a></li>
             </ul>
           </li>
             <li class="nav-item me-lg-3">
               <i class="fa-regular fa-bell text-white" style="font-size:1.1rem"></i>
-            </li>
-          <li class="nav-item me-lg-3 mt-2 mt-lg-0">
-            <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
-          </li>
+            </li> 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
+              <img src="../../assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
             <div class="lh-1">
               <div class="fw-bold text-white" id="navbarUserName"></div>
               <div class="text-light small" id="navbarUserRole"></div>
             </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="profileDropdown">
-              <li><a class="dropdown-item" href="/frontend/pages/staff/staff-profile.html">Profile</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><a class="dropdown-item" href="staff-profile.html">Profile</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="/frontend/pages/login-form.html">Logout</a></li>
+              <li><a class="dropdown-item text-danger" href="../login-form.html">Logout</a></li>
             </ul>
           </li>
         </ul>
@@ -73,29 +68,29 @@
       <div class="row g-4">
         <div class="col-md-3 col-sm-6">
           <article class="staff-stat-card bg-white text-center p-4">
-            <div class="fs-1 text-primary mb-3">🐾</div>
-            <h3 class="fw-bold mb-2">156</h3>
-            <p class="text-muted mb-0">Animals in Care</p>
+            <div class="fs-1 text-primary mb-3"><i class="fas fa-dog"></i></div>
+            <h3 class="fw-bold mb-2" id="dogsInCareCount">0</h3>
+            <p class="text-muted mb-0">Dogs in Care</p>
           </article>
         </div>
         <div class="col-md-3 col-sm-6">
           <article class="staff-stat-card bg-white text-center p-4">
-            <div class="fs-1 text-success mb-3">👥</div>
-            <h3 class="fw-bold mb-2">223</h3>
-            <p class="text-muted mb-0">Active Volunteers</p>
+            <div class="fs-1 text-info mb-3"><i class="fas fa-cat"></i></div>
+            <h3 class="fw-bold mb-2" id="catsInCareCount">0</h3>
+            <p class="text-muted mb-0">Cats in Care</p>
           </article>
         </div>
         <div class="col-md-3 col-sm-6">
           <article class="staff-stat-card bg-white text-center p-4">
             <div class="fs-1 text-danger mb-3">❤️</div>
-            <h3 class="fw-bold mb-2">34</h3>
+            <h3 class="fw-bold mb-2" id="adoptionsThisMonthCount">0</h3>
             <p class="text-muted mb-0">Adoptions This Month</p>
           </article>
         </div>
         <div class="col-md-3 col-sm-6">
           <article class="staff-stat-card bg-white text-center p-4">
-            <div class="fs-1 text-info mb-3">⚠️</div>
-            <h3 class="fw-bold mb-2">8</h3>
+            <div class="fs-1 text-warning mb-3">⚠️</div>
+            <h3 class="fw-bold mb-2" id="urgentCareCount">0</h3>
             <p class="text-muted mb-0">Urgent Care Needed</p>
           </article>
         </div>
@@ -110,21 +105,11 @@
         <div class="col-lg-6">
           <section class="staff-card-container">
             <h3 class="fw-bold">Recent Alerts</h3>
-            <div class="staff-alerts-container">
-              <article class="d-flex align-items-center">
-                <span class="staff-alert-label staff-alert-urgent me-3">Urgent</span>
-                <span class="flex-grow-1">Bella needs medication in 2 hours</span>
-              </article>
-              <article class="d-flex align-items-center">
-                <span class="staff-alert-label staff-alert-medical me-3">Medical</span>
-                <span class="flex-grow-1">Max has vet appointment tomorrow</span>
-              </article>
-              <article class="d-flex align-items-center">
-                <span class="staff-alert-label staff-alert-update me-3">Update</span>
-                <span class="flex-grow-1">New volunteer application received</span>
-              </article>
+            <div id="recentAlertsContainer" class="staff-alerts-container">
+              <!-- Alerts will be dynamically loaded here -->
+              <p class="text-muted">Loading alerts...</p>
             </div>
-            <button class="btn staff-view-dashboard-btn text-white w-100 mt-4">View Care Dashboard →</button>
+            <a href="staff-care-tracking.html" class="btn staff-view-dashboard-btn text-white w-100 mt-4">View Care Dashboard →</a>
           </section>
         </div>
 
@@ -132,19 +117,18 @@
         <div class="col-lg-6">
           <section class="staff-card-container">
             <h3 class="fw-bold">Quick Actions</h3>
-            <button class="btn staff-quick-btn w-100 text-start mb-2">🐾 Add New Pet</button>
-            <button class="btn staff-quick-btn w-100 text-start mb-2">👥 Manage Volunteers</button>
-            <button class="btn staff-quick-btn w-100 text-start mb-2">📊 Generate Reports</button>
-            <button class="btn staff-quick-btn w-100 text-start">🗓️ Schedule Care Tasks</button>
+            <a href="staff-pets.html" class="btn staff-quick-btn w-100 text-start mb-2">🐾 Manage Pets</a>
+            <a href="staff-pet-assignment.html" class="btn staff-quick-btn w-100 text-start mb-2">👥 Assign Volunteers</a>
+            <a href="staff-applications.html" class="btn staff-quick-btn w-100 text-start mb-2">📄 Review Applications</a>
+            <a href="staff-care-tracking.html" class="btn staff-quick-btn w-100 text-start">🗓️ Track Care</a>
           </section>
         </div>
       </div>
     </section>
   </main>
-  <script src="/frontend/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script type="module" src="../../scripts/app.js"></script>
-  <script src="/frontend/js/auth/auth.js"></script>
-  <script type="module" src="../../scripts/utils/staffDashboardInit.js"></script>
+  <script src="../../bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/auth/auth.js"></script>
+  <script type="module" src="../../scripts/pages/staffDashboard.js"></script>
 
 </body>
 </html>

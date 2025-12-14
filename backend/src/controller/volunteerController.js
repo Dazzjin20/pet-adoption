@@ -1,4 +1,5 @@
 const { Volunteer } = require('../models/index');
+const volunteerRepository = require('../repositories/volunteerRepository');
 
 // @desc    Get available volunteers based on current time
 // @route   GET /api/volunteers/available
@@ -27,4 +28,32 @@ const getAvailableVolunteers = async (req, res) => {
     }
 };
 
-module.exports = { getAvailableVolunteers };
+/**
+ * Updates a volunteer's profile information.
+ */
+const updateProfile = async (req, res) => {
+    try {
+        const { volunteerId } = req.params;
+        const updateData = req.body;
+
+        // Ensure the user is not trying to change their role
+        if (updateData.role) {
+            delete updateData.role;
+        }
+
+        const updatedVolunteer = await volunteerRepository.updateById(volunteerId, updateData);
+
+        if (!updatedVolunteer) {
+            return res.status(404).json({ message: 'Volunteer not found.' });
+        }
+
+        // Send back the updated user object, excluding the password
+        updatedVolunteer.password = undefined;
+        res.status(200).json({ message: 'Profile updated successfully!', user: updatedVolunteer });
+    } catch (error) {
+        console.error('Error updating volunteer profile:', error);
+        res.status(500).json({ message: 'Failed to update profile.', error: error.message });
+    }
+};
+
+module.exports = { getAvailableVolunteers, updateProfile };

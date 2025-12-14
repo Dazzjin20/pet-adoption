@@ -6,12 +6,12 @@
     <title>Pet Profile</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/frontend/css/base/general.css">
+    <link rel="stylesheet" href="../../../css/base/general.css">
 </head>
 
 <body data-required-role="staff">
 
-  <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
+ <nav class="navbar navbar-expand-lg staff-navbar-gradient navbar-dark">
     <div class="container">
       <a class="navbar-brand fw-bold fs-4" href="#">🐾 Staff Dashboard</a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#staffNavbarNav">
@@ -20,39 +20,33 @@
 
       <div class="collapse navbar-collapse" id="staffNavbarNav">
         <ul class="navbar-nav ms-auto align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="/frontend/pages/staff/staff-dashboard.html">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="/frontend/pages/staff/staff-pets.html">Pets</a></li>
-          <li class="nav-item"><a class="nav-link fw-medium" href="/frontend/pages/staff/staff-messages.html">Messages</a></li>
+          <li class="nav-item"><a class="nav-link" href="../staff-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link fw-medium" href="../staff-pets.html">Pets</a></li>
          <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Management
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/frontend/pages/staff/staff-pet-assignment.html">Pet Assignment</a></li>
-              <li><a class="dropdown-item" href="#">Task Assignment</a></li>
-              <li><a class="dropdown-item" href="#">Care Tracking</a></li>
-              <li><a class="dropdown-item" href="#">Volunteers</a></li>
+              <li><a class="dropdown-item" href="../staff-pet-assignment.html">Pet Assignment</a></li>
+              <li><a class="dropdown-item" href="../staff-task-assignment.html">Task Assignment</a></li>
+              <li><a class="dropdown-item" href="../staff-care-tracking.html">Care Tracking</a></li>
             </ul>
           </li>
             <li class="nav-item me-lg-3">
               <i class="fa-regular fa-bell text-white" style="font-size:1.1rem"></i>
-            </li>
-          <li class="nav-item me-lg-3 mt-2 mt-lg-0">
-            <img src="/frontend/assets/fonts/icon/bell.png" alt="bell" width="22" />
-          </li>
+            </li> 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="/frontend/assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
+              <img src="../../../assets/image/photo/BoyIcon.jpg" alt="profile" class="staff-profile-img me-2" />
             <div class="lh-1">
               <div class="fw-bold text-white" id="navbarUserName"></div>
               <div class="text-light small" id="navbarUserRole"></div>
             </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="profileDropdown">
-              <li><a class="dropdown-item" href="/frontend/pages/staff/staff-profile.html">Profile</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><a class="dropdown-item" href="../staff-profile.html">Profile</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="/frontend/pages/login-form.html">Logout</a></li>
+              <li><a class="dropdown-item text-danger" href="../../login-form.html">Logout</a></li>
             </ul>
           </li>
         </ul>
@@ -65,7 +59,7 @@
    <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <a href="/frontend/pages/staff/staff-pets.html" class="text-secondary text-decoration-none mb-2 d-block">
+                <a href="../staff-pets.html" class="text-secondary text-decoration-none mb-2 d-block">
                     &larr; Back to All Pets
                 </a>
                 <h2 class="fw-bold" id="petNameHeader">Loading...</h2>
@@ -83,10 +77,10 @@
             <a class="nav-link active" href="#" data-tab="overview">Overview</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/frontend/pages/staff/pets-page/staff-view-medical.html" data-tab="medical" data-page="medical">Medical</a>
+            <a class="nav-link" href="staff-view-medical.html" data-tab="medical" data-page="medical">Medical</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/frontend/pages/staff/pets-page/staff-view-care-log.html" data-tab="care-log" data-page="care-log">Care Log</a>
+            <a class="nav-link" href="staff-view-care-log.html" data-tab="care-log" data-page="care-log">Care Log</a>
         </li>
     </ul>
     
@@ -94,12 +88,12 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <span class="before-after-label mb-2">Before</span>
-            <img class="custom-img mt-2" id="beforeImage" src="/frontend/assets/image/photo/placeholder.jpg" alt="Before Image">
+            <img class="custom-img mt-2" id="beforeImage" src="../../../assets/image/photo/placeholder.jpg" alt="Before Image">
         </div>
 
         <div class="col-md-6">
             <span class="before-after-label mb-2">After</span>
-            <img class="custom-img mt-2" id="afterImage" src="/frontend/assets/image/photo/placeholder.jpg" alt="After Image">
+            <img class="custom-img mt-2" id="afterImage" src="../../../assets/image/photo/placeholder.jpg" alt="After Image">
         </div>
     </div>
 
@@ -155,8 +149,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/frontend/scripts/utils/tabNavigationHelper.js"></script>
-<script src="/frontend/js/auth/auth.js"></script>
-<script src="/frontend/scripts/pages/staffViewPet.js" type="module"></script>
+<script src="../../../scripts/utils/tabNavigationHelper.js"></script>
+<script src="../../../js/auth/auth.js"></script>
+<script src="../../../scripts/pages/staffViewPet.js" type="module"></script>
 </body>
 </html>
