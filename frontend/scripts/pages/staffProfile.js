@@ -1,239 +1,186 @@
-import { getStaffProfile, updateStaffProfile, getStaffStats } from '../utils/staffApi.js';
+import AuthService from '../components/authService.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  // Try to get staff ID from localStorage, fallback to email
-  let staffId = localStorage.getItem('userId');
-  const userEmail = localStorage.getItem('userEmail');
-  
-  if (!staffId && userEmail) {
-    console.warn('Staff ID not found, using email as fallback');
-    staffId = userEmail;
-  }
+class StaffProfile {
+    constructor() {
+        this.user = null;
+        this.profileImageBase64 = null;
 
-  if (!staffId) {
-    alert('Error: Staff information not found. Please login again.');
-    window.location.href = '/frontend/pages/login-form.html';
-    return;
-  }
+        // DOM Elements
+        this.profilePic = document.getElementById('profilePic');
+        this.navbarProfilePic = document.querySelector('.staff-profile-img');
 
-  let isEditMode = false;
+        // View-mode elements
+        this.viewElements = document.querySelectorAll('.info-value');
+        // Edit-mode elements
+        this.editElements = document.querySelectorAll('.info-input');
 
-  // DOM Elements
-  const editBtn = document.getElementById('editProfileBtn');
-  const saveBtn = document.getElementById('saveProfileBtn');
-  const cancelBtn = document.getElementById('cancelEditBtn');
-  const profileForm = document.getElementById('profileForm');
+        // Buttons
+        this.editProfileBtn = document.getElementById('editProfileBtn');
+        this.saveChangesBtn = document.getElementById('saveProfileBtn');
+        this.cancelBtn = document.getElementById('cancelEditBtn');
+        this.changePhotoBtn = document.getElementById('changePhotoBtn');
+        this.profileImageInput = document.getElementById('profileImageInput');
 
-  // Profile elements
-  const profileNameEl = document.getElementById('profileName');
-  const profileRoleEl = document.getElementById('profileRole');
-  const memberSinceEl = document.getElementById('memberSince');
-  const profilePicEl = document.getElementById('profilePic');
+        // Message element
+        this.profileMessage = document.getElementById('profileMessage'); // Assuming you'll add this div
 
-  // View elements
-  const viewFirstName = document.getElementById('viewFirstName');
-  const viewMiddleName = document.getElementById('viewMiddleName');
-  const viewLastName = document.getElementById('viewLastName');
-  const viewPhone = document.getElementById('viewPhone');
-  const viewEmail = document.getElementById('viewEmail');
-  const viewAddress = document.getElementById('viewAddress');
-  const viewBio = document.getElementById('viewBio');
+        this.initialize();
+    }
 
-  // Edit elements
-  const editFirstName = document.getElementById('editFirstName');
-  const editMiddleName = document.getElementById('editMiddleName');
-  const editLastName = document.getElementById('editLastName');
-  const editPhone = document.getElementById('editPhone');
-  const editEmail = document.getElementById('editEmail');
-  const editAddress = document.getElementById('editAddress');
-  const editBio = document.getElementById('editBio');
-
-  // Stats elements
-  const animalsHelpedCount = document.getElementById('animalsHelpedCount');
-  const adoptionsApprovedCount = document.getElementById('adoptionsApprovedCount');
-  const serviceDuration = document.getElementById('serviceDuration');
-
-  // Load staff profile data
-  async function loadStaffProfile() {
-    try {
-      if (!staffId) {
-        console.error('Staff ID not found');
-        return;
-      }
-
-      const response = await getStaffProfile(staffId);
-      const staff = response.data || response;
-
-      // Update profile header
-      profileNameEl.textContent = `${staff.firstName} ${staff.lastName}`;
-      profileRoleEl.textContent = 'Staff Member';
-      
-      // Calculate member duration
-      const createdDate = new Date(staff.createdAt);
-      const duration = calculateDuration(createdDate);
-      memberSinceEl.textContent = `Member since ${duration}`;
-
-      // Update view fields
-      viewFirstName.textContent = staff.firstName || '-';
-      viewMiddleName.textContent = staff.middleName || '-';
-      viewLastName.textContent = staff.lastName || '-';
-      viewPhone.textContent = staff.phone || '-';
-      viewEmail.textContent = staff.email || '-';
-      viewAddress.textContent = staff.address || '-';
-      viewBio.textContent = staff.bio || 'No bio yet.';
-
-      // Fill edit fields with current values
-      editFirstName.value = staff.firstName || '';
-      editMiddleName.value = staff.middleName || '';
-      editLastName.value = staff.lastName || '';
-      editPhone.value = staff.phone || '';
-      editEmail.value = staff.email || '';
-      editAddress.value = staff.address || '';
-      editBio.value = staff.bio || '';
-
-      if (staff.profilePic) {
-        if (profilePicEl) {
-          profilePicEl.src = staff.profilePic;
+    async initialize() {
+        const token = AuthService.getToken();
+        if (!token) {
+            window.location.href = '/frontend/pages/login-form.html';
+            return;
         }
-        const navbarPic = document.getElementById('navbarProfilePic');
-        if (navbarPic) {
-          navbarPic.src = staff.profilePic;
-        }
-      }
 
-      // Load stats
-      await loadStaffStats();
-    } catch (error) {
-      console.error('Error loading staff profile:', error);
-      alert('Failed to load profile');
-    }
-  }
-
-  // Load staff statistics
-  async function loadStaffStats() {
-    try {
-      const response = await getStaffStats(staffId);
-      const stats = response.data || response;
-
-      // Update stats
-      animalsHelpedCount.textContent = stats.animalsHelped || 0;
-      adoptionsApprovedCount.textContent = stats.adoptionsApproved || 0;
-      serviceDuration.textContent = `${stats.serviceDuration || '0'} days`;
-    } catch (error) {
-      console.error('Error loading stats:', error);
-      // Stats are optional, don't fail the whole page
-    }
-  }
-
-  // Calculate duration (days, months, or years)
-  function calculateDuration(createdDate) {
-    const now = new Date();
-    const diff = now - createdDate;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-    if (days < 30) {
-      return `${days} day${days !== 1 ? 's' : ''} ago`;
-    } else if (days < 365) {
-      const months = Math.floor(days / 30);
-      return `${months} month${months !== 1 ? 's' : ''} ago`;
-    } else {
-      const years = Math.floor(days / 365);
-      return `${years} year${years !== 1 ? 's' : ''} ago`;
-    }
-  }
-
-  // Toggle edit mode
-  function toggleEditMode() {
-    isEditMode = !isEditMode;
-
-    // Toggle visibility
-    document.querySelectorAll('[id^="view"]').forEach(el => {
-      el.classList.toggle('d-none', isEditMode);
-    });
-
-    document.querySelectorAll('[id^="edit"]').forEach(el => {
-      el.classList.toggle('d-none', !isEditMode);
-    });
-
-    editBtn.classList.toggle('d-none', isEditMode);
-    saveBtn.classList.toggle('d-none', !isEditMode);
-    cancelBtn.classList.toggle('d-none', !isEditMode);
-  }
-
-  // Save profile changes
-  async function saveProfile() {
-    try {
-      const updatedData = {
-        firstName: editFirstName.value,
-        middleName: editMiddleName.value,
-        lastName: editLastName.value,
-        phone: editPhone.value,
-        address: editAddress.value,
-        bio: editBio.value
-      };
-
-      const response = await updateStaffProfile(staffId, updatedData);
-      
-      alert('Profile updated successfully!');
-      toggleEditMode();
-      await loadStaffProfile();
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      alert('Failed to save profile: ' + error.message);
-    }
-  }
-
-  // Event listeners
-  editBtn.addEventListener('click', toggleEditMode);
-  cancelBtn.addEventListener('click', () => {
-    toggleEditMode();
-    loadStaffProfile(); // Reset to original values
-  });
-  saveBtn.addEventListener('click', saveProfile);
-
-  // Profile picture change
-  const changePhotoBtn = document.getElementById('changePhotoBtn');
-  const profileImageInput = document.getElementById('profileImageInput');
-  
-  if (changePhotoBtn) {
-    changePhotoBtn.addEventListener('click', () => {
-      if (profileImageInput) {
-        profileImageInput.click();
-      }
-    });
-  }
-
-  if (profileImageInput) {
-    profileImageInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        const base64 = event.target.result;
-        
         try {
-          const response = await updateStaffProfile(staffId, {
-            profilePic: base64
-          });
-          
-          if (profilePicEl) {
-            profilePicEl.src = base64;
-          }
-          const navbarPic = document.getElementById('navbarProfilePic');
-          if (navbarPic) {
-            navbarPic.src = base64;
-          }
-          alert('Profile picture updated!');
-        } catch (error) {
-          console.error('Error updating profile picture:', error);
-          alert('Failed to update profile picture');
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  }
+            this.user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!this.user) throw new Error('User not found in localStorage');
 
-  // Load profile on page load
-  loadStaffProfile();
-});
+            this.populateProfileData();
+            this.attachEventListeners();
+        } catch (error) {
+            console.error('Initialization failed:', error);
+            AuthService.logout();
+            window.location.href = '/frontend/pages/login-form.html';
+        }
+    }
+
+    populateProfileData() {
+        if (!this.user) return;
+
+        const fullName = `${this.user.first_name || ''} ${this.user.last_name || ''}`.trim();
+        document.getElementById('profileName').textContent = fullName || 'Staff Member';
+        document.getElementById('navbarUserName').textContent = fullName || 'Staff';
+        document.getElementById('profileRole').textContent = this.user.role || 'Staff';
+        document.getElementById('navbarUserRole').textContent = this.user.role ? this.user.role.charAt(0).toUpperCase() + this.user.role.slice(1) : 'Staff';
+
+        // Member since
+        const joinDate = this.user.created_at || new Date().toISOString();
+        document.getElementById('memberSince').textContent = `Member since ${new Date(joinDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`;
+
+        // View mode elements
+        document.getElementById('viewFirstName').textContent = this.user.first_name || 'N/A';
+        document.getElementById('viewLastName').textContent = this.user.last_name || 'N/A';
+        document.getElementById('viewEmail').textContent = this.user.email || 'N/A';
+        document.getElementById('viewPhone').textContent = this.user.phone || 'N/A';
+        document.getElementById('viewAddress').textContent = this.user.address || 'Not provided';
+        document.getElementById('viewBio').textContent = this.user.bio || 'No bio yet.';
+        document.getElementById('viewMiddleName').textContent = this.user.middle_name || '-';
+
+        // Edit mode inputs
+        document.getElementById('editFirstName').value = this.user.first_name || '';
+        document.getElementById('editLastName').value = this.user.last_name || '';
+        document.getElementById('editEmail').value = this.user.email || '';
+        document.getElementById('editPhone').value = this.user.phone || '';
+        document.getElementById('editAddress').value = this.user.address || '';
+        document.getElementById('editBio').value = this.user.bio || '';
+        document.getElementById('editMiddleName').value = this.user.middle_name || '';
+
+        // Profile picture
+        const profileImageUrl = this.user.profile_image || '/frontend/assets/image/photo/BoyIcon.jpg';
+        this.profilePic.src = profileImageUrl;
+        if (this.navbarProfilePic) this.navbarProfilePic.src = profileImageUrl;
+    }
+
+    attachEventListeners() {
+        this.editProfileBtn.addEventListener('click', () => this.toggleEditMode(true));
+        this.cancelBtn.addEventListener('click', () => this.toggleEditMode(false));
+        this.saveChangesBtn.addEventListener('click', () => this.handleSaveChanges());
+
+        // Image upload
+        this.changePhotoBtn.addEventListener('click', () => this.profileImageInput.click());
+        this.profileImageInput.addEventListener('change', (e) => this.handleImageUpload(e));
+    }
+
+    toggleEditMode(isEditing) {
+        const viewModeElements = document.querySelectorAll('.info-value');
+        const editModeElements = document.querySelectorAll('.info-input');
+
+        viewModeElements.forEach(el => el.classList.toggle('d-none', isEditing));
+        editModeElements.forEach(el => el.classList.toggle('d-none', !isEditing));
+
+        this.editProfileBtn.classList.toggle('d-none', isEditing);
+        this.saveChangesBtn.classList.toggle('d-none', !isEditing);
+        this.cancelBtn.classList.toggle('d-none', !isEditing);
+
+        if (!isEditing) {
+            this.populateProfileData(); // Reset changes if cancelled
+        }
+    }
+
+    handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.profileImageBase64 = e.target.result;
+            this.profilePic.src = this.profileImageBase64;
+            // Automatically trigger save when a new photo is selected
+            this.handleSaveChanges(); 
+        };
+        reader.onerror = () => {
+            alert('Failed to read image file.');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async handleSaveChanges() {
+        this.saveChangesBtn.disabled = true;
+        this.saveChangesBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+        const updatedData = {
+            firstName: document.getElementById('editFirstName').value,
+            lastName: document.getElementById('editLastName').value,
+            middleName: document.getElementById('editMiddleName').value,
+            phone: document.getElementById('editPhone').value,
+            address: document.getElementById('editAddress').value,
+            bio: document.getElementById('editBio').value,
+        };
+
+        if (this.profileImageBase64) {
+            updatedData.profile_image = this.profileImageBase64;
+        }
+
+        try {
+            const token = AuthService.getToken();
+            const response = await fetch(`http://localhost:3000/api/auth/profile/staff/${this.user._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || 'Failed to save changes.');
+
+            // The backend should return the updated user object
+            const updatedUser = result.data;
+
+            // Update localStorage
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+            this.user = updatedUser; // Update the instance's user object
+
+            alert('Profile updated successfully!');
+            this.populateProfileData();
+            this.toggleEditMode(false);
+
+            // Dispatch event to update navbar
+            window.dispatchEvent(new CustomEvent('userUpdated'));
+
+        } catch (error) {
+            console.error('Save failed:', error);
+            alert(error.message);
+        } finally {
+            this.saveChangesBtn.disabled = false;
+            this.saveChangesBtn.textContent = 'Save Changes';
+            this.profileImageBase64 = null; // Reset after save attempt
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => new StaffProfile());

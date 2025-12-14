@@ -49,7 +49,7 @@ class StaffRepository {
             if (updateData.phone) updateFields.phone = updateData.phone;
             if (updateData.address) updateFields.address = updateData.address;
             if (updateData.bio) updateFields.bio = updateData.bio;
-            if (updateData.profilePic) updateFields.profilePic = updateData.profilePic;
+            if (updateData.profile_image) updateFields.profile_image = updateData.profile_image;
 
             return await Staff.findByIdAndUpdate(id, updateFields, { new: true });
         } catch (error) {

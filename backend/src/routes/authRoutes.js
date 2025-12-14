@@ -3,6 +3,7 @@ const authController = require('../controller/authController');
 const dashboardController = require('../controller/dashboardController');
 const adopterController = require('../controller/adopterController');
 const volunteerController = require('../controller/volunteerController');
+const staffController = require('../controller/staffController');
 
 const router = express.Router();
 
@@ -30,5 +31,8 @@ router.put('/profile/adopter/:adopterId', adopterController.updateProfile);
 
 // Volunteer Profile Update Route
 router.put('/profile/volunteer/:volunteerId', volunteerController.updateProfile);
+
+// Staff Profile Update Route
+router.put('/profile/staff/:staffId', staffController.updateProfile);
 
 module.exports = router;

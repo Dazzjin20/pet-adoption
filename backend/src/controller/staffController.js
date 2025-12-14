@@ -69,7 +69,8 @@ class StaffController {
         phone: req.body.phone,
         address: req.body.address,
         bio: req.body.bio,
-        profilePic: req.body.profilePic
+        // Use profile_image to be consistent with the model
+        profile_image: req.body.profile_image
       };
       const updated = await staffRepository.updateById(staffId, updateData);
 
@@ -77,18 +78,22 @@ class StaffController {
         return res.status(404).json({ message: 'Staff not found' });
       }
 
-      // Format response
+      // Format response to match what the frontend expects
       const profileData = {
         _id: updated._id,
-        firstName: updated.first_name || '',
-        middleName: updated.middle_name || '',
-        lastName: updated.last_name || '',
+        first_name: updated.first_name || '',
+        middle_name: updated.middle_name || '',
+        last_name: updated.last_name || '',
         email: updated.email || '',
         phone: updated.phone || '',
         address: updated.address || '',
         bio: updated.bio || '',
-        profilePic: updated.profilePic || '/frontend/assets/image/photo/BoyIcon.jpg',
-        createdAt: updated.createdAt
+        profile_image: updated.profile_image || '/frontend/assets/image/photo/BoyIcon.jpg',
+        role: updated.role,
+        created_at: updated.created_at,
+        // Add camelCase for frontend convenience if needed, but sticking to snake_case is fine
+        firstName: updated.first_name,
+        lastName: updated.last_name,
       };
 
       return res.json({ 

@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+function populateNavbar() {
+     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const body = document.body;
 
     // Determine the required role from a data attribute on the body tag
@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const navbarUserRole = document.getElementById('navbarUserRole');
         const dropdownUserName = document.getElementById('dropdownUserName');
         const dropdownUserRole = document.getElementById('dropdownUserRole');
-        const profileImage = document.querySelector('.profile-image'); // A generic class for profile pics
+        // Select all possible profile images in navbars
+        const profileImages = document.querySelectorAll('.profile-image, .staff-profile-img'); 
 
         if (navbarUserName) navbarUserName.textContent = userFullName;
         if (navbarUserRole) navbarUserRole.textContent = userRole;
@@ -42,9 +43,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dropdownUserRole) dropdownUserRole.textContent = userRole;
 
         // Update profile picture if element exists
-        if (profileImage) {
-            profileImage.src = currentUser.profile_image || '/frontend/assets/image/photo/BoyIcon.jpg';
-            profileImage.onerror = () => { profileImage.src = '/frontend/assets/image/photo/BoyIcon.jpg'; };
-        } 
+        if (profileImages.length > 0) {
+            const imageUrl = currentUser.profile_image || '/frontend/assets/image/photo/BoyIcon.jpg';
+            profileImages.forEach(img => {
+                img.src = imageUrl;
+                img.onerror = () => { img.src = '/frontend/assets/image/photo/BoyIcon.jpg'; };
+            });
+        }
     }
-});
+}
+
+document.addEventListener('DOMContentLoaded', populateNavbar);
+
+// Listen for a custom event to re-populate the navbar after a profile update
+window.addEventListener('userUpdated', populateNavbar);
