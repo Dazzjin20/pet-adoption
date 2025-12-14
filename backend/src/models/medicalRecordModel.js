@@ -6,6 +6,10 @@ const medicalRecordSchema = new mongoose.Schema({
     required: true,
     index: true
   },
+  pet_name:{
+    type: String,
+    default: ''
+  },
   recordType: {
     type: String,
     enum: ['Vaccination', 'Checkup', 'Surgery', 'Treatment'],

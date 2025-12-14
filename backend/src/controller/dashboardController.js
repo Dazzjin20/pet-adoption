@@ -104,7 +104,8 @@ exports.getStaffDashboardStats = async (req, res) => {
             const petName = rec.pet_id ? rec.pet_id.pet_name : 'an unknown pet';
             recentActivities.push({
                 type: 'medical_record',
-                message: `${rec.recordType} record added for ${petName}`,
+                message: `${rec.description || 'Medical record'} added for ${petname}`,
+                message: `${rec.description || 'Medical record'} added for ${petName}`,
                 date: rec.date
             });
         });
