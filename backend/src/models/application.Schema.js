@@ -13,9 +13,8 @@ const applicationSchema = new mongoose.Schema({
     adopter_first_name: { type: String, required: true },
     adopter_last_name: { type: String, required: true },
     adopter_contact_no: { type: String }, 
-
     // Application specific fields
-    message: { type: String }, // The message from the adopter (maps to 'notes' in old repo)
+    message: { type: String }, 
     status: { type: String, enum: ['Pending', 'Approved', 'Rejected', 'Interview Scheduled', 'Adopted'], default: 'Pending' },
     date_submitted: { type: Date, default: Date.now },
     last_update: { type: Date, default: Date.now },

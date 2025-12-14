@@ -1,4 +1,5 @@
 const medicalRecordRepository = require('../repositories/medicalRecordRepository');
+const petRepository = require('../repositories/pet.repository');
 
 class MedicalRecordController {
   async create(req, res) {
@@ -11,8 +12,17 @@ class MedicalRecordController {
         });
       }
 
+      // Fetch the pet to get its name
+      const pet = await petRepository.findById(pet_id);
+      if (!pet) {
+        return res.status(404).json({
+          message: 'Pet not found for the given pet_id'
+        });
+      }
+
       const medicalData = {
         pet_id,
+        pet_name: pet.pet_name, 
         recordType,
         date: new Date(date),
         description: description || '',

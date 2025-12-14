@@ -33,12 +33,13 @@ async function loadPetDetails(id) {
 }
 
 function populatePetDetails(pet) {
-    // Header
-    document.getElementById('petNameHeader').textContent = pet.pet_name;
-    document.title = `${pet.pet_name} - Pet Profile`; // Update page title
-    document.getElementById('petSubHeader').textContent = `${pet.age || 'N/A'} • ${pet.sex || 'N/A'}`;
+    // Header - Ensure elements exist before setting content
+    const petNameHeader = document.getElementById('petNameHeader');
+    if (petNameHeader) petNameHeader.textContent = pet.pet_name;
+    document.title = `${pet.pet_name || 'Pet'} - Pet Profile`; // Update page title
 
-    // Header Tags
+    const petSubHeader = document.getElementById('petSubHeader');
+    if (petSubHeader) petSubHeader.textContent = `${pet.age || 'N/A'} • ${pet.sex || 'N/A'}`;
     const tagsHeader = document.getElementById('petTagsHeader');
     tagsHeader.innerHTML = ''; // Clear loading state
     if (pet.status) {

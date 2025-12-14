@@ -53,10 +53,6 @@ exports.getAdopterDashboardStats = async (req, res) => {
         res.status(500).json({ message: 'Failed to get dashboard stats.', error: error.message });
     }
 };
-
-/**
- * Gathers and returns statistics and recent activities for the staff dashboard.
- */
 exports.getStaffDashboardStats = async (req, res) => {
     try {
         const oneMonthAgo = new Date();
@@ -73,7 +69,6 @@ exports.getStaffDashboardStats = async (req, res) => {
         });
         const urgentCare = await Pet.countDocuments({ status: 'medical' });
 
-        // --- RECENT ACTIVITIES (ALERTS) ---
         const recentApplications = await Application.find()
             .sort({ date_submitted: -1 })
             .limit(3)
@@ -82,14 +77,13 @@ exports.getStaffDashboardStats = async (req, res) => {
 
         const recentMedicalRecords = await MedicalRecord.find()
             .sort({ date: -1 })
-            .limit(2)
-            .populate('pet_id', 'pet_name');
+            .limit(2);
 
         let recentActivities = [];
 
         recentApplications.forEach(app => {
             // Defensive check: Ensure adopter and pet are not null
-            const adopterName = app.adopter ? `${app.adopter.first_name} ${app.adopter.last_name}`.trim() : 'an unknown adopter';
+            const adopterName = app.adopter ? `${app.adopter.first_name || ''} ${app.adopter.last_name || ''}`.trim() : 'an unknown adopter';
             const petName = app.pet ? app.pet.pet_name : 'an unknown pet';
 
             recentActivities.push({
@@ -101,10 +95,9 @@ exports.getStaffDashboardStats = async (req, res) => {
 
         recentMedicalRecords.forEach(rec => {
             // Defensive check for pet
-            const petName = rec.pet_id ? rec.pet_id.pet_name : 'an unknown pet';
+            const petName = rec.pet_name || 'an unknown pet';
             recentActivities.push({
                 type: 'medical_record',
-                message: `${rec.description || 'Medical record'} added for ${petname}`,
                 message: `${rec.description || 'Medical record'} added for ${petName}`,
                 date: rec.date
             });
