@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const createTaskForm = document.getElementById('createTaskForm');
   const saveTaskBtn = document.getElementById('saveTaskBtn');
-  const tasksContainer = document.querySelector('.col-lg-8 .staff-card-container');
-  const availableVolunteersContainer = document.querySelector('.col-lg-4 .staff-card-container:last-of-type');
+  const tasksContainer = document.querySelector('.staff-card-container');
   const createTaskModalEl = document.getElementById('createTaskModal');
   const createTaskModal = new bootstrap.Modal(createTaskModalEl);
   const assignVolunteerModalEl = document.getElementById('assignVolunteerModal');
@@ -142,38 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const fetchAndDisplayAvailableVolunteers = async () => {
-    try {
-        const response = await fetch(`${API_URL}/volunteers/available`);
-        if (!response.ok) throw new Error('Failed to fetch volunteers');
-        const volunteers = await response.json();
-
-        // Clear existing volunteers list
-        availableVolunteersContainer.innerHTML = '<h3 class="fw-bold mb-3">Available Volunteers</h3>';
-
-        if (volunteers.length === 0) {
-            availableVolunteersContainer.innerHTML += '<p class="text-muted">No volunteers currently available.</p>';
-            return;
-        }
-
-        volunteers.forEach(v => {
-            const volunteerHTML = `
-              <div class="d-flex align-items-center mb-3">
-                <img src="https://ui-avatars.com/api/?name=${v.name.replace(' ', '+')}&background=27ae60&color=fff" alt="${v.name}" class="volunteer-avatar me-3">
-                <div class="flex-grow-1">
-                  <div class="fw-medium">${v.name}</div>
-                  <div class="text-muted small">Available now</div>
-                </div>
-                <button class="btn btn-sm btn-outline-primary quick-assign-btn" data-volunteer-id="${v._id}" data-volunteer-name="${v.name}">Assign</button>
-              </div>`;
-            availableVolunteersContainer.insertAdjacentHTML('beforeend', volunteerHTML);
-        });
-    } catch (error) {
-        console.error('Error fetching volunteers:', error);
-        availableVolunteersContainer.innerHTML = '<h3 class="fw-bold mb-3">Available Volunteers</h3><p class="text-danger">Could not load volunteers.</p>';
-    }
-  };
-
   const handleAssignTask = async (taskId, volunteerId) => {
     try {
       const response = await fetch(`${API_URL}/tasks/${taskId}/assign`, {
@@ -244,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
     tasksContainer.querySelectorAll('.task-card').forEach(card => card.remove());
 
     fetchAndDisplayTasks();
-    fetchAndDisplayAvailableVolunteers();
   };
 
   initializePage();

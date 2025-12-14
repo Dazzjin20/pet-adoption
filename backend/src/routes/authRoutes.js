@@ -29,9 +29,6 @@ router.get('/dashboard/staff', dashboardController.getStaffDashboardStats);
 // Adopter Profile Update Route
 router.put('/profile/adopter/:adopterId', adopterController.updateProfile);
 
-// Volunteer Profile Update Route
-router.put('/profile/volunteer/:volunteerId', volunteerController.updateProfile);
-
 // Staff Profile Update Route
 router.put('/profile/staff/:staffId', staffController.updateProfile);
 
