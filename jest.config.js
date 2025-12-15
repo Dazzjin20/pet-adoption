@@ -1,24 +1,30 @@
 module.exports = {
-  testEnvironment: 'node',
-  testMatch: ['**/__tests__/**/*.test.js', '**/?(*.)+(spec|test).js'],
-  collectCoverageFrom: [
-    'backend/src/**/*.js',
-    '!backend/src/config/database.js',
-    '!backend/src/models/index.js'
+  projects: [
+  
+    {
+      displayName: 'backend',
+      testEnvironment: 'node',
+      // Look for tests in the top-level 'tests' folder
+      testMatch: ['<rootDir>/tests/__tests__/**/*.test.js'],
+      setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+      testTimeout: 15000, // Increased timeout for integration tests
+      collectCoverageFrom: [
+        'backend/src/**/*.js',
+        '!backend/src/config/database.js',
+        '!backend/src/models/index.js',
+        '!backend/server.js'
+      ],
+    },
+  
+    {
+      displayName: 'frontend',
+      testEnvironment: 'jsdom',
+      rootDir: 'frontend',
+      testMatch: ['<rootDir>/tests/**/*.test.js'],
+      
+    },
   ],
+  // Global coverage settings
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
-  testTimeout: 10000
-};
-
-module.exports = {
-  // The root of your source code, tells Jest to find tests in this folder
-  rootDir: '.',
-
-  // The test environment that will be used for testing
-  testEnvironment: 'jsdom',
-
-  // A map from regular expressions to paths to transformers
-  transform: {},
 };

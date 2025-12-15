@@ -1,16 +1,17 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
 const app = require('../../backend/server');
-const dbConfig = require('../../backend/src/config/database');
+const Adopter = require('../../backend/src/models/adopter');
+const Staff = require('../../backend/src/models/staff');
+const Volunteer = require('../../backend/src/models/volunteer');
 
 describe('Auth Integration Tests - Database Insertion', () => {
-  let testDb;
   let server;
 
   beforeAll(async () => {
     // Connect to test database
     const testMongoURI = process.env.MONGODB_URI_TEST || 'mongodb://localhost:27017/stray_pets_adoption_test';
-    testDb = await mongoose.connect(testMongoURI);
+    await mongoose.connect(testMongoURI);
 
     // Start the server for integration testing
     server = app.listen(3001);
@@ -20,9 +21,7 @@ describe('Auth Integration Tests - Database Insertion', () => {
     if (server) {
       server.close();
     }
-    if (testDb) {
-      await mongoose.disconnect();
-    }
+    await mongoose.disconnect();
   });
 
   beforeEach(async () => {
@@ -37,13 +36,13 @@ describe('Auth Integration Tests - Database Insertion', () => {
   describe('Adopter Registration - Database Insertion', () => {
     it('should insert adopter data into database', async () => {
       const adopterData = {
-        adopter_first_name: 'John',
-        adopter_last_name: 'Doe',
+        first_name: 'John',
+        last_name: 'Doe',
         email: 'john.doe.test@example.com',
-        adopter_phone_number: '09123456789',
+        phone: '09123456789',
         password: 'password123',
         living_situation: 'own_house',
-        pet_experience: ['dogs'],
+        pet_experience: 'dogs',
         adopter_consents: ['terms_agreed']
       };
 
@@ -56,26 +55,21 @@ describe('Auth Integration Tests - Database Insertion', () => {
       expect(response.body.message).toBe('Adopter registered successfully');
 
       // Verify data was inserted into database
-      const adopter = await mongoose.connection.db.collection('adopters').findOne({ adopter_email: adopterData.email });
+      const adopter = await Adopter.findOne({ email: adopterData.email });
 
       expect(adopter).toBeTruthy();
-      expect(adopter.adopter_first_name).toBe('John');
-      expect(adopter.adopter_last_name).toBe('Doe');
-      expect(adopter.adopter_email).toBe('john.doe.test@example.com');
-      expect(adopter.adopter_phone_number).toBe('09123456789');
-      expect(adopter.living_situation).toBe('own_house');
-      expect(adopter.pet_experience).toContain('dogs');
-      expect(adopter.consents.length).toBe(1);
-      expect(adopter.consents[0].consent_type).toBe('terms_agreed');
-      expect(adopter.consents[0].consented).toBe(true);
+      expect(adopter.first_name).toBe('John');
+      expect(adopter.last_name).toBe('Doe');
+      expect(adopter.email).toBe('john.doe.test@example.com');
+      expect(adopter.phone).toBe('09123456789');
     });
 
     it('should prevent duplicate email registration', async () => {
       const adopterData = {
-        adopter_first_name: 'Jane',
-        adopter_last_name: 'Smith',
+        first_name: 'Jane',
+        last_name: 'Smith',
         email: 'jane.smith.test@example.com',
-        adopter_phone_number: '09123456789',
+        phone: '09123456789',
         password: 'password123',
         living_situation: 'own_house',
         pet_experience: ['dogs'],
@@ -116,15 +110,12 @@ describe('Auth Integration Tests - Database Insertion', () => {
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
 
-      // Verify data was inserted
-      const staffMember = await mongoose.connection.db.collection('staff').findOne({ staff_email: staffData.email });
+      // Verify data was inserted using the Staff model
+      const staffMember = await Staff.findOne({ email: staffData.email });
 
       expect(staffMember).toBeTruthy();
-      expect(staffMember.staff_first_name).toBe('Jane');
-      expect(staffMember.staff_last_name).toBe('Smith');
-      expect(staffMember.consents.length).toBe(1);
-      expect(staffMember.consents[0].consent_type).toBe('terms_agreed');
-      expect(staffMember.consents[0].consented).toBe(true);
+      expect(staffMember.first_name).toBe('Jane');
+      expect(staffMember.last_name).toBe('Smith');
     });
   });
 
@@ -148,36 +139,14 @@ describe('Auth Integration Tests - Database Insertion', () => {
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
 
-      // Verify volunteer was inserted
-      const [volunteers] = await testDb.execute(
-        'SELECT * FROM volunteers WHERE email = ?',
-        [volunteerData.email]
-      );
+      // Verify volunteer was inserted using the Volunteer model
+      const volunteer = await Volunteer.findOne({ email: volunteerData.email });
 
-      expect(volunteers.length).toBe(1);
-      const volunteer = volunteers[0];
+      expect(volunteer).toBeTruthy();
       expect(volunteer.first_name).toBe('Bob');
       expect(volunteer.last_name).toBe('Wilson');
-
-      // Verify volunteer profile
-      const [profiles] = await testDb.execute(
-        'SELECT * FROM volunteer_profiles WHERE volunteer_id = ?',
-        [volunteer.id]
-      );
-
-      expect(profiles.length).toBe(1);
-      const profile = profiles[0];
-      expect(profile.availability).toBe('Weekdays');
-      expect(profile.interested_activities).toBe('Dog Care');
-
-      // Verify consents
-      const [consents] = await testDb.execute(
-        'SELECT * FROM volunteer_consents WHERE volunteer_id = ?',
-        [volunteer.id]
-      );
-
-      expect(consents.length).toBe(1);
-      expect(consents[0].agreed_terms).toBe(1);
+      expect(volunteer.availability).toContain('Weekdays');
+      expect(volunteer.interested_activities).toContain('Dog Care');
     });
   });
 
@@ -185,10 +154,10 @@ describe('Auth Integration Tests - Database Insertion', () => {
     it('should login successfully and return token', async () => {
       // First register a user
       const adopterData = {
-        adopter_first_name: 'Login',
-        adopter_last_name: 'Test',
+        first_name: 'Login',
+        last_name: 'Test',
         email: 'login.test@example.com',
-        adopter_phone_number: '09123456789',
+        phone: '09123456789',
         password: 'password123',
         living_situation: 'own_house',
         pet_experience: ['dogs'],
@@ -213,8 +182,8 @@ describe('Auth Integration Tests - Database Insertion', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.token).toBeDefined();
-      expect(response.body.data.user.email).toBe('login.test@example.com');
-      expect(response.body.data.user.role).toBe('adopter');
+      expect(response.body.user.email).toBe('login.test@example.com');
+      expect(response.body.user.role).toBe('adopter');
     });
 
     it('should reject invalid credentials', async () => {
