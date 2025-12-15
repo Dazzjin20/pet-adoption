@@ -81,7 +81,7 @@ function createPetCard(pet) {
  * @param {string} status The status of the pet.
  * @returns {string} HTML string for the badge.
  */
-function getStatusBadge(status) {
+export function getStatusBadge(status) {
     const s = (status || '').toLowerCase();
     switch (s) {
         case 'available':
@@ -210,7 +210,7 @@ function setupFilterListeners() {
 /**
  * Helper function to escape quotes in strings for HTML attributes.
  */
-function escapeQuotes(str) {
+export function escapeQuotes(str) {
     if (!str) return '';
     return str
         .replace(/&/g, '&amp;')
