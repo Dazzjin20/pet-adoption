@@ -7,6 +7,7 @@ const taskRoutes = require('./routes/taskRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const authRoutes = require('./routes/authRoutes'); // Import auth routes
 const volunteerRoutes = require('./routes/volunteerRoutes'); // Import volunteer routes
+const staffTaskRoutes = require('./routes/staffTaskRoutes'); // Import staff task routes
 const activityLogRoutes = require('./routes/activityLogRoutes');
 const medicalRecordRoutes = require('./routes/medicalRecordRoutes');
 const staffRoutes = require('./routes/staffRoutes');
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json({ limit: '12mb' }));
 // Also support URL-encoded form bodies at larger size
 app.use(express.urlencoded({ limit: '12mb', extended: true }));
+
 
 // --- API ROUTES ---
 
@@ -34,6 +36,9 @@ app.use('/api/applications', applicationRoutes);
 
 // Mount volunteer routes
 app.use('/api/volunteers', volunteerRoutes);
+
+// Mount staff task routes
+app.use('/api/staff-tasks', staffTaskRoutes);
 
 // Mount activity log routes
 app.use('/api/activitylogs', activityLogRoutes);

@@ -3,31 +3,39 @@
       currentDate: new Date(),
       selectedDate: new Date(),
       
-      // Sample task data for demonstration
-      tasksByDate: {
-        // Tasks for today
-        [new Date().toDateString()]: [
-          { petName: "Joy", taskTitle: "Daily Exercise Routine", assignedTo: "Alex Morgan", time: "2:00 PM" },
-          { petName: "Fear", taskTitle: "Behavioral Assessment", assignedTo: "Jamie Smith", time: "3:30 PM" }
-        ],
-        // Tasks for tomorrow
-        [new Date(Date.now() + 86400000).toDateString()]: [
-          { petName: "Sadness", taskTitle: "Vaccination", assignedTo: "Dasha Taran", time: "10:00 AM" }
-        ],
-        // Tasks for day after tomorrow
-        [new Date(Date.now() + 172800000).toDateString()]: [
-          { petName: "Anger", taskTitle: "Physical Therapy Session", assignedTo: "Kenji Webbo", time: "10:00 AM" }
-        ],
-        // Additional tasks for various dates
-        "Sat Jan 18 2025": [
-          { petName: "Disgust", taskTitle: "Grooming Session", assignedTo: "Taylor Brown", time: "11:00 AM" },
-          { petName: "Surprise", taskTitle: "Socialization Training", assignedTo: "Alex Morgan", time: "2:00 PM" }
-        ],
-        "Mon Jan 20 2025": [
-          { petName: "Sadness", taskTitle: "Follow-up Checkup", assignedTo: "Dasha Taran", time: "9:00 AM" },
-          { petName: "Joy", taskTitle: "Advanced Training", assignedTo: "Alex Morgan", time: "1:00 PM" },
-          { petName: "Fear", taskTitle: "Behavioral Follow-up", assignedTo: "Jamie Smith", time: "3:00 PM" }
-        ]
+      // This will now be populated from the API
+      tasksByDate: {},
+
+      // --- NEW: Fetch and process tasks from the backend ---
+      async fetchAndProcessTasks() {
+        try {
+          const response = await fetch('http://localhost:3000/api/tasks');
+          if (!response.ok) throw new Error('Failed to fetch tasks');
+          const result = await response.json();
+          const tasks = result.tasks || []; // Correctly access the tasks array from the response object
+          
+          // Reset tasksByDate
+          this.tasksByDate = {};
+
+          // Group tasks by date
+          tasks.forEach(task => {
+            if (task.scheduled_date) {
+              const date = new Date(task.scheduled_date);
+              // Adjust for timezone to prevent off-by-one day errors
+              const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+              const adjustedDate = new Date(date.getTime() + userTimezoneOffset);
+              const dateString = adjustedDate.toDateString();
+
+              if (!this.tasksByDate[dateString]) {
+                this.tasksByDate[dateString] = [];
+              }
+              this.tasksByDate[dateString].push(task);
+            }
+          });
+        } catch (error) {
+          console.error("Error fetching tasks for calendar:", error);
+          this.tasksByDate = {}; // Clear on error
+        }
       },
       
       // Get tasks for a specific date
@@ -76,11 +84,140 @@
       }
     };
 
+    // --- NEW: Functions to render the Overview Tab ---
+    async function renderOverviewTab() {
+      const recentCareContainer = document.querySelector('#overviewView .recent-care-card');
+      const allCareContainer = document.querySelector('#overviewView .all-care-card');
+
+      if (!recentCareContainer || !allCareContainer) return;
+
+      // Show loading state
+      recentCareContainer.innerHTML = '<p>Loading recent tasks...</p>';
+      allCareContainer.innerHTML = '<p>Loading all tasks...</p>';
+
+      try {
+        const response = await fetch('http://localhost:3000/api/tasks');
+        if (!response.ok) throw new Error('Failed to fetch tasks');
+        const result = await response.json();
+        const tasks = result.tasks || [];
+
+        // Sort tasks by creation date, most recent first
+        tasks.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        // Render recent tasks (e.g., top 3)
+        const recentTasks = tasks.slice(0, 3);
+        recentCareContainer.innerHTML = recentTasks.length > 0 
+          ? recentTasks.map(createOverviewTaskCard).join('') 
+          : '<p class="text-muted">No recent care activities found.</p>';
+
+        // Render all tasks
+        allCareContainer.innerHTML = tasks.length > 0 
+          ? tasks.map(createOverviewTaskCard).join('') 
+          : '<p class="text-muted">No care activities found.</p>';
+
+      } catch (error) {
+        console.error("Error rendering overview tab:", error);
+        recentCareContainer.innerHTML = '<p class="text-danger">Could not load recent tasks.</p>';
+        allCareContainer.innerHTML = '<p class="text-danger">Could not load all tasks.</p>';
+      }
+    }
+
+    /**
+     * Creates the HTML for a single task card for the Overview tab.
+     */
+    function createOverviewTaskCard(task) {
+      const statusClasses = { 'Pending': 'status-pending', 'In Progress': 'status-in-progress', 'Completed': 'status-completed' };
+      const status = task.status || 'Pending';
+
+      return `
+        <article class="care-activity-item">
+          <div class="activity-header">
+            <div class="pet-name">${task.pet_id?.pet_name || 'N/A'}</div>
+            <span class="status-badge ${statusClasses[status]}">${status}</span>
+          </div>
+          <div class="activity-details">
+            <div class="activity-title">${task.title}</div>
+            <div class="activity-meta">
+              <div class="activity-assigned">
+                <i class="fas fa-user-circle"></i>
+                Created by ${task.created_by?.first_name || 'Staff'}
+              </div>
+              <div class="activity-time">
+                <i class="far fa-calendar"></i>
+                ${new Date(task.scheduled_date).toLocaleDateString()}
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    // --- NEW: Functions to render dynamic content for tabs ---
+
+    /**
+     * Fetches all tasks and renders them in the "Tasks" tab.
+     */
+    async function renderTasksTab() {
+      const pendingSection = document.querySelector('#tasksView .task-section[data-status="pending"] .all-care-card');
+      const inProgressSection = document.querySelector('#tasksView .task-section[data-status="in-progress"] .all-care-card');
+      const completedSection = document.querySelector('#tasksView .task-section[data-status="completed"] .all-care-card');
+
+      if (!pendingSection || !inProgressSection || !completedSection) return;
+
+      // Show loading state
+      pendingSection.innerHTML = '<p>Loading pending tasks...</p>';
+      inProgressSection.innerHTML = '<p>Loading in-progress tasks...</p>';
+      completedSection.innerHTML = '<p>Loading completed tasks...</p>';
+
+      try {
+        const response = await fetch('http://localhost:3000/api/tasks');
+        if (!response.ok) throw new Error('Failed to fetch tasks');
+        const result = await response.json();
+        const tasks = result.tasks || [];
+
+        const pendingTasks = tasks.filter(t => (t.status || 'pending').toLowerCase() === 'pending');
+        const inProgressTasks = tasks.filter(t => (t.status || '').toLowerCase() === 'in progress');
+        const completedTasks = tasks.filter(t => (t.status || '').toLowerCase() === 'completed');
+
+        pendingSection.innerHTML = pendingTasks.length > 0 ? pendingTasks.map(createTaskCard).join('') : '<p class="text-muted">No pending tasks.</p>';
+        inProgressSection.innerHTML = inProgressTasks.length > 0 ? inProgressTasks.map(createTaskCard).join('') : '<p class="text-muted">No tasks in progress.</p>';
+        completedSection.innerHTML = completedTasks.length > 0 ? completedTasks.map(createTaskCard).join('') : '<p class="text-muted">No completed tasks.</p>';
+
+      } catch (error) {
+        console.error("Error rendering tasks tab:", error);
+        pendingSection.innerHTML = '<p class="text-danger">Could not load tasks.</p>';
+        inProgressSection.innerHTML = '';
+        completedSection.innerHTML = '';
+      }
+    }
+
+    /**
+     * Creates the HTML for a single task card.
+     */
+    function createTaskCard(task) {
+      const priorityClasses = { 'High': 'priority-high', 'Medium': 'priority-medium', 'Low': 'priority-low' };
+      const statusClasses = { 'Pending': 'status-pending', 'In Progress': 'status-in-progress', 'Completed': 'status-completed' };
+      
+      return `
+        <article class="task-item">
+          <div class="task-header">
+            <div class="pet-name-section">
+              <div class="pet-name">${task.pet_id?.pet_name || 'N/A'}</div>
+              <span class="priority-badge ${priorityClasses[task.priority] || 'priority-medium'}">${task.priority}</span>
+            </div>
+          </div>
+          <div class="task-details">
+            <div class="task-title">${task.title}</div>
+          </div>
+          <div class="task-status-section">
+            <span class="status-badge ${statusClasses[task.status] || 'status-pending'}">${task.status || 'Pending'}</span>
+          </div>
+        </article>
+      `;
+    }
+
     // Initialize the page
-    document.addEventListener('DOMContentLoaded', function() {
-      // Set user info in navbar (using your existing auth logic)
-      document.getElementById('navbarUserName').textContent = 'Kenji Webbo';
-      document.getElementById('navbarUserRole').textContent = 'Staff Manager';
+    document.addEventListener('DOMContentLoaded', async function() {
       
       // Tab switching functionality
       const tabs = {
@@ -99,7 +236,7 @@
       };
       
       // Function to switch tabs
-      function switchToTab(tabName) {
+      async function switchToTab(tabName) {
         // Hide all views
         Object.values(tabs).forEach(tab => {
           if (tab.view) tab.view.style.display = 'none';
@@ -114,7 +251,13 @@
         
         // If switching to schedule tab, update the calendar
         if (tabName === 'schedule') {
-          updateCalendar();
+          await updateCalendar();
+        } else if (tabName === 'tasks') {
+          // If switching to tasks tab, render the tasks
+          await renderTasksTab();
+        } else if (tabName === 'overview') {
+          // If switching to overview tab, render its content
+          await renderOverviewTab();
         }
       }
       
@@ -124,136 +267,10 @@
       document.getElementById('scheduleTab').addEventListener('click', () => switchToTab('schedule'));
       
       // ===== OVERVIEW TAB FUNCTIONALITY =====
-      
-      // Overview action buttons
-      const overviewViewButtons = document.querySelectorAll('#overviewView .action-btn-view');
-      overviewViewButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-          const activityItem = this.closest('.care-activity-item');
-          const petName = activityItem.querySelector('.pet-name').textContent;
-          alert(`Viewing details for ${petName}'s care activity`);
-        });
-      });
-      
-      const overviewUpdateButtons = document.querySelectorAll('#overviewView .action-btn-update');
-      overviewUpdateButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-          const activityItem = this.closest('.care-activity-item');
-          const petName = activityItem.querySelector('.pet-name').textContent;
-          const currentStatus = activityItem.querySelector('.status-badge').textContent;
-          
-          // Simple status update simulation
-          if (currentStatus === 'Pending') {
-            activityItem.querySelector('.status-badge').textContent = 'In Progress';
-            activityItem.querySelector('.status-badge').className = 'status-badge status-in-progress';
-            alert(`${petName}'s task is now In Progress`);
-          } else if (currentStatus === 'In Progress') {
-            activityItem.querySelector('.status-badge').textContent = 'Completed';
-            activityItem.querySelector('.status-badge').className = 'status-badge status-completed';
-            this.textContent = 'Log Activity';
-            alert(`${petName}'s task is now Completed`);
-          } else if (currentStatus === 'Completed') {
-            alert(`Logging additional activity for ${petName}`);
-          }
-        });
-      });
+      // Logic is now handled by renderOverviewTab()
       
       // ===== TASKS TAB FUNCTIONALITY =====
-      
-      // Tasks action buttons
-      const tasksViewButtons = document.querySelectorAll('#tasksView .action-btn-view');
-      tasksViewButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-          const taskItem = this.closest('.task-item');
-          const petName = taskItem.querySelector('.pet-name').textContent;
-          const taskTitle = taskItem.querySelector('.task-title').textContent;
-          alert(`Viewing details for:\nPet: ${petName}\nTask: ${taskTitle}`);
-        });
-      });
-      
-      const tasksEditButtons = document.querySelectorAll('#tasksView .action-btn-edit');
-      tasksEditButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-          const taskItem = this.closest('.task-item');
-          const petName = taskItem.querySelector('.pet-name').textContent;
-          const currentStatus = taskItem.querySelector('.status-badge').textContent;
-          
-          if (currentStatus === 'Pending') {
-            taskItem.querySelector('.status-badge').textContent = 'In Progress';
-            taskItem.querySelector('.status-badge').className = 'status-badge status-in-progress';
-            this.textContent = 'Update';
-            alert(`${petName}'s task is now In Progress`);
-          } else if (currentStatus === 'In Progress') {
-            taskItem.querySelector('.status-badge').textContent = 'Completed';
-            taskItem.querySelector('.status-badge').className = 'status-badge status-completed';
-            this.textContent = 'Review';
-            alert(`${petName}'s task is now Completed`);
-          } else if (currentStatus === 'Completed') {
-            alert(`Reviewing completed task for ${petName}`);
-          }
-        });
-      });
-      
-      // Add Task Button functionality
-      document.getElementById('addTaskBtn').addEventListener('click', function() {
-        // Create a new task item
-        const newTaskItem = document.createElement('article');
-        newTaskItem.className = 'task-item';
-        newTaskItem.innerHTML = `
-          <div class="task-header">
-            <div class="pet-name-section">
-              <div class="pet-name">New Pet</div>
-              <span class="priority-badge priority-medium">Medium</span>
-            </div>
-          </div>
-          
-          <div class="task-details">
-            <div class="task-title">New Care Task</div>
-            <div class="task-meta">
-              <div class="task-assigned">
-                <i class="fas fa-user-circle"></i>
-                Assigned to You
-              </div>
-              <div class="task-time">
-                <i class="far fa-calendar"></i>
-                Just now
-              </div>
-            </div>
-          </div>
-          
-          <div class="task-status-section">
-            <span class="status-badge status-pending">Pending</span>
-            <div class="task-actions">
-              <button class="action-btn action-btn-view">View</button>
-              <button class="action-btn action-btn-edit">Edit</button>
-            </div>
-          </div>
-        `;
-        
-        // Add to pending section
-        const pendingSection = document.querySelector('#tasksView .task-section');
-        pendingSection.appendChild(newTaskItem);
-        
-        // Add event listeners to new buttons
-        newTaskItem.querySelector('.action-btn-view').addEventListener('click', function() {
-          alert('Viewing new task details');
-        });
-        
-        newTaskItem.querySelector('.action-btn-edit').addEventListener('click', function() {
-          const taskItem = this.closest('.task-item');
-          const petName = taskItem.querySelector('.pet-name').textContent;
-          const currentStatus = taskItem.querySelector('.status-badge').textContent;
-          
-          if (currentStatus === 'Pending') {
-            taskItem.querySelector('.status-badge').textContent = 'In Progress';
-            taskItem.querySelector('.status-badge').className = 'status-badge status-in-progress';
-            this.textContent = 'Update';
-            alert(`${petName}'s task is now In Progress`);
-          }
-        });
-        
-        alert('New task added successfully!');
-      });
+      // The logic for adding a task is now handled by the modal in staffCareTracking.js
       
       // ===== SCHEDULE TAB FUNCTIONALITY =====
       
@@ -269,7 +286,7 @@
       });
       
       // Update calendar display
-      function updateCalendar() {
+      async function updateCalendar() {
         const weekDates = calendarData.getWeekDates(calendarData.currentDate);
         const today = new Date();
         
@@ -333,10 +350,11 @@
         
         if (tasks.length > 0) {
           tasks.forEach(task => {
-            // Calculate time display
-            let timeDisplay = task.time;
+            // Calculate time display from scheduled_date
+            const taskDate = new Date(task.scheduled_date);
+            let timeDisplay = taskDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
             if (isToday) {
-              timeDisplay = `Today ${task.time}`;
+              timeDisplay = `Today ${timeDisplay}`;
             } else {
               const dayDiff = Math.floor((calendarData.selectedDate - today) / (1000 * 60 * 60 * 24));
               if (dayDiff === 1) {
@@ -344,23 +362,23 @@
               } else if (dayDiff > 1) {
                 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 const dayName = days[calendarData.selectedDate.getDay()];
-                timeDisplay = `${dayName} ${task.time}`;
+                timeDisplay = `${dayName} ${timeDisplay}`;
               }
             }
             
             tasksHTML += `
               <article class="upcoming-task-item">
                 <div class="upcoming-task-header">
-                  <div class="upcoming-pet-name">${task.petName}</div>
+                  <div class="upcoming-pet-name">${task.pet_id?.pet_name || 'N/A'}</div>
                   <div class="upcoming-task-time">${timeDisplay}</div>
                 </div>
                 
                 <div class="upcoming-task-details">
-                  <div class="upcoming-task-title">${task.taskTitle}</div>
+                  <div class="upcoming-task-title">${task.title}</div>
                   <div class="task-meta">
                     <div class="task-assigned">
                       <i class="fas fa-user-circle"></i>
-                      Assigned to ${task.assignedTo}
+                      Created by Staff
                     </div>
                   </div>
                 </div>
@@ -378,6 +396,16 @@
         document.getElementById('upcomingTasksList').innerHTML = tasksHTML;
       }
       
+      // --- NEW: Listen for task updates from other scripts ---
+      window.addEventListener('tasksUpdated', async () => {
+        await calendarData.fetchAndProcessTasks();
+        await updateCalendar();
+        // --- FIX: Refresh the overview and tasks tabs as well ---
+        await renderOverviewTab();
+        await renderTasksTab();
+      });
+
       // Initialize with Overview tab active
-      switchToTab('overview');
+      await calendarData.fetchAndProcessTasks();
+      await switchToTab('overview');
     });

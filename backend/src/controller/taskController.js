@@ -1,5 +1,6 @@
 const taskRepository = require('../repositories/taskRepository');
 const petRepository = require('../repositories/pet.repository');
+const staffRepository = require('../repositories/staffRepository');
 const volunteerRepository = require('../repositories/volunteerRepository');
 
 class TaskController {
@@ -26,9 +27,17 @@ class TaskController {
 
   async create(req, res) {
     try {
+      // Validate that the creator (staff) exists
+      const creator = await staffRepository.findById(req.body.created_by);
+      if (!creator) {
+        return res.status(404).json({ message: 'Creator (staff) not found.' });
+      }
+
       // Validate pet exists
-      const pet = await petRepository.findById(req.body.pet_id);
-      if (!pet) return res.status(404).json({ message: 'Pet not found' });
+      if (req.body.pet_id) {
+        const pet = await petRepository.findById(req.body.pet_id);
+        if (!pet) return res.status(404).json({ message: 'Pet not found for the given pet_id' });
+      }
 
       // Validate volunteer exists if assigned
       if (req.body.assigned_to) {

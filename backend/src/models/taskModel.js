@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const taskSchema = new mongoose.Schema({
   pet_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Pet',
-    required: true
+    ref: 'Pet', // This can be null for manual/staff tasks
+    required: false
   },
   task_type: {
     type: String,
-    enum: ['Medical', 'Cleaning', 'Maintenance', 'Special'],
+    enum: ['Medical', 'Cleaning', 'Maintenance', 'Special', 'One-time', 'Recurring', 'Urgent'],
     required: true
   },
   title: {
@@ -18,6 +18,11 @@ const taskSchema = new mongoose.Schema({
   description: {
     type: String,
     default: ''
+  },
+  category: {
+    type: String,
+    enum: ['Facilities', 'Animal Care', 'Administrative'],
+    required: false // Make it optional for Care Tasks
   },
   assigned_to: {
     type: mongoose.Schema.Types.ObjectId,
@@ -32,6 +37,20 @@ const taskSchema = new mongoose.Schema({
   scheduled_date: {
     type: Date,
     required: true
+  },
+  location: {
+    type: String,
+    required: false // Optional for care tasks, but good to have
+  },
+  estimatedHours: {
+    type: Number,
+    default: 1,
+    required: false
+  },
+  points: {
+    type: Number,
+    default: 25,
+    required: false
   },
   status: {
     type: String,

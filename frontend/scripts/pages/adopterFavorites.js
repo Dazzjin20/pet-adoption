@@ -80,7 +80,6 @@ function createFavoritePetCard(pet) {
                 <p class="text-muted small"><i class="fa-regular fa-clock me-1"></i> Added ${pet.arrival_date || 'N/A'}</p>
                 <div class="d-flex justify-content-between">
                     <a href="adopter-view-pet.html?id=${pet._id}" class="btn btn-outline-primary w-50 me-2">View Details</a>
-                    <button class="btn btn-primary w-50">Apply to Adopt</button>
                 </div>
             </div>
         </article>

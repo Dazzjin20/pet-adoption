@@ -61,15 +61,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (container) container.innerHTML = '';
         
         try {
-            const response = await fetch(`${API_URL}/tasks`);
+            // Fetch from both endpoints simultaneously
+            const [staffTasksResponse, careTasksResponse] = await Promise.all([
+                fetch(`${API_URL}/staff-tasks`),
+                fetch(`${API_URL}/tasks`)
+            ]);
             
-            if (!response.ok) {
+            if (!staffTasksResponse.ok || !careTasksResponse.ok) {
                 throw new Error('Failed to fetch tasks');
             }
             
-            const data = await response.json();
-            allTasks = extractTasks(data);
+            const staffTasksData = await staffTasksResponse.json();
+            const careTasksData = await careTasksResponse.json();
+
+            const staffTasks = extractTasks(staffTasksData);
+            const careTasks = extractTasks(careTasksData);
             
+            // Combine the tasks from both collections
+            allTasks = [...staffTasks, ...careTasks];
+
             // Hide loading
             if (loadingEl) loadingEl.style.display = 'none';
             
@@ -109,14 +119,20 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             // Get ALL tasks and filter completed ones
-            const response = await fetch(`${API_URL}/tasks`);
+            const [staffTasksResponse, careTasksResponse] = await Promise.all([
+                fetch(`${API_URL}/staff-tasks`),
+                fetch(`${API_URL}/tasks`)
+            ]);
             
-            if (response.ok) {
-                const allData = await response.json();
-                const allTasksData = extractTasks(allData);
+            if (staffTasksResponse.ok && careTasksResponse.ok) {
+                const staffTasksData = await staffTasksResponse.json();
+                const careTasksData = await careTasksResponse.json();
+
+                const allStaffTasks = extractTasks(staffTasksData);
+                const allCareTasks = extractTasks(careTasksData);
                 
                 // Filter completed tasks
-                completedTasks = allTasksData.filter(task => {
+                completedTasks = [...allStaffTasks, ...allCareTasks].filter(task => {
                     const status = (task.status || '').toLowerCase();
                     return status === 'completed' || status === 'done' || status === 'finished';
                 });
@@ -133,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const completedCard = createCompletedTaskCard(task);
                     container.appendChild(completedCard);
                 });
-            } else {
+            } else {    
                 throw new Error('Failed to fetch tasks');
             }
             
@@ -564,8 +580,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log('Updating task with:', updateData);
             
-            // Send update to your existing /api/tasks/:id endpoint
-            const response = await fetch(`${API_URL}/tasks/${taskId}`, {
+            // Determine the correct endpoint based on whether the task has a pet_id
+            const endpoint = task.pet_id ? `${API_URL}/tasks/${taskId}` : `${API_URL}/staff-tasks/${taskId}`;
+
+            // Send update to the correct endpoint
+            const response = await fetch(endpoint, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updateData)

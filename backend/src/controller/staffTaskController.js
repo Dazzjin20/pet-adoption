@@ -4,7 +4,7 @@ const volunteerRepository = require('../repositories/volunteerRepository');
 class StaffTaskController {
   async create(req, res) {
     try {
-      const { title, description, type, category, priority, estimatedHours, points, dueDate, location } = req.body;
+      const { title, description, type, category, priority, estimatedHours, points, dueDate, location, created_by } = req.body;
 
       if (!title || !category || !dueDate || !location) {
         return res.status(400).json({
@@ -22,7 +22,8 @@ class StaffTaskController {
         points: points || 25,
         dueDate,
         location,
-        status: 'Unassigned'
+        status: 'Unassigned',
+        created_by: created_by // Add the creator's ID
       };
 
       const created = await staffTaskRepository.create(taskData);

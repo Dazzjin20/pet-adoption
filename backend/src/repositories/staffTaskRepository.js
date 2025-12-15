@@ -7,7 +7,10 @@ class StaffTaskRepository {
   }
 
   async findAll() {
-    return await StaffTask.find().populate('assignedTo').sort({ createdAt: -1 });
+    return await StaffTask.find()
+      .populate('assignedTo', 'first_name last_name')
+      .populate('created_by', 'first_name last_name')
+      .sort({ createdAt: -1 });
   }
 
   async findById(id) {

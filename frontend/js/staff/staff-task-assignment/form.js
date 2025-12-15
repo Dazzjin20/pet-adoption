@@ -36,19 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- UI Rendering ---
   const renderTaskCard = (task) => {
     const isAssigned = task.status !== 'Unassigned' && task.assignedTo;
-    const assignedToHTML = isAssigned
+    const assignedToHTML = isAssigned && task.assignedTo.first_name && task.assignedTo.last_name
       ? `
         <div class="d-flex align-items-center me-3">
-            <img src="https://ui-avatars.com/api/?name=${task.assignedTo.name.replace(' ', '+')}&background=667eea&color=fff" alt="${task.assignedTo.name}" class="volunteer-avatar me-2">
-            <span>${task.assignedTo.name}</span>
+            <img src="https://ui-avatars.com/api/?name=${task.assignedTo.first_name}+${task.assignedTo.last_name}&background=667eea&color=fff" alt="${task.assignedTo.first_name}" class="volunteer-avatar me-2">
+            <span>${task.assignedTo.first_name} ${task.assignedTo.last_name}</span>
         </div>
         <span class="status-badge status-assigned">Assigned</span>
       `
       : `
-        <span class="status-badge status-unassigned me-3">Not assigned yet</span>
-        <button class="assign-volunteer-btn" data-bs-toggle="modal" data-bs-target="#assignVolunteerModal" data-task-id="${task._id}">
-            Assign Volunteer
-        </button>
+       
       `;
 
     return `
@@ -81,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- API Calls ---
   const fetchAndDisplayTasks = async () => {
     try {
-      const response = await fetch(`${API_URL}/tasks`);
+      const response = await fetch(`${API_URL}/staff-tasks`); // Corrected API endpoint
       if (!response.ok) throw new Error('Failed to fetch tasks');
       const tasksResp = await response.json();
 
@@ -105,12 +102,19 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || !currentUser._id) {
+      alert('Error: Could not identify the current user. Please log in again.');
+      return;
+    }
+
     const taskData = {
       title: document.getElementById('taskTitle').value,
       description: document.getElementById('taskDescription').value,
       type: document.getElementById('taskType').value,
       category: document.getElementById('taskCategory').value,
       priority: document.getElementById('taskPriority').value,
+      created_by: currentUser._id, // Ensure created_by is sent
       estimatedHours: parseFloat(document.getElementById('taskEstimatedHours').value),
       points: parseInt(document.getElementById('taskPoints').value),
       dueDate: document.getElementById('taskDueDate').value,
@@ -119,8 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      // POST directly to /api/tasks to save in the tasks collection
-      const response = await fetch(`${API_URL}/tasks`, {
+      const response = await fetch(`${API_URL}/staff-tasks`, { // Corrected API endpoint
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(taskData),
@@ -136,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       createTaskModal.hide();
       alert('Task created successfully!');
     } catch (error) {
-      console.error('Error creating task:', error);
+      console.error('Error creating staff task:', error);
       alert('Failed to create task. Please check the console for details.');
     }
   };
@@ -144,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const handleAssignTask = async (taskId, volunteerId) => {
     try {
       const response = await fetch(`${API_URL}/tasks/${taskId}/assign`, {
-        method: 'PUT',
+        method: 'PUT', // This endpoint is for /api/tasks, not /api/staff-tasks
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ volunteerId }),
       });
@@ -162,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
     } catch (error) {
-      console.error('Error assigning task:', error);
+      console.error('Error assigning staff task:', error);
       alert('There was an error assigning the task.');
     }
   };

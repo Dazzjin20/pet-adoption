@@ -97,109 +97,23 @@
           <h3>Recent Care Activities</h3>
           <p>Latest updates on pet care tasks</p>
           
+        </header>        
+        <!-- Recent tasks will be loaded here by switch-page.js -->
+      </section>
+
+      <!-- All Care Activities Card -->
+      <section class="all-care-card mt-4">
+        <header class="recent-care-header">
+          <h3>All Care Activities</h3>
+          <p>Complete history of all tasks</p>
         </header>
-        
-        <!-- Activity 1: Sadness -->
-        <article class="care-activity-item">
-          <div class="activity-header">
-            <div class="pet-name-section">
-              <div class="pet-name">Sadness</div>
-              <span class="priority-badge priority-high">High</span>
-            </div>
-          </div>
-          
-          <div class="activity-details">
-            <div class="activity-title">Vaccination</div>
-            <div class="activity-meta">
-              <div class="activity-assigned">
-                <i class="fas fa-user-circle"></i>
-                Assigned to Dasha Taran
-              </div>
-              <div class="activity-time">
-                <i class="far fa-calendar"></i>
-                1/20/2025, 10:00 AM
-              </div>
-            </div>
-          </div>
-          
-          <div class="activity-status-section">
-            <span class="status-badge status-pending">Pending</span>
-            <div class="activity-actions">
-              <button class="action-btn action-btn-view">View Details</button>
-              <button class="action-btn action-btn-update">Update Status</button>
-            </div>
-          </div>
-        </article>
-        
-        <!-- Activity 2: Anger -->
-        <article class="care-activity-item">
-          <div class="activity-header">
-            <div class="pet-name-section">
-              <div class="pet-name">Anger</div>
-              <span class="priority-badge priority-medium">Medium</span>
-            </div>
-          </div>
-          
-          <div class="activity-details">
-            <div class="activity-title">Physical Therapy Session</div>
-            <div class="activity-meta">
-              <div class="activity-assigned">
-                <i class="fas fa-user-circle"></i>
-                Assigned to Kenji Webbo
-              </div>
-              <div class="activity-time">
-                <i class="far fa-calendar"></i>
-                1/19/2025, 12:00 AM
-              </div>
-            </div>
-          </div>
-          
-          <div class="activity-status-section">
-            <span class="status-badge status-in-progress">In Progress</span>
-            <div class="activity-actions">
-              <button class="action-btn action-btn-view">View Details</button>
-              <button class="action-btn action-btn-update">Update Status</button>
-            </div>
-          </div>
-        </article>
-        
-        <!-- Activity 3: Joy -->
-        <article class="care-activity-item">
-          <div class="activity-header">
-            <div class="pet-name-section">
-              <div class="pet-name">Joy</div>
-              <span class="priority-badge priority-low">Low</span>
-            </div>
-          </div>
-          
-          <div class="activity-details">
-            <div class="activity-title">Daily Exercise Routine</div>
-            <div class="activity-meta">
-              <div class="activity-assigned">
-                <i class="fas fa-user-circle"></i>
-                Assigned to Alex Morgan
-              </div>
-              <div class="activity-time">
-                <i class="far fa-calendar"></i>
-                1/21/2025, 2:00 PM
-              </div>
-            </div>
-          </div>
-          
-          <div class="activity-status-section">
-            <span class="status-badge status-completed">Completed</span>
-            <div class="activity-actions">
-              <button class="action-btn action-btn-view">View Details</button>
-              <button class="action-btn action-btn-update">Log Activity</button>
-            </div>
-          </div>
-        </article>
+        <!-- All tasks will be loaded here by switch-page.js -->
       </section>
     </div>
 
     <!-- ===== TASKS TAB CONTENT (Hidden by default) ===== -->
     <div id="tasksView" class="care-main-content" style="display: none;">
-      <section class="all-care-card">
+      <section>
         <header class="all-care-header">
           <h3>All Care</h3>
         </header>
@@ -207,107 +121,17 @@
         <!-- Pending Tasks Section -->
         <div class="task-section">
           <h4 class="task-section-title">Pending</h4>
-          
-          <!-- Task 1: Sadness -->
-          <article class="task-item">
-            <div class="task-header">
-              <div class="pet-name-section">
-                <div class="pet-name">Sadness</div>
-                <span class="priority-badge priority-high">High</span>
-              </div>
-            </div>
-            
-            <div class="task-details">
-              <div class="task-title">Vaccination</div>
-              <div class="task-meta">
-                <div class="task-assigned">
-                  <i class="fas fa-user-circle"></i>
-                  Assigned to Dasha Taran
-                </div>
-                <div class="task-time">
-                  <i class="far fa-calendar"></i>
-                  1/20/2025, 10:00 AM
-                </div>
-              </div>
-            </div>
-            
-            <div class="task-status-section">
-              <span class="status-badge status-pending">Pending</span>
-              <div class="task-actions">
-                <button class="action-btn action-btn-view">View</button>
-                <button class="action-btn action-btn-edit">Edit</button>
-              </div>
-            </div>
-          </article>
-          
-          <!-- Task 2: Anger -->
-          <article class="task-item">
-            <div class="task-header">
-              <div class="pet-name-section">
-                <div class="pet-name">Anger</div>
-                <span class="priority-badge priority-medium">Medium</span>
-              </div>
-            </div>
-            
-            <div class="task-details">
-              <div class="task-title">Physical Therapy Session</div>
-              <div class="task-meta">
-                <div class="task-assigned">
-                  <i class="fas fa-user-circle"></i>
-                  Assigned to Kenji Webbo
-                </div>
-                <div class="task-time">
-                  <i class="far fa-calendar"></i>
-                  1/19/2025, 12:00 AM
-                </div>
-              </div>
-            </div>
-            
-            <div class="task-status-section">
-              <span class="status-badge status-pending">Pending</span>
-              <div class="task-actions">
-                <button class="action-btn action-btn-view">View</button>
-                <button class="action-btn action-btn-edit">Edit</button>
-              </div>
-            </div>
-          </article>
+          <div class="all-care-card" data-status="pending">
+            <!-- Pending tasks will be loaded here -->
+          </div>
         </div>
         
         <!-- In Progress Tasks Section -->
         <div class="task-section">
           <h4 class="task-section-title">In Progress</h4>
-          
-          <!-- Task 3: Joy -->
-          <article class="task-item">
-            <div class="task-header">
-              <div class="pet-name-section">
-                <div class="pet-name">Joy</div>
-                <span class="priority-badge priority-low">Low</span>
-              </div>
-            </div>
-            
-            <div class="task-details">
-              <div class="task-title">Daily Exercise Routine</div>
-              <div class="task-meta">
-                <div class="task-assigned">
-                  <i class="fas fa-user-circle"></i>
-                  Assigned to Alex Morgan
-                </div>
-                <div class="task-time">
-                  <i class="far fa-calendar"></i>
-                  1/21/2025, 2:00 PM
-                </div>
-              </div>
-            </div>
-            
-            <div class="task-status-section">
-              <span class="status-badge status-in-progress">In Progress</span>
-              <div class="task-actions">
-                <button class="action-btn action-btn-view">View</button>
-                <button class="action-btn action-btn-edit">Update</button>
-              </div>
-            </div>
-          </article>
+          <div class="all-care-card" data-status="in-progress">
+            <!-- In-progress tasks will be loaded here -->
+          </div>
         </div>
         
         <!-- Add Task Button -->
@@ -395,6 +219,7 @@
                   <option value="Cleaning">Cleaning</option>
                   <option value="Maintenance">Maintenance</option>
                   <option value="Special">Special</option>
+                  <option value="Special">Physical Therapy</option>
                 </select>
               </article>
             </section>
@@ -428,13 +253,6 @@
 
             <!-- Row 3: Assigned To, Priority, Schedule -->
             <section class="row g-3 mt-2">
-
-              <article class="col-md-4">
-                <label for="assignedTo" class="form-label fw-semibold">Assign To</label>
-                <select id="assignedTo" class="form-select form-control-lg" name="assignedTo">
-                  <option selected disabled>Select volunteer</option>
-                </select>
-              </article>
 
               <article class="col-md-4">
                 <label for="priority" class="form-label fw-semibold">Priority</label>

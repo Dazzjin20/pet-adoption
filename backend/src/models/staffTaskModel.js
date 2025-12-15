@@ -50,6 +50,11 @@ const staffTaskSchema = new mongoose.Schema({
     ref: 'Volunteer',
     default: null
   },
+  created_by: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Staff',
+    required: true
+  },
   createdAt: {
     type: Date,
     default: Date.now
