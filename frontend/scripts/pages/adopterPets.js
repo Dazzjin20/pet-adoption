@@ -101,35 +101,98 @@ export function getStatusBadge(status) {
  * Fetches pets based on current filter values and renders them.
  */
 async function applyFiltersAndLoadPets() {
-    const name = document.getElementById('searchPetName').value.trim();
-    const type = document.getElementById('filterPetType').value;
-    const status = document.getElementById('filterPetStatus').value;
-    const vaccinated = document.getElementById('vaccinatedCheck').checked ? 'true' : undefined;
+    // Get filter values from the DOM
+    const searchTerm = document.getElementById('searchPetName').value.trim();
+    const typeFilter = document.getElementById('filterPetType').value;
+    const statusFilter = document.getElementById('filterPetStatus').value;
+    const vaccinatedOnly = document.getElementById('vaccinatedCheck').checked;
     const grid = document.getElementById('petsGrid');
-
-    if (!grid) return;
-    grid.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
-
+    
+    if (!grid) {
+        console.error('petsGrid not found!');
+        return;
+    }
+    
+    console.log('Filters:', { searchTerm, typeFilter, statusFilter, vaccinatedOnly });
+    
+    // Show loading
+    grid.innerHTML = `
+        <div class="col-12">
+            <div class="text-center p-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading pets...</span>
+                </div>
+                <p class="mt-3 text-muted">Loading pets...</p>
+            </div>
+        </div>
+    `;
+    
+    // Build API params
     const params = {};
-    if (name) params.name = name;
-    if (type && type !== 'All Types') params.type = type;
-    if (status && status !== 'All Status') params.status = status;
-    if (vaccinated) params.vaccinated = vaccinated;
-
+    
+    // Type filter - specific mapping for Dog and Cat
+    if (typeFilter === 'Dog') {
+        params.type = 'dog';
+    } else if (typeFilter === 'Cat') {
+        params.type = 'cat';
+    }
+    // If "All Types" or any other value, don't send type parameter
+    
+    // Status filter - only send if specific status is selected
+    if (statusFilter && statusFilter !== 'All Status') {
+        params.status = statusFilter.toLowerCase();
+    }
+    
+    // Vaccinated filter - only show vaccinated when checked
+    if (vaccinatedOnly) {
+        params.vaccinated = 'true';
+    }
+    
+    console.log('API params:', params);
+    
     try {
+        // Fetch pets from API with type, status, and vaccinated filters
         const data = await getPets(params);
-        const pets = data.pets || [];
-        grid.innerHTML = ''; // Clear spinner
-
+        console.log('API response:', data);
+        
+        // Check data structure and extract pets array
+        let pets = [];
+        if (Array.isArray(data)) {
+            pets = data;
+        } else if (data && data.pets) {
+            pets = data.pets;
+        } else if (data && data.data) {
+            pets = data.data;
+        }
+        
+        console.log(`Found ${pets.length} total pets from API`);
+        
+        // Apply search filter CLIENT-SIDE (for name searching)
+        if (searchTerm) {
+            const searchLower = searchTerm.toLowerCase();
+            pets = pets.filter(pet => {
+                const petName = (pet.pet_name || pet.name || '').toLowerCase();
+                return petName.includes(searchLower);
+            });
+            console.log(`After search filtering: ${pets.length} pets`);
+        }
+        
+        // Clear loading spinner
+        grid.innerHTML = '';
+        
+        // Display results
         if (pets.length === 0) {
             grid.innerHTML = '<div class="col-12 text-center"><p class="text-muted">No pets found matching your criteria.</p></div>';
         } else {
+            // Add pet cards to the grid
             pets.forEach(pet => grid.appendChild(createPetCard(pet)));
-            // setupFavoriteIcons(); // This is causing duplicate listeners. We will use event delegation instead.
-            setupApplyToAdoptButtons(); // Setup apply buttons
+            
+            // Setup apply buttons
+            setupApplyToAdoptButtons();
         }
+        
     } catch (err) {
-        console.error('Failed to load pets with filters:', err);
+        console.error('Failed to load pets:', err);
         grid.innerHTML = `<div class="col-12"><div class="alert alert-danger">Failed to load pets. ${err.message}</div></div>`;
     }
 }

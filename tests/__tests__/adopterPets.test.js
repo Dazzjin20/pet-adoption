@@ -2,7 +2,6 @@ import { getStatusBadge, escapeQuotes } from '../../frontend/scripts/pages/adopt
 
 describe('adopterPets.js', () => {
 
-  // Test suite for the getStatusBadge function
   describe('getStatusBadge', () => {
     
     test('should return "Available" badge for "available" status', () => {
