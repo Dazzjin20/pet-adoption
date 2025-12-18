@@ -56,8 +56,9 @@ export class SignupForm {
       return false;
     }
 
-    if (!emailRegex.test(payload.email)) {
-      this.showMessage('Please enter a valid email address.', 'danger');
+    // Check for valid Gmail format and disallow common mistakes
+    if (!emailRegex.test(payload.email) || !payload.email.endsWith('@gmail.com') || payload.email.endsWith('.com.com')) {
+      this.showMessage('Please enter a valid Gmail address (e.g., example@gmail.com).', 'danger');
       return false;
     }
 

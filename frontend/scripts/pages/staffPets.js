@@ -442,133 +442,13 @@ async function setupAddPet() {
   }
 }
 
-/**
- * Fetches pets based on filters, applies client-side search, and renders them.
- */
-async function applyFiltersAndLoadPets() {
-  const grid = document.getElementById('petsGrid');
-  if (!grid) {
-    console.error('petsGrid not found!');
-    return;
-  }
-
-  try {
-    // 1. Get filter values from the DOM
-    const name = document.getElementById('searchPetName').value.trim();
-    const type = document.getElementById('filterPetType').value;
-    const status = document.getElementById('filterPetStatus').value;
-    const vaccinated = document.getElementById('vaccinatedFilter').checked;
-
-    console.log('Filters:', { name, type, status, vaccinated });
-
-    // Show loading spinner with text
-    grid.innerHTML = `
-      <div class="col-12">
-        <div class="text-center p-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <p class="mt-3 text-muted">Loading pets...</p>
-        </div>
-      </div>
-    `;
-
-    // 2. Build API params for backend filtering (excluding name search)
-    const params = {};
-    
-    // Type filter - specific mapping for Dog and Cat
-    if (type === 'Dog') {
-      params.type = 'dog';
-    } else if (type === 'Cat') {
-      params.type = 'cat';
-    }
-    // If "All Types", don't send type parameter
-    
-    // Status filter - only send if specific status is selected
-    if (status && status !== 'All Status') {
-      params.status = status.toLowerCase();
-    }
-    
-    // Vaccinated filter
-    if (vaccinated) {
-      params.vaccinated = 'true';
-    }
-
-    console.log('API params:', params);
-
-    // 3. Fetch pets from the backend with filters
-    const res = await getPets(params);
-    console.log('API response:', res);
-    
-    // Check data structure and extract pets array
-    let pets = [];
-    if (Array.isArray(res)) {
-      pets = res;
-    } else if (res && res.pets) {
-      pets = res.pets;
-    } else if (res && res.data) {
-      pets = res.data;
-    }
-
-    console.log(`Found ${pets.length} total pets from API`);
-
-    // 4. Apply name search filter on the client-side
-    if (name) {
-      const searchTerm = name.toLowerCase();
-      pets = pets.filter(pet => {
-        const petName = (pet.pet_name || pet.name || '').toLowerCase();
-        return petName.includes(searchTerm);
-      });
-      console.log(`After search filtering: ${pets.length} pets`);
-    }
-
-    // 5. Render the results
-    grid.innerHTML = ''; // Clear spinner
-    
-    if (pets.length === 0) {
-      grid.innerHTML = '<div class="col-12 text-center"><p class="text-muted">No pets found matching your criteria.</p></div>';
-    } else {
-      pets.forEach(p => grid.appendChild(createCard(p)));
-    }
-
-    // 6. Update stats and attach button handlers
-    updateStats(pets);
-    attachActionHandlers();
-
-  } catch (err) {
-    console.error('Failed to apply filters and load pets:', err);
-    grid.innerHTML = `<div class="col-12"><div class="alert alert-danger">Failed to load pets. ${err.message}</div></div>`;
-  }
-}
-
-/**
- * Sets up event listeners for the filter controls.
- */
-function setupFilterListeners() {
-  // hook filter apply
-  document.getElementById('applyFiltersBtn')?.addEventListener('click', applyFiltersAndLoadPets);
-
-  // Optional: Add listeners for live filtering
-  const searchInput = document.getElementById('searchPetName');
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      clearTimeout(e.target.debounce);
-      e.target.debounce = setTimeout(applyFiltersAndLoadPets, 500); // Debounce
-    });
-  }
-  document.getElementById('filterPetType')?.addEventListener('change', applyFiltersAndLoadPets);
-  document.getElementById('filterPetStatus')?.addEventListener('change', applyFiltersAndLoadPets);
-  document.getElementById('vaccinatedFilter')?.addEventListener('change', applyFiltersAndLoadPets);
-}
-
 // ========== INITIALIZE EVERYTHING ==========
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadPets(); // Initial load of all pets
+  loadPets();
   setupAddPet();
-  setupUpdatePet();
-  setupUpdateFileHandlers();
-  setupFilterListeners(); // Setup the new filter listeners
+  setupUpdatePet(); // Add update functionality
+  setupUpdateFileHandlers(); // Add update file handlers
   
   // file input handlers for images: read as base64 and preview
   const beforeInput = document.getElementById('beforeImageInput');
@@ -630,4 +510,116 @@ document.addEventListener('DOMContentLoaded', () => {
   const afterBtn = document.getElementById('afterImageBtn');
   if (beforeBtn && beforeInput) beforeBtn.addEventListener('click', () => beforeInput.click());
   if (afterBtn && afterInput) afterBtn.addEventListener('click', () => afterInput.click());
+
+  // hook filter apply
+  document.getElementById('applyFiltersBtn')?.addEventListener('click', applyFiltersAndSearch);
 });
+
+/**
+ * Gathers filter and search values, fetches pets from the API, and re-renders the grid.
+ */
+async function applyFiltersAndSearch() {
+    try {
+        // Get filter values
+        const searchTerm = document.getElementById('searchPetName')?.value || '';
+        const typeFilter = document.getElementById('filterPetType')?.value || 'All Types';
+        const statusFilter = document.getElementById('filterPetStatus')?.value || 'All Status';
+        const vaccinatedOnly = document.getElementById('vaccinatedFilter')?.checked || false;
+        
+        console.log('Filters:', { searchTerm, typeFilter, statusFilter, vaccinatedOnly });
+        
+        // Show loading
+        const grid = document.getElementById('petsGrid');
+        if (!grid) {
+            console.error('petsGrid not found!');
+            return;
+        }
+        
+        grid.innerHTML = `
+            <div class="col-12">
+                <div class="text-center p-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading pets...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Loading pets...</p>
+                </div>
+            </div>
+        `;
+        
+        // Build API params
+        const params = {};
+        
+        // Type filter
+        if (typeFilter === 'Dog') {
+            params.type = 'dog';
+        } else if (typeFilter === 'Cat') {
+            params.type = 'cat';
+        }
+        // If "All Types", don't send type parameter
+        
+        // Status filter
+        if (statusFilter !== 'All Status') {
+            params.status = statusFilter;
+        }
+        
+        // Vaccinated filter
+        if (vaccinatedOnly) {
+            params.vaccinated = 'true';
+        }
+        
+        console.log('API params:', params);
+        
+        // Fetch pets from API
+        const data = await getPets(params);
+        console.log('API response:', data);
+        
+        // Check data structure
+        let pets = [];
+        if (Array.isArray(data)) {
+            pets = data;
+        } else if (data && data.pets) {
+            pets = data.pets;
+        } else if (data && data.data) {
+            pets = data.data;
+        }
+        
+        console.log(`Found ${pets.length} total pets`);
+        
+        // Use all pets fetched from the API
+        let filteredPets = pets;
+        
+        // Apply search filter CLIENT-SIDE (since API search isn't working)
+        if (searchTerm) {
+            const searchLower = searchTerm.toLowerCase();
+            filteredPets = filteredPets.filter(pet => {
+                const petName = (pet.pet_name || pet.name || '').toLowerCase();
+                return petName.includes(searchLower);
+            });
+            console.log(`After search filtering: ${filteredPets.length} pets`);
+        }
+        
+        // Display pets
+        grid.innerHTML = '';
+        filteredPets.forEach(p => grid.appendChild(createCard(p)));
+        updateStats(filteredPets);
+        attachActionHandlers();
+        
+    } catch (error) {
+        console.error('Error loading pets:', error);
+        
+        const grid = document.getElementById('petsGrid');
+        if (grid) {
+            grid.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger">
+                        <h5>Error Loading Pets</h5>
+                        <p>${error.message}</p>
+                        <button class="btn btn-primary btn-sm mt-2" onclick="applyFiltersAndSearch()">
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}

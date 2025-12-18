@@ -55,8 +55,9 @@ export class RegisterStaff {
       this.showMessage('Please enter your full name.', 'danger');
       return false;
     }
-    if (!emailRegex.test(payload.staffEmail)) {
-      this.showMessage('Please enter a valid email address.', 'danger');
+    // Check for valid Gmail format and disallow common mistakes
+    if (!emailRegex.test(payload.staffEmail) || !payload.staffEmail.endsWith('@gmail.com') || payload.staffEmail.endsWith('.com.com')) {
+      this.showMessage('Please enter a valid Gmail address (e.g., example@gmail.com).', 'danger');
       return false;
     }
     if (!payload.staffPassword || payload.staffPassword.length < 6) {
