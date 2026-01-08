@@ -180,6 +180,9 @@ async function loadAndDisplayPets() {
         // Use all pets fetched from the API, no client-side status filtering.
         let availablePets = pets;
         
+        // Filter out adopted pets
+        availablePets = availablePets.filter(pet => (pet.status || '').toLowerCase() !== 'adopted');
+
         // Apply search filter CLIENT-SIDE (since API search isn't working)
         if (searchTerm) {
             const searchLower = searchTerm.toLowerCase();

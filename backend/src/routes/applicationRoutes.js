@@ -11,6 +11,7 @@ router.get('/', applicationController.getAllApplications);
 router.put('/:applicationId/approve', applicationController.approveApplication);
 router.put('/:applicationId/reject', applicationController.rejectApplication);
 router.put('/:applicationId/interview', applicationController.scheduleInterview);
+router.put('/:applicationId/adopt', applicationController.markAsAdopted);
 
 // Route to get all applications for a specific adopter
 router.get('/adopter/:adopterId', applicationController.getAdopterApplications);

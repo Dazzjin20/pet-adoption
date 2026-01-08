@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadDashboardData(currentUser._id);
     loadRecommendations(currentUser._id);
+    loadSuccessStories(); // New function
     updateWelcomeMessage(currentUser);
 });
 
@@ -78,6 +79,42 @@ async function loadRecommendations(adopterId) {
         console.error('Error loading dashboard data:', error);
         // Display error on the page
         document.getElementById('activityFeed').innerHTML = `<p class="text-danger">Could not load dashboard data.</p>`;
+    }
+}
+
+async function loadSuccessStories() {
+    // We assume there is a container with id 'successStoriesContainer' in the HTML
+    const container = document.getElementById('successStoriesContainer');
+    if (!container) return;
+
+    try {
+        // Fetch pets with status 'Adopted'
+        const response = await fetch('http://localhost:3000/api/pets?status=Adopted');
+        if (!response.ok) throw new Error('Failed to fetch success stories');
+        
+        const data = await response.json();
+        const adoptedPets = (data.pets || []).slice(0, 4); // Show top 4
+
+        if (adoptedPets.length === 0) {
+            container.innerHTML = '<p class="text-muted">No success stories yet. Be the first!</p>';
+            return;
+        }
+
+        container.innerHTML = adoptedPets.map(pet => `
+            <div class="col-md-3 mb-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="${pet.before_image || '/frontend/assets/image/photo/placeholder.jpg'}" class="card-img-top" alt="${pet.pet_name}" style="height: 150px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h6 class="fw-bold text-success mb-1">${pet.pet_name}</h6>
+                        <small class="text-muted">Found a home!</small>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (error) {
+        console.error('Error loading success stories:', error);
+        container.innerHTML = '<p class="text-danger small">Could not load success stories.</p>';
     }
 }
 

@@ -71,22 +71,22 @@
       <!-- Statistics Cards -->
       <div class="care-stats-container">
         <div class="care-stat-card stat-urgent">
-          <div class="care-stat-number">3</div>
+          <div class="care-stat-number" id="statUrgent">0</div>
           <div class="care-stat-label">Urgent Tasks</div>
         </div>
         
         <div class="care-stat-card stat-pending">
-          <div class="care-stat-number">8</div>
+          <div class="care-stat-number" id="statPending">0</div>
           <div class="care-stat-label">Pending</div>
         </div>
         
         <div class="care-stat-card stat-progress">
-          <div class="care-stat-number">5</div>
+          <div class="care-stat-number" id="statProgress">0</div>
           <div class="care-stat-label">In Progress</div>
         </div>
         
         <div class="care-stat-card stat-completed">
-          <div class="care-stat-number">24</div>
+          <div class="care-stat-number" id="statCompleted">0</div>
           <div class="care-stat-label">Completed Today</div>
         </div>
       </div>
@@ -117,20 +117,53 @@
         <header class="all-care-header">
           <h3>All Care</h3>
         </header>
-        
+
+        <!-- Search and Filter Section -->
+        <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <input type="text" id="searchInput" class="form-control" placeholder="Search tasks or pets...">
+            </div>
+            <div class="col-md-3">
+              <select id="priorityFilter" class="form-select">
+                <option value="All">All Priorities</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select id="categoryFilter" class="form-select">
+                <option value="All">All Categories</option>
+                <option value="Medical">Medical</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Special">Special</option>
+                <option value="Physical Therapy">Physical Therapy</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button id="resetFiltersBtn" class="btn btn-outline-secondary w-100">Reset</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Pending Tasks Section -->
         <div class="task-section">
           <h4 class="task-section-title">Pending</h4>
-          <div class="all-care-card" data-status="pending">
+          <div class="all-care-card" id="pendingTasksContainer" data-status="pending">
             <!-- Pending tasks will be loaded here -->
+            <p class="text-muted p-3">Loading tasks...</p>
           </div>
-        </div>
+        </header>
+        
         
         <!-- In Progress Tasks Section -->
         <div class="task-section">
           <h4 class="task-section-title">In Progress</h4>
-          <div class="all-care-card" data-status="in-progress">
+          <div class="all-care-card" id="inProgressTasksContainer" data-status="in-progress">
             <!-- In-progress tasks will be loaded here -->
+            <p class="text-muted p-3">No tasks in progress.</p>
           </div>
         </div>
         
@@ -210,33 +243,25 @@
               </article>
 
               <article class="col-md-6">
-                <label for="taskType" class="form-label fw-semibold">
-                  Task Type <span class="text-danger">*</span>
+                <label for="taskTitle" class="form-label fw-semibold">
+                  Task Title <span class="text-danger">*</span>
                 </label>
-                <select id="taskType" class="form-select form-control-lg" name="taskType" required>
-                  <option selected disabled>Select task</option>
-                  <option value="Medical">Medical</option>
-                  <option value="Cleaning">Cleaning</option>
-                  <option value="Maintenance">Maintenance</option>
-                  <option value="Special">Special</option>
-                  <option value="Special">Physical Therapy</option>
+                <select id="taskTitle" class="form-select form-control-lg" name="title" required>
+                  <option value="" selected disabled>Select task</option>
+                  <option value="Urgent: Medical Attention" data-type="Medical" class="text-danger fw-bold">Urgent: Medical Attention</option>
+                  <option value="Urgent: Injury Check" data-type="Medical" class="text-danger fw-bold">Urgent: Injury Check</option>
+                  <option value="Urgent: Isolation Required" data-type="Medical" class="text-danger fw-bold">Urgent: Isolation Required</option>
+                  <option value="Morning Feeding" data-type="Feeding">Morning Feeding</option>
+                  <option value="Evening Feeding" data-type="Feeding">Evening Feeding</option>
+                  <option value="Kennel Cleaning" data-type="Cleaning">Kennel Cleaning</option>
+                  <option value="Litter Box Maintenance" data-type="Cleaning">Litter Box Maintenance</option>
+                  <option value="Daily Grooming" data-type="Grooming">Daily Grooming</option>
+                  <option value="Walk & Exercise" data-type="Exercise">Walk & Exercise</option>
+                  <option value="Medication Administration" data-type="Medical">Medication Administration</option>
+                  <option value="Physical Therapy Session" data-type="Physical Therapy">Physical Therapy Session</option>
+                  <option value="Socialization" data-type="Special">Socialization</option>
                 </select>
               </article>
-            </section>
-
-            <!-- Task Title -->
-            <section class="mt-3">
-              <label for="taskTitle" class="form-label fw-semibold">
-                Task Title <span class="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                id="taskTitle"
-                class="form-control form-control-lg"
-                name="title"
-                placeholder="Enter task title"
-                required
-              >
             </section>
 
             <!-- Description -->

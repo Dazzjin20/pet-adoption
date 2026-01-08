@@ -7,6 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const assignVolunteerModalEl = document.getElementById('assignVolunteerModal');
   const assignVolunteerModal = new bootstrap.Modal(assignVolunteerModalEl);
 
+  // --- Search and Filter Elements ---
+  const searchInput = document.getElementById('searchInput');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const priorityFilter = document.getElementById('priorityFilter');
+  let allTasks = []; // Store all tasks locally for filtering
+
   const API_URL = 'http://localhost:3000/api'; // Backend server URL
 
   // --- Helper Functions ---
@@ -21,17 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- UI Update Functions ---
   const updateTaskCardUI = (task) => {
-    const taskCard = tasksContainer.querySelector(`.task-card[data-task-id="${task._id}"]`);
-    if (taskCard) {
-      // Re-render the single card and replace the old one
-      const newCardHTML = renderTaskCard(task);
-      const newCardElement = document.createElement('div');
-      newCardElement.innerHTML = newCardHTML.trim();
-      taskCard.replaceWith(newCardElement.firstChild);
+    // Update local state
+    const index = allTasks.findIndex(t => t._id === task._id);
+    if (index !== -1) {
+      allTasks[index] = task;
     } else {
-      // If it's a new card, just append it
-      tasksContainer.insertAdjacentHTML('beforeend', renderTaskCard(task));
+      allTasks.push(task);
     }
+    // Re-apply filters to render the correct list
+    filterTasks();
   };
   // --- UI Rendering ---
   const renderTaskCard = (task) => {
@@ -75,6 +79,43 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   };
 
+  // --- Filter and Render Logic ---
+  const filterTasks = () => {
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+    const category = categoryFilter ? categoryFilter.value : 'All';
+    const priority = priorityFilter ? priorityFilter.value : 'All';
+
+    const filtered = allTasks.filter(task => {
+      // Search by Title or Description
+      const title = (task.title || '').toLowerCase();
+      const desc = (task.description || '').toLowerCase();
+      const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
+
+      // Filter by Category
+      const matchesCategory = category === 'All' || category === 'All Categories' || task.category === category;
+
+      // Filter by Priority
+      const matchesPriority = priority === 'All' || priority === 'All Priorities' || task.priority === priority;
+
+      return matchesSearch && matchesCategory && matchesPriority;
+    });
+
+    renderTasksList(filtered);
+  };
+
+  const renderTasksList = (tasksToRender) => {
+    // Clear only dynamically loaded tasks (preserve any static headers if they exist inside container, though usually container is cleared)
+    tasksContainer.querySelectorAll('.task-card[data-task-id]').forEach(card => card.remove());
+    
+    if (tasksToRender.length === 0) {
+      // Optional: Show "No tasks found" message
+      // tasksContainer.insertAdjacentHTML('beforeend', '<p class="text-muted ms-3">No tasks found matching your criteria.</p>');
+    } else {
+      const allTasksHTML = tasksToRender.map(renderTaskCard).join('');
+      tasksContainer.insertAdjacentHTML('beforeend', allTasksHTML);
+    }
+  };
+
   // --- API Calls ---
   const fetchAndDisplayTasks = async () => {
     try {
@@ -83,13 +124,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const tasksResp = await response.json();
 
       // Support multiple response shapes: either an array, or an object like { tasks: [...] }
-      const tasks = Array.isArray(tasksResp) ? tasksResp : (tasksResp.tasks || tasksResp.data || []);
+      allTasks = Array.isArray(tasksResp) ? tasksResp : (tasksResp.tasks || tasksResp.data || []);
 
-      // Clear only dynamically loaded tasks
-      tasksContainer.querySelectorAll('.task-card[data-task-id]').forEach(card => card.remove());
-
-      const allTasksHTML = tasks.map(renderTaskCard).join('');
-      tasksContainer.insertAdjacentHTML('beforeend', allTasksHTML);
+      // Initial render with filters (shows all if filters are default)
+      filterTasks();
     } catch (error) {
       console.error('Error fetching tasks:', error);
       tasksContainer.insertAdjacentHTML('beforeend', '<p class="text-danger ms-3">Could not load tasks. Is the backend server running?</p>');
@@ -203,6 +241,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TODO: Add logic for quick-assign buttons
   });
+
+  // --- Search & Filter Event Listeners ---
+  if (searchInput) searchInput.addEventListener('input', filterTasks);
+  if (categoryFilter) categoryFilter.addEventListener('change', filterTasks);
+  if (priorityFilter) priorityFilter.addEventListener('change', filterTasks);
 
   // --- Initial Page Load ---
   const initializePage = () => {

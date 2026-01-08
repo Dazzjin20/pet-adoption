@@ -29,8 +29,12 @@ function populatePetSelect() {
 
 function readTaskForm() {
   const petId = document.getElementById('petId').value;
-  const taskType = document.getElementById('taskType').value;
-  const title = document.getElementById('taskTitle').value.trim();
+  
+  const taskTitleSelect = document.getElementById('taskTitle');
+  const title = taskTitleSelect.value;
+  const selectedOption = taskTitleSelect.options[taskTitleSelect.selectedIndex];
+  const taskType = selectedOption.getAttribute('data-type') || 'General';
+
   const description = document.getElementById('taskDescription').value.trim();
   const priority = document.getElementById('priority').value;
   const scheduleDate = document.getElementById('scheduleDate').value;
@@ -62,6 +66,18 @@ function resetTaskForm() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadPets();
+
+  // Auto-set priority to High if an Urgent task title is selected
+  const taskTitleSelect = document.getElementById('taskTitle');
+  const prioritySelect = document.getElementById('priority');
+  
+  if (taskTitleSelect && prioritySelect) {
+    taskTitleSelect.addEventListener('change', function() {
+      if (this.value.includes('Urgent')) {
+        prioritySelect.value = 'High';
+      }
+    });
+  }
 
   // Wire top-level Add Task button to open the modal
   const addTaskBtn = document.getElementById('addTaskBtn');

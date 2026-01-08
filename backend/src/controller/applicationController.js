@@ -82,9 +82,15 @@ exports.getAllApplications = async (req, res) => {
 exports.approveApplication = async (req, res) => {
     try {
         const { applicationId } = req.params;
-        const { staff_notes } = req.body || {};
+        const { staff_notes, meeting_date } = req.body || {};
 
-        const updatedApplication = await applicationRepository.updateStatus(applicationId, 'Approved', staff_notes);
+        const updateData = {
+            status: 'Approved',
+            staff_notes: staff_notes || '',
+            next_step: meeting_date ? `Meeting/Pickup scheduled for: ${meeting_date}` : 'Awaiting final adoption'
+        };
+
+        const updatedApplication = await applicationRepository.updateApplication(applicationId, updateData);
 
         if (!updatedApplication) {
             return res.status(404).json({ message: 'Application not found.' });
@@ -147,5 +153,23 @@ exports.scheduleInterview = async (req, res) => {
     } catch (error) {
         console.error('Error scheduling interview:', error);
         res.status(500).json({ message: 'Failed to schedule interview.', error: error.message });
+    }
+};
+
+/**
+ * Staff action: Mark application (and pet) as Adopted
+ */
+exports.markAsAdopted = async (req, res) => {
+    try {
+        const { applicationId } = req.params;
+        const updatedApplication = await applicationRepository.markAsAdopted(applicationId);
+
+        if (!updatedApplication) {
+            return res.status(404).json({ message: 'Application not found.' });
+        }
+        res.status(200).json({ message: 'Application marked as Adopted', application: updatedApplication });
+    } catch (error) {
+        console.error('Error marking as adopted:', error);
+        res.status(500).json({ message: 'Failed to mark as adopted.', error: error.message });
     }
 };

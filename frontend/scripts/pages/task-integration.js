@@ -24,8 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Configuration
     const API_URL = 'http://localhost:3000/api';
-    const VOLUNTEER_ID = 'volunteer123'; // Change to actual volunteer ID
-    const VOLUNTEER_NAME = 'Daks Pangilinan'; // Change to actual volunteer name
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const VOLUNTEER_ID = currentUser ? currentUser._id : null;
+    const VOLUNTEER_NAME = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Volunteer';
     
     // Store tasks
     let allTasks = [];
@@ -33,6 +34,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let activeTask = null;
     let activeTimers = new Map();
     
+    // --- NEW: Filter Event Listeners ---
+    const searchInput = document.getElementById('taskSearchInput');
+    const statusFilter = document.getElementById('taskStatusFilter');
+    const categoryFilter = document.getElementById('taskCategoryFilter');
+
+    if (searchInput) searchInput.addEventListener('input', () => renderAssignedTasks());
+    if (statusFilter) statusFilter.addEventListener('change', () => renderAssignedTasks());
+    if (categoryFilter) categoryFilter.addEventListener('change', () => renderAssignedTasks());
+
     // Override the showTab function
     const originalShowTab = window.showTab;
     window.showTab = function(tabName) {
@@ -80,26 +90,63 @@ document.addEventListener('DOMContentLoaded', function() {
             // Combine the tasks from both collections
             allTasks = [...staffTasks, ...careTasks];
 
+            // --- RESTORE ACTIVE TIMER LOGIC ---
+            const storedTimer = localStorage.getItem('activeTaskTimer');
+            if (storedTimer) {
+                try {
+                    const { taskId, totalMinutes, startTime } = JSON.parse(storedTimer);
+                    const task = allTasks.find(t => (t._id || t.id) === taskId);
+                    
+                    if (task) {
+                        // Calculate how much time has passed since start
+                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                        const totalSeconds = totalMinutes * 60;
+                        
+                        // Only restore if task exists and isn't already completed in backend
+                        const status = (task.status || '').toLowerCase();
+                        if (status !== 'completed' && status !== 'done') {
+                            console.log('Restoring active timer for task:', taskId);
+                            
+                            // Switch to task view and setup UI
+                            selectTaskForWork(task); 
+                            
+                            // Get the rendered card
+                            const taskCard = document.querySelector(`.detailed-task-card[data-task-id="${taskId}"]`);
+                            if (taskCard) {
+                                // Manually update UI to "In Progress" state
+                                const statusBadge = taskCard.querySelector('.status-badge');
+                                if (statusBadge) {
+                                    statusBadge.textContent = 'In Progress';
+                                    statusBadge.className = 'status-badge status-in-progress';
+                                }
+                                
+                                const startBtn = taskCard.querySelector('.btn-start-task-main');
+                                if (startBtn) {
+                                    startBtn.textContent = 'Task Started';
+                                    startBtn.disabled = true;
+                                    startBtn.classList.remove('btn-primary');
+                                    startBtn.classList.add('btn-secondary');
+                                }
+                                
+                                const timerSection = taskCard.querySelector('.task-timer-section');
+                                if (timerSection) timerSection.style.display = 'block';
+                                
+                                // Resume timer with calculated elapsed time
+                                startTimer(taskId, totalMinutes, taskCard, elapsed);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error restoring timer:', e);
+                    localStorage.removeItem('activeTaskTimer');
+                }
+            }
+
             // Hide loading
             if (loadingEl) loadingEl.style.display = 'none';
             
-            // Filter out completed tasks - use status field
-            const activeTasks = allTasks.filter(task => {
-                const status = (task.status || '').toLowerCase();
-                return status !== 'completed' && status !== 'done' && status !== 'finished';
-            });
-            
-            if (activeTasks.length === 0) {
-                if (emptyEl) emptyEl.style.display = 'block';
-                return;
-            }
-            
-            // Add staff-assigned tasks
-            activeTasks.forEach(task => {
-                const taskCard = createStaffTaskCard(task);
-                container.appendChild(taskCard);
-            });
-            
+            // Render with filters and sorting
+            renderAssignedTasks();
         } catch (error) {
             console.error('Error loading tasks:', error);
             if (loadingEl) loadingEl.style.display = 'none';
@@ -107,6 +154,57 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // --- NEW: Render function with Sorting and Filtering ---
+    function renderAssignedTasks() {
+        const container = document.getElementById('dynamicStaffTasks');
+        const emptyEl = document.getElementById('staffTasksEmpty');
+        
+        if (!container) return;
+        container.innerHTML = '';
+
+        // 1. Base filter: Active tasks only
+        let tasksToRender = allTasks.filter(task => {
+            const status = (task.status || '').toLowerCase();
+            return status !== 'completed' && status !== 'done' && status !== 'finished';
+        });
+
+        // 2. Apply UI Filters
+        const searchTerm = document.getElementById('taskSearchInput')?.value.toLowerCase() || '';
+        const statusVal = document.getElementById('taskStatusFilter')?.value.toLowerCase() || '';
+        const categoryVal = document.getElementById('taskCategoryFilter')?.value.toLowerCase() || '';
+
+        tasksToRender = tasksToRender.filter(task => {
+            const title = (task.title || task.taskTitle || '').toLowerCase();
+            const desc = (task.description || '').toLowerCase();
+            const status = (task.status || '').toLowerCase();
+            const category = (task.category || task.type || '').toLowerCase();
+
+            const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
+            const matchesStatus = statusVal ? status === statusVal : true;
+            const matchesCategory = categoryVal ? category === categoryVal : true;
+
+            return matchesSearch && matchesStatus && matchesCategory;
+        });
+
+        // 3. Sort: Urgent/High Priority First
+        tasksToRender.sort((a, b) => {
+            const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+            const pA = priorityOrder[a.priority] || 0;
+            const pB = priorityOrder[b.priority] || 0;
+            
+            if (pA !== pB) return pB - pA; // Higher priority first
+            return new Date(a.dueDate || 0) - new Date(b.dueDate || 0);
+        });
+
+        // 4. Render
+        if (tasksToRender.length === 0) {
+            if (emptyEl) emptyEl.style.display = 'block';
+        } else {
+            if (emptyEl) emptyEl.style.display = 'none';
+            tasksToRender.forEach(task => container.appendChild(createStaffTaskCard(task)));
+        }
+    }
+
     // Load completed tasks
     async function loadCompletedTasks() {
         const container = document.getElementById('dynamicCompletedTasks');
@@ -423,7 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Start task with timer - GLOBAL FUNCTION
-    window.startTaskWithTimer = function(taskId, estimatedMinutes, button) {
+    window.startTaskWithTimer = async function(taskId, estimatedMinutes, button) {
         const taskCard = button.closest('.detailed-task-card');
         const taskName = taskCard.querySelector('.task-main-title').textContent;
         const timerSection = taskCard.querySelector('.task-timer-section');
@@ -433,6 +531,13 @@ document.addEventListener('DOMContentLoaded', function() {
         button.disabled = true;
         button.classList.remove('btn-primary');
         button.classList.add('btn-secondary');
+        
+        // Save to localStorage for persistence
+        localStorage.setItem('activeTaskTimer', JSON.stringify({
+            taskId,
+            totalMinutes: estimatedMinutes,
+            startTime: Date.now()
+        }));
         
         // Update status
         const statusBadge = taskCard.querySelector('.status-badge');
@@ -444,6 +549,30 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show timer section
         timerSection.style.display = 'block';
         
+        // Update backend status to "In Progress"
+        try {
+            const task = allTasks.find(t => (t._id || t.id) === taskId);
+            if (task) {
+                const endpoint = task.pet_id ? `${API_URL}/tasks/${taskId}` : `${API_URL}/staff-tasks/${taskId}`;
+                
+                // Prepare update payload: Status AND Assignment
+                const updatePayload = { status: 'In Progress' };
+                if (task.pet_id) {
+                    updatePayload.assigned_to = VOLUNTEER_ID;
+                } else {
+                    updatePayload.assignedTo = VOLUNTEER_ID;
+                }
+
+                await fetch(endpoint, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatePayload)
+                });
+            }
+        } catch (error) {
+            console.error('Failed to update task status to In Progress:', error);
+        }
+
         // Start timer
         startTimer(taskId, estimatedMinutes, taskCard);
         
@@ -451,14 +580,14 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Start the countdown timer
-    function startTimer(taskId, totalMinutes, taskCard) {
+    function startTimer(taskId, totalMinutes, taskCard, initialElapsed = 0) {
         const timerDisplay = taskCard.querySelector('.timer-time');
         const elapsedDisplay = taskCard.querySelector('.elapsed-time');
         const progressCircle = taskCard.querySelector('.timer-fg');
         const finishBtn = taskCard.querySelector('.btn-finish-early');
         
         let totalSeconds = totalMinutes * 60;
-        let elapsedSeconds = 0;
+        let elapsedSeconds = initialElapsed; // Start from restored time if any
         let timerInterval;
         
         // Calculate circumference for progress circle
@@ -471,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function() {
         activeTimers.set(taskId, {
             interval: null,
             totalSeconds: totalSeconds,
-            elapsedSeconds: 0,
+            elapsedSeconds: elapsedSeconds,
             taskCard: taskCard
         });
         
@@ -555,6 +684,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Complete task
     async function completeTask(taskId, isAutoComplete, timeSpent) {
+        // Clear stored timer
+        localStorage.removeItem('activeTaskTimer');
+
         try {
             // Find the task
             const task = allTasks.find(t => (t._id || t.id) === taskId) || activeTask;
@@ -570,7 +702,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update task status in database
             const updateData = {
-                status: 'completed',
+                status: 'Completed',
                 completedAt: new Date().toISOString(),
                 timeSpent: timeSpent,
                 completedEarly: !isAutoComplete && timeSpent < (estimatedHours * 60 * 60),

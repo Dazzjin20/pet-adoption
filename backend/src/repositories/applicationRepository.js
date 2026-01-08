@@ -144,6 +144,28 @@ class ApplicationRepository{
             throw new Error(`Failed to update application: ${error.message}`);
         }
     }
+
+    async markAsAdopted(applicationId) {
+        try {
+            const query = mongoose.Types.ObjectId.isValid(applicationId) 
+                ? { _id: applicationId } 
+                : { application_id: applicationId };
+
+            const app = await Application.findOne(query);
+            if (!app) throw new Error('Application not found');
+
+            app.status = 'Adopted';
+            app.last_update = new Date();
+            await app.save();
+
+            // Update Pet status to Adopted
+            await Pet.findByIdAndUpdate(app.pet, { status: 'Adopted' });
+
+            return app;
+        } catch (error) {
+            throw new Error(`Failed to mark as adopted: ${error.message}`);
+        }
+    }
 }
 module.exports = {
     ApplicationRepository

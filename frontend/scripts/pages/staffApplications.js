@@ -44,6 +44,9 @@ function renderApplicationsTable(applications) {
           <button class="btn btn-sm btn-success approve-btn" data-app-id="${app._id}">Approve</button>
           <button class="btn btn-sm btn-danger reject-btn" data-app-id="${app._id}">Reject</button>
         ` : ''}
+        ${app.status === 'Approved' ? `
+          <button class="btn btn-sm btn-primary adopted-btn" data-app-id="${app._id}" style="background-color: #6f42c1; border-color: #6f42c1;">Adopted</button>
+        ` : ''}
         ${app.status === 'Pending' ? `
           <button class="btn btn-sm btn-warning interview-btn" data-app-id="${app._id}">Interview</button>
         ` : ''}
@@ -62,7 +65,7 @@ function getStatusBadgeClass(status) {
     'Approved': 'bg-success',
     'Rejected': 'bg-danger',
     'Interview Scheduled': 'bg-info',
-    'Adopted': 'bg-secondary'
+    'Adopted': 'bg-primary'
   };
   return classes[status] || 'bg-secondary';
 }
@@ -87,9 +90,16 @@ function attachEventListeners() {
       const appId = e.target.dataset.appId;
       if (confirm('Are you sure you want to approve this application?')) {
         try {
+          const meetingDate = prompt('Please set a Meeting/Pickup Date (e.g., 2023-12-25):');
+          if (meetingDate === null) return; // Cancelled
+
           const notes = prompt('Add staff notes (optional):');
-          await approveApplication(appId, notes || '');
-          alert('Application approved!');
+          
+          // We use fetch directly here since we modified the backend to accept meeting_date
+          // and the utils/applicationsApi.js might not be updated yet.
+          await callApproveApi(appId, notes || '', meetingDate);
+          
+          alert('Application approved and meeting date set!');
           await loadApplications();
         } catch (err) {
           alert('Error: ' + err.message);
@@ -135,6 +145,47 @@ function attachEventListeners() {
       }
     });
   });
+
+  // Adopted application
+  document.querySelectorAll('.adopted-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const appId = e.target.dataset.appId;
+      if (confirm('Mark this application as ADOPTED? This will also update the pet status to Adopted.')) {
+        try {
+          const response = await fetch(`http://localhost:3000/api/applications/${appId}/adopt`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          
+          if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.message || 'Failed to mark as adopted');
+          }
+
+          alert('Success! Pet marked as Adopted.');
+          await loadApplications();
+        } catch (err) {
+          alert('Error: ' + err.message);
+        }
+      }
+    });
+  });
+}
+
+// Helper to call the updated approve endpoint
+async function callApproveApi(appId, notes, meetingDate) {
+    const response = await fetch(`http://localhost:3000/api/applications/${appId}/approve`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            staff_notes: notes,
+            meeting_date: meetingDate
+        })
+    });
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Failed to approve');
+    }
 }
 
 function showApplicationModal(application) {
@@ -157,6 +208,7 @@ Preferred Interview Date: ${application.preferred_interview_date ? new Date(appl
 Preferred Interview Time: ${application.preferred_interview_time || 'N/A'}
 Additional Details: ${application.additional_details || 'N/A'}
 
+${application.next_step ? `NEXT STEP: ${application.next_step}` : ''}
 ${application.staff_notes ? `STAFF NOTES: ${application.staff_notes}` : ''}
 ${application.interview_date ? `SCHEDULED INTERVIEW: ${new Date(application.interview_date).toLocaleDateString()} at ${application.interview_time}` : ''}
   `;

@@ -8,7 +8,7 @@ const taskSchema = new mongoose.Schema({
   },
   task_type: {
     type: String,
-    enum: ['Medical', 'Cleaning', 'Maintenance', 'Special', 'One-time', 'Recurring', 'Urgent'],
+    enum: ['Medical', 'Cleaning', 'Maintenance', 'Special', 'One-time', 'Recurring', 'Urgent', 'Feeding', 'Grooming', 'Exercise', 'Physical Therapy', 'General'],
     required: true
   },
   title: {

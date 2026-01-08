@@ -84,6 +84,35 @@
       }
     };
 
+    // --- NEW: Helper function to update stats ---
+    function updateDashboardStats(tasks) {
+      const urgentCount = tasks.filter(t => t.priority === 'High' && (t.status || 'Pending').toLowerCase() !== 'completed').length;
+      const pendingCount = tasks.filter(t => (t.status || 'Pending').toLowerCase() === 'pending').length;
+      const progressCount = tasks.filter(t => (t.status || '').toLowerCase() === 'in progress').length;
+      
+      // Calculate completed today
+      const today = new Date();
+      // NOTE: Kung gusto mo ng TOTAL completed, alisin ang date check.
+      // Sa ngayon, ito ay "Completed Today" logic:
+      const completedCount = tasks.filter(t => {
+          if ((t.status || '').toLowerCase() !== 'completed') return false;
+          const taskDate = new Date(t.updated_at || t.created_at);
+          return taskDate.getDate() === today.getDate() &&
+                 taskDate.getMonth() === today.getMonth() &&
+                 taskDate.getFullYear() === today.getFullYear();
+      }).length;
+
+      const elUrgent = document.getElementById('statUrgent');
+      const elPending = document.getElementById('statPending');
+      const elProgress = document.getElementById('statProgress');
+      const elCompleted = document.getElementById('statCompleted');
+
+      if (elUrgent) elUrgent.textContent = urgentCount;
+      if (elPending) elPending.textContent = pendingCount;
+      if (elProgress) elProgress.textContent = progressCount;
+      if (elCompleted) elCompleted.textContent = completedCount;
+    }
+
     // --- NEW: Functions to render the Overview Tab ---
     async function renderOverviewTab() {
       const recentCareContainer = document.querySelector('#overviewView .recent-care-card');
@@ -101,8 +130,18 @@
         const result = await response.json();
         const tasks = result.tasks || [];
 
-        // Sort tasks by creation date, most recent first
-        tasks.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        // Update stats immediately when Overview loads
+        updateDashboardStats(tasks);
+
+        // Sort tasks: High priority first, then by creation date
+        tasks.sort((a, b) => {
+          const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+          const pA = priorityOrder[a.priority] || 0;
+          const pB = priorityOrder[b.priority] || 0;
+          
+          if (pA !== pB) return pB - pA; // Higher priority first
+          return new Date(b.created_at) - new Date(a.created_at); // Most recent first
+        });
 
         // Render recent tasks (e.g., top 3)
         const recentTasks = tasks.slice(0, 3);
@@ -160,14 +199,15 @@
     async function renderTasksTab() {
       const pendingSection = document.querySelector('#tasksView .task-section[data-status="pending"] .all-care-card');
       const inProgressSection = document.querySelector('#tasksView .task-section[data-status="in-progress"] .all-care-card');
+      // Completed section might not exist in HTML yet, so we make it optional to prevent errors
       const completedSection = document.querySelector('#tasksView .task-section[data-status="completed"] .all-care-card');
 
-      if (!pendingSection || !inProgressSection || !completedSection) return;
+      if (!pendingSection || !inProgressSection) return;
 
       // Show loading state
       pendingSection.innerHTML = '<p>Loading pending tasks...</p>';
       inProgressSection.innerHTML = '<p>Loading in-progress tasks...</p>';
-      completedSection.innerHTML = '<p>Loading completed tasks...</p>';
+      if (completedSection) completedSection.innerHTML = '<p>Loading completed tasks...</p>';
 
       try {
         const response = await fetch('http://localhost:3000/api/tasks');
@@ -175,19 +215,32 @@
         const result = await response.json();
         const tasks = result.tasks || [];
 
+        // Update stats using the shared function
+        updateDashboardStats(tasks);
+
+        // Sort tasks: High priority first, then by creation date
+        tasks.sort((a, b) => {
+          const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+          const pA = priorityOrder[a.priority] || 0;
+          const pB = priorityOrder[b.priority] || 0;
+          
+          if (pA !== pB) return pB - pA; // Higher priority first
+          return new Date(b.created_at) - new Date(a.created_at); // Most recent first
+        });
+
         const pendingTasks = tasks.filter(t => (t.status || 'pending').toLowerCase() === 'pending');
         const inProgressTasks = tasks.filter(t => (t.status || '').toLowerCase() === 'in progress');
         const completedTasks = tasks.filter(t => (t.status || '').toLowerCase() === 'completed');
 
         pendingSection.innerHTML = pendingTasks.length > 0 ? pendingTasks.map(createTaskCard).join('') : '<p class="text-muted">No pending tasks.</p>';
         inProgressSection.innerHTML = inProgressTasks.length > 0 ? inProgressTasks.map(createTaskCard).join('') : '<p class="text-muted">No tasks in progress.</p>';
-        completedSection.innerHTML = completedTasks.length > 0 ? completedTasks.map(createTaskCard).join('') : '<p class="text-muted">No completed tasks.</p>';
+        if (completedSection) completedSection.innerHTML = completedTasks.length > 0 ? completedTasks.map(createTaskCard).join('') : '<p class="text-muted">No completed tasks.</p>';
 
       } catch (error) {
         console.error("Error rendering tasks tab:", error);
         pendingSection.innerHTML = '<p class="text-danger">Could not load tasks.</p>';
         inProgressSection.innerHTML = '';
-        completedSection.innerHTML = '';
+        if (completedSection) completedSection.innerHTML = '';
       }
     }
 
@@ -342,7 +395,17 @@
       
       // Update tasks list for selected date
       function updateTasksList() {
-        const tasks = calendarData.getTasksForDate(calendarData.selectedDate);
+        // Get tasks and create a copy to sort
+        let tasks = [...calendarData.getTasksForDate(calendarData.selectedDate)];
+        
+        // Sort tasks: High priority first for the schedule list
+        tasks.sort((a, b) => {
+          const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+          const pA = priorityOrder[a.priority] || 0;
+          const pB = priorityOrder[b.priority] || 0;
+          return pB - pA;
+        });
+
         const today = new Date();
         const isToday = calendarData.isToday(calendarData.selectedDate);
         

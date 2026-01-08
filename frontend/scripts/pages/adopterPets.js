@@ -170,6 +170,9 @@ async function applyFiltersAndLoadPets() {
         // Use all pets fetched from the API
         let filteredPets = pets;
         
+        // Filter out adopted pets so they don't appear in the list
+        filteredPets = filteredPets.filter(pet => (pet.status || '').toLowerCase() !== 'adopted');
+
         // Apply search filter CLIENT-SIDE (since API search isn't working)
         if (searchTerm) {
             const searchLower = searchTerm.toLowerCase();
