@@ -53,7 +53,26 @@ function populateNavbar() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', populateNavbar);
+function initStickyNavbar() {
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        navbar.classList.add('sticky-top');
+        
+        // Add shadow on scroll for better visibility
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                navbar.classList.add('shadow-sm');
+            } else {
+                navbar.classList.remove('shadow-sm');
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    populateNavbar();
+    initStickyNavbar();
+});
 
 // Listen for a custom event to re-populate the navbar after a profile update
 window.addEventListener('userUpdated', populateNavbar);

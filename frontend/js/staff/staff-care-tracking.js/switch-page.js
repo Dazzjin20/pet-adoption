@@ -1,3 +1,31 @@
+  // Helper to fetch both Care Tasks and Staff Tasks
+  async function fetchCombinedTasks() {
+    try {
+      const [careRes, staffRes] = await Promise.all([
+        fetch('http://localhost:3000/api/tasks'),
+        fetch('http://localhost:3000/api/staff-tasks')
+      ]);
+
+      let tasks = [];
+
+      if (careRes.ok) {
+        const data = await careRes.json();
+        tasks = [...tasks, ...(data.tasks || data.data || [])];
+      }
+
+      if (staffRes.ok) {
+        const data = await staffRes.json();
+        const staffTasks = Array.isArray(data) ? data : (data.tasks || data.data || []);
+        tasks = [...tasks, ...staffTasks];
+      }
+
+      return tasks;
+    } catch (error) {
+      console.error("Error fetching combined tasks:", error);
+      return [];
+    }
+  }
+
   // Calendar data and functions
     const calendarData = {
       currentDate: new Date(),
@@ -9,10 +37,7 @@
       // --- NEW: Fetch and process tasks from the backend ---
       async fetchAndProcessTasks() {
         try {
-          const response = await fetch('http://localhost:3000/api/tasks');
-          if (!response.ok) throw new Error('Failed to fetch tasks');
-          const result = await response.json();
-          const tasks = result.tasks || []; // Correctly access the tasks array from the response object
+          const tasks = await fetchCombinedTasks();
           
           // Reset tasksByDate
           this.tasksByDate = {};
@@ -130,10 +155,7 @@
       allCareContainer.innerHTML = '<p>Loading all tasks...</p>';
 
       try {
-        const response = await fetch('http://localhost:3000/api/tasks');
-        if (!response.ok) throw new Error('Failed to fetch tasks');
-        const result = await response.json();
-        const tasks = result.tasks || [];
+        const tasks = await fetchCombinedTasks();
 
         // Update stats immediately when Overview loads
         updateDashboardStats(tasks);
@@ -252,10 +274,7 @@
       if (completedSection) completedSection.innerHTML = '<p>Loading completed tasks...</p>';
 
       try {
-        const response = await fetch('http://localhost:3000/api/tasks');
-        if (!response.ok) throw new Error('Failed to fetch tasks');
-        const result = await response.json();
-        const tasks = result.tasks || [];
+        const tasks = await fetchCombinedTasks();
 
         // --- NEW: Update Cache ---
         allTasksCache = tasks;

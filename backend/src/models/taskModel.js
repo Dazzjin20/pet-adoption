@@ -62,6 +62,24 @@ const taskSchema = new mongoose.Schema({
     ref: 'Staff',
     required: true
   },
+  timeSpent: {
+    type: Number, // In seconds
+    default: 0
+  },
+  completedAt: {
+    type: Date
+  },
+  completedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Volunteer'
+  },
+  completedByName: {
+    type: String
+  },
+  completedEarly: {
+    type: Boolean,
+    default: false
+  },
   created_at: {
     type: Date,
     default: Date.now

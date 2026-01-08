@@ -65,7 +65,7 @@
     </div>
 
    
-    <div class="row mt-4 g-3">
+    <div class="row mt-4 g-3" id="Dashboard">
       <div class="col-md-3 col-sm-6">
         <div class="volunteer-stat-card p-4">
           <div class="fs-1 mb-2">⏰</div>
@@ -99,18 +99,11 @@
 
     <div class="row mt-4 g-4">
       <div class="col-md-6">
-        <div class="bg-white border rounded-4 p-4">
+        <div class="bg-white border rounded-4 p-4" id="Today-schedule-container">
           <h5 class="fw-bold mb-3">Today's Schedule</h5>
-
-          <div class="volunteer-schedule-item" id="scheduleItem1">
-            <div class="fw-semibold">Dog Walking - Morning Shift</div>
-            <div class="volunteer-schedule-time">9:00 AM - 11:00 AM</div>
+          <div>
+            <p class="text-muted">Loading today's schedule...</p>
           </div>
-          <div class="volunteer-schedule-item" id="scheduleItem2">
-            <div class="fw-semibold">Cat Socialization</div>
-            <div class="volunteer-schedule-time">2:00 PM - 4:00 PM</div>
-          </div>
-
           <button class="volunteer-view-btn mt-3" id="viewFullScheduleBtn">View Full Schedule</button>
         </div>
       </div>
@@ -121,9 +114,7 @@
           <p class="text-muted small mb-3">Your recent volunteer activity overview</p>
 
           <ul class="list-unstyled mb-3" id="performanceList">
-            <li class="mb-2">✔ Completed 3 dog walks this week</li>
-            <li class="mb-2">✔ Assisted 2 adoptions successfully</li>
-            <li>✔ Helped with 1 vaccination clinic</li>
+            <li class="text-muted">Loading performance summary...</li>
           </ul>
         </div>
       </div>
@@ -132,6 +123,6 @@
 
    <script src="../../bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="../../js/auth/auth.js"></script>
-  <script src="../../js/volunteer-dashboard.js"></script>
+  <script type="module" src="../../scripts/pages/volunteerDashboard.js"></script>
 </body>
 </html>

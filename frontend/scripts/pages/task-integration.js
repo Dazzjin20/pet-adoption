@@ -1,3 +1,19 @@
+// --- NEW: Sound effect for task completion ---
+// NOTE: You need to create this sound file in the specified path.
+const completionSound = new Audio('/frontend/assets/sounds/timer-complete.mp3'); 
+completionSound.preload = 'auto';
+let isMuted = false;
+
+function playCompletionSound() {
+    if (isMuted) return;
+    // Reset time to play again if needed
+    completionSound.currentTime = 0;
+    completionSound.play().catch(error => {
+        // Autoplay was prevented by the browser. This is a common security feature.
+        console.warn("Timer sound was blocked by the browser. User interaction is required to play audio.", error);
+    });
+}
+
 // Check if we should filter by date (from schedule page)
 const filterDate = sessionStorage.getItem('filterByDate');
 if (filterDate) {
@@ -464,9 +480,14 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="task-timer-section" style="display: none;">
                 <div class="timer-header">
                     <h6>Task Timer</h6>
-                    <div class="timer-badge">
-                        <span class="timer-icon">⏱️</span>
-                        <span class="timer-label">Active</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-outline-secondary btn-mute-toggle" onclick="toggleMute(this)" title="Mute/Unmute Sound">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <div class="timer-badge">
+                            <span class="timer-icon">⏱️</span>
+                            <span class="timer-label">Active</span>
+                        </div>
                     </div>
                 </div>
                 <div class="timer-display">
@@ -487,6 +508,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             Elapsed: <span class="elapsed-time">0m 0s</span>
                         </div>
                     </div>
+                </div>
+                <div class="progress mb-3 mx-3" style="height: 10px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <div class="timer-controls">
                     <button class="btn btn-success btn-finish-early" onclick="finishTaskEarly('${taskId}', this)">
@@ -557,6 +581,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Prepare update payload: Status AND Assignment
                 const updatePayload = { status: 'In Progress' };
+                // Check if it's a pet task (Care Task) or Staff Task to use correct field
                 if (task.pet_id) {
                     updatePayload.assigned_to = VOLUNTEER_ID;
                 } else {
@@ -584,6 +609,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const timerDisplay = taskCard.querySelector('.timer-time');
         const elapsedDisplay = taskCard.querySelector('.elapsed-time');
         const progressCircle = taskCard.querySelector('.timer-fg');
+        const progressBar = taskCard.querySelector('.progress-bar');
         const finishBtn = taskCard.querySelector('.btn-finish-early');
         
         let totalSeconds = totalMinutes * 60;
@@ -628,11 +654,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const offset = circumference - (progress * circumference);
             progressCircle.style.strokeDashoffset = offset;
             
+            // Update progress bar
+            if (progressBar) {
+                const percentage = Math.min(100, progress * 100);
+                progressBar.style.width = `${percentage}%`;
+                progressBar.setAttribute('aria-valuenow', percentage);
+            }
+            
             // Change color when nearing completion
             if (progress > 0.8) {
                 progressCircle.style.stroke = '#dc3545';
+                if (progressBar) progressBar.className = 'progress-bar bg-danger';
             } else if (progress > 0.5) {
                 progressCircle.style.stroke = '#ffc107';
+                if (progressBar) progressBar.className = 'progress-bar bg-warning';
+            } else {
+                if (progressBar) progressBar.className = 'progress-bar bg-success';
             }
             
             // Update timer data
@@ -644,6 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Auto-complete when time is up
             if (elapsedSeconds >= totalSeconds) {
                 clearInterval(timerInterval);
+                playCompletionSound(); // Play the sound effect
                 completeTask(taskId, true, elapsedSeconds);
             }
         }
@@ -682,6 +720,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
+    // Toggle mute - GLOBAL FUNCTION
+    window.toggleMute = function(button) {
+        isMuted = !isMuted;
+        const icon = button.querySelector('i');
+        
+        if (isMuted) {
+            icon.className = 'fas fa-volume-mute';
+            button.classList.remove('btn-outline-secondary');
+            button.classList.add('btn-secondary');
+        } else {
+            icon.className = 'fas fa-volume-up';
+            button.classList.remove('btn-secondary');
+            button.classList.add('btn-outline-secondary');
+        }
+    };
+
     // Complete task
     async function completeTask(taskId, isAutoComplete, timeSpent) {
         // Clear stored timer
