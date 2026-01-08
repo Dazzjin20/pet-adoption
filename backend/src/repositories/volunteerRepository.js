@@ -37,6 +37,18 @@ class VolunteerRepository {
         }
     }
 
+    async updateById(id, updateData) {
+        try {
+            // Hanapin at i-update ang volunteer, at ibalik ang bagong document
+            console.log(`Updating volunteer ${id} in MongoDB...`);
+            const volunteer = await Volunteer.findByIdAndUpdate(id, { $set: updateData }, { new: true });
+            if (volunteer) volunteer.password = undefined; // Huwag ibalik ang password
+            return volunteer;
+        } catch (error) {
+            throw new Error(`Failed to update volunteer by ID: ${error.message}`);
+        }
+    }
+
     buildConsents(consentTypes) {
         const consentMap = {
             agreed_terms: 'Terms of Service and Privacy Policy',

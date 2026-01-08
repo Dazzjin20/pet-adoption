@@ -1,10 +1,16 @@
 class VolunteerProfile {
     constructor() {
         this.user = null;
+        this.profileImageBase64 = null; // Store new image here
 
         // DOM Elements
         this.viewElements = document.querySelectorAll('.volunteer-profile-info-value');
         this.editElements = document.querySelectorAll('input.form-control, textarea.form-control');
+        
+        this.profilePic = document.getElementById('profilePic');
+        this.navbarProfilePic = document.getElementById('navbarProfilePic');
+        this.uploadPicBtn = document.getElementById('uploadPicBtn');
+        this.profileImageInput = document.getElementById('profileImageInput');
 
         // Buttons
         this.editProfileBtn = document.getElementById('editProfileBtn');
@@ -86,6 +92,11 @@ class VolunteerProfile {
         document.getElementById('editUserBio').value = this.user.bio || '';
         document.getElementById('editUserSkills').value = this.user.activities ? this.user.activities.join(', ') : '';
         document.getElementById('editUserAvailability').value = this.user.availability ? this.user.availability.join(', ') : '';
+
+        // Profile picture
+        const profileImageUrl = this.user.profile_image || '/frontend/assets/image/photo/BoyIcon.jpg';
+        if(this.profilePic) this.profilePic.src = profileImageUrl;
+        if(this.navbarProfilePic) this.navbarProfilePic.src = profileImageUrl;
     }
 
     populateActivities() {
@@ -134,6 +145,25 @@ class VolunteerProfile {
         this.editProfileBtn.addEventListener('click', () => this.toggleEditMode(true));
         this.cancelBtn.addEventListener('click', () => this.toggleEditMode(false));
         this.saveChangesBtn.addEventListener('click', () => this.handleSaveChanges());
+
+        // Image upload listeners
+        if(this.uploadPicBtn && this.profileImageInput) {
+            this.uploadPicBtn.addEventListener('click', () => this.profileImageInput.click());
+            this.profileImageInput.addEventListener('change', (e) => this.handleImageUpload(e));
+        }
+    }
+
+    handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.profileImageBase64 = e.target.result;
+            if(this.profilePic) this.profilePic.src = this.profileImageBase64;
+            this.showMessage('New profile image is ready to be saved.', 'info');
+        };
+        reader.readAsDataURL(file);
     }
 
     toggleEditMode(isEditing) {
@@ -143,12 +173,25 @@ class VolunteerProfile {
             this.editProfileBtn.classList.add('d-none');
             this.saveChangesBtn.classList.remove('d-none');
             this.cancelBtn.classList.remove('d-none');
+            
+            // Show upload button (Camera overlay)
+            if(this.uploadPicBtn) {
+                this.uploadPicBtn.classList.remove('d-none');
+                this.uploadPicBtn.classList.add('d-flex');
+            }
         } else {
             this.viewElements.forEach(el => el.classList.remove('d-none'));
             this.editElements.forEach(el => el.classList.add('d-none'));
             this.editProfileBtn.classList.remove('d-none');
             this.saveChangesBtn.classList.add('d-none');
             this.cancelBtn.classList.add('d-none');
+            
+            // Hide upload button
+            if(this.uploadPicBtn) {
+                this.uploadPicBtn.classList.add('d-none');
+                this.uploadPicBtn.classList.remove('d-flex');
+            }
+            
             this.populateProfileData();
             this.hideMessage();
         }
@@ -167,6 +210,11 @@ class VolunteerProfile {
             activities: document.getElementById('editUserSkills').value.split(',').map(s => s.trim()).filter(s => s).map(s => s.toLowerCase().replace(/ /g, '_')),
             availability: document.getElementById('editUserAvailability').value.split(',').map(a => a.trim()).filter(a => a)
         };
+
+        // Add image if changed
+        if (this.profileImageBase64) {
+            updatedData.profile_image = this.profileImageBase64;
+        }
 
         try {
             // FIX: Your AuthService uses 'authToken' not 'token'
@@ -199,16 +247,7 @@ class VolunteerProfile {
 
             // Check response
             if (response.status === 404) {
-                // The backend endpoint is missing. We will save locally as a fallback.
-                const errorMsg = 'Backend route not found. You must add the PUT /api/auth/profile/volunteer/:userId endpoint to your server.';
-                console.error(errorMsg);
-                
-                // Save locally for now
-                this.saveToLocalStorage(updatedData);
-                this.showMessage('Profile saved locally. The backend endpoint is missing.', 'info');
-                this.populateProfileData();
-                this.toggleEditMode(false);
-                return;
+                throw new Error('Backend route not found (404). Check your server routes.');
             }
 
             if (!response.ok) {
@@ -224,6 +263,11 @@ class VolunteerProfile {
             if (result.user) {
                 this.user = result.user;
                 localStorage.setItem('currentUser', JSON.stringify(this.user));
+                
+                // Update Navbar Profile Pic immediately
+                if (this.navbarProfilePic && this.user.profile_image) {
+                    this.navbarProfilePic.src = this.user.profile_image;
+                }
             }
 
             this.showMessage('Profile updated successfully in database!', 'success');
@@ -233,13 +277,10 @@ class VolunteerProfile {
         } catch (error) {
             console.error('Save failed:', error);
             
-            // Save to localStorage as fallback
-            this.saveToLocalStorage(updatedData);
-            this.showMessage('Saved locally. ' + error.message, 'warning');
-            
-            this.populateProfileData();
-            this.toggleEditMode(false);
+            // Removed localStorage fallback to ensure we fix the backend connection
+            this.showMessage('Failed to save to server: ' + error.message, 'danger');
         } finally {
+            this.profileImageBase64 = null; // Reset after save
             this.saveChangesBtn.disabled = false;
             this.saveChangesBtn.textContent = 'Save Changes';
         }
