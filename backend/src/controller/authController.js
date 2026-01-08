@@ -104,3 +104,73 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: 'Failed to retrieve profile.', error: error.message });
   }
 };
+
+// Forgot Password Controller
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    // Check user across all repositories
+    let user = await adopterRepository.findByEmail(email);
+    let role = 'adopter';
+    
+    if (!user) {
+      user = await volunteerRepository.findByEmail(email);
+      role = 'volunteer';
+    }
+    if (!user) {
+      user = await staffRepository.findByEmail(email);
+      role = 'staff';
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'User with this email does not exist.' });
+    }
+
+    // Generate reset token (valid for 1 hour)
+    const token = jwt.sign(
+      { id: user._id, role }, 
+      process.env.JWT_SECRET || 'your_default_secret_key', 
+      { expiresIn: '1h' }
+    );
+
+    // NOTE: In a real app, send this via email. For dev, we log it.
+    // Get the client URL from the request headers to handle dynamic ports (e.g. 5501, 5502)
+    const clientUrl = req.headers.origin || 'http://127.0.0.1:5500';
+    const resetLink = `${clientUrl}/frontend/pages/reset-password.html?token=${token}`;
+    console.log('------------------------------------------------');
+    console.log(`PASSWORD RESET LINK FOR ${email}:`);
+    console.log(resetLink);
+    console.log('------------------------------------------------');
+
+    return res.status(200).json({ message: 'Password reset link generated! Redirecting...', resetLink });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ message: 'An error occurred.' });
+  }
+};
+
+// Reset Password Controller
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) return res.status(400).json({ message: 'Token and password required.' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_default_secret_key');
+    const { id, role } = decoded;
+
+    let repository = (role === 'adopter') ? adopterRepository : 
+                     (role === 'volunteer') ? volunteerRepository : staffRepository;
+
+    const user = await repository.findById(id);
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+
+    user.password = await bcrypt.hash(password, SALT_ROUNDS);
+    await user.save();
+
+    return res.status(200).json({ message: 'Password reset successful. You can now login.' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(400).json({ message: 'Invalid or expired token.' });
+  }
+};

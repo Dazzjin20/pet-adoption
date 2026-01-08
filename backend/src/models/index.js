@@ -35,7 +35,7 @@ const adopterSchema = new mongoose.Schema({
   },
   pet_experience: [{
     type: String,
-    'enum': ['dogs', 'cats', '1st_time_owner'] 
+    'enum': ['dogs', 'cats','Others'] 
   }],
   status: {
     type: String,

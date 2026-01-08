@@ -17,6 +17,10 @@ router.post('/login/adopter', authController.loginAdopter);
 router.post('/login/volunteer', authController.loginVolunteer);
 router.post('/login/staff', authController.loginStaff);
 
+// Password Reset Routes
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
+
 // Profile routes
 router.get('/profile/:userType/:userId', authController.getProfile);
 
