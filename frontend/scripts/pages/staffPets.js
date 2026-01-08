@@ -38,7 +38,9 @@ async function loadPets() {
     const grid = document.getElementById('petsGrid');
     if (!grid) return;
     grid.innerHTML = '';
-    pets.forEach(p => grid.appendChild(createCard(p)));
+    
+    // Filter out adopted pets from the default list view
+    pets.filter(p => (p.status || '').toLowerCase() !== 'adopted').forEach(p => grid.appendChild(createCard(p)));
 
     updateStats(pets);
     attachActionHandlers();
@@ -587,6 +589,11 @@ async function applyFiltersAndSearch() {
         
         // Use all pets fetched from the API
         let filteredPets = pets;
+
+        // Hide adopted pets if viewing "All Status" (Active pets only)
+        if (statusFilter === 'All Status') {
+            filteredPets = filteredPets.filter(p => (p.status || '').toLowerCase() !== 'adopted');
+        }
         
         // Apply search filter CLIENT-SIDE (since API search isn't working)
         if (searchTerm) {

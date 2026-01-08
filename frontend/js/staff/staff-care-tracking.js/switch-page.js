@@ -113,10 +113,15 @@
       if (elCompleted) elCompleted.textContent = completedCount;
     }
 
+    // --- Overview Pagination State ---
+    let overviewTasksCache = [];
+    let overviewCurrentPage = 1;
+    const overviewItemsPerPage = 5;
+
     // --- NEW: Functions to render the Overview Tab ---
     async function renderOverviewTab() {
-      const recentCareContainer = document.querySelector('#overviewView .recent-care-card');
-      const allCareContainer = document.querySelector('#overviewView .all-care-card');
+      const recentCareContainer = document.getElementById('recentTasksList');
+      const allCareContainer = document.getElementById('overviewTasksList');
 
       if (!recentCareContainer || !allCareContainer) return;
 
@@ -143,6 +148,10 @@
           return new Date(b.created_at) - new Date(a.created_at); // Most recent first
         });
 
+        // Cache for pagination
+        overviewTasksCache = tasks;
+        overviewCurrentPage = 1;
+
         // Render recent tasks (e.g., top 3)
         const recentTasks = tasks.slice(0, 3);
         recentCareContainer.innerHTML = recentTasks.length > 0 
@@ -150,15 +159,43 @@
           : '<p class="text-muted">No recent care activities found.</p>';
 
         // Render all tasks
-        allCareContainer.innerHTML = tasks.length > 0 
-          ? tasks.map(createOverviewTaskCard).join('') 
-          : '<p class="text-muted">No care activities found.</p>';
+        updateOverviewTasksList();
 
       } catch (error) {
         console.error("Error rendering overview tab:", error);
         recentCareContainer.innerHTML = '<p class="text-danger">Could not load recent tasks.</p>';
         allCareContainer.innerHTML = '<p class="text-danger">Could not load all tasks.</p>';
       }
+    }
+
+    function updateOverviewTasksList() {
+        const container = document.getElementById('overviewTasksList');
+        if (!container) return;
+        
+        const totalItems = overviewTasksCache.length;
+        const start = (overviewCurrentPage - 1) * overviewItemsPerPage;
+        const end = start + overviewItemsPerPage;
+        const paginatedTasks = overviewTasksCache.slice(start, end);
+        
+        container.innerHTML = paginatedTasks.length > 0 
+            ? paginatedTasks.map(createOverviewTaskCard).join('') 
+            : '<p class="text-muted">No care activities found.</p>';
+            
+        renderOverviewPaginationControls(totalItems);
+    }
+
+    function renderOverviewPaginationControls(totalItems) {
+        const totalPages = Math.ceil(totalItems / overviewItemsPerPage);
+        const start = totalItems === 0 ? 0 : (overviewCurrentPage - 1) * overviewItemsPerPage + 1;
+        const end = Math.min(overviewCurrentPage * overviewItemsPerPage, totalItems);
+        
+        const infoEl = document.getElementById('overviewPaginationInfo');
+        const prevItem = document.getElementById('overviewPrevPageItem');
+        const nextItem = document.getElementById('overviewNextPageItem');
+        
+        if (infoEl) infoEl.textContent = `Showing ${start}-${end} of ${totalItems} tasks`;
+        if (prevItem) prevItem.classList.toggle('disabled', overviewCurrentPage <= 1);
+        if (nextItem) nextItem.classList.toggle('disabled', overviewCurrentPage >= totalPages);
     }
 
     /**
@@ -194,6 +231,8 @@
     // --- NEW: Functions to render dynamic content for tabs ---
 
     let allTasksCache = []; // Moved to global scope so renderTasksTab can access it
+    let tasksCurrentPage = 1;
+    const tasksItemsPerPage = 10;
 
     /**
      * Fetches all tasks and renders them in the "Tasks" tab.
@@ -261,7 +300,9 @@
     }
 
     // --- NEW: Filter Logic for Tasks Tab (Moved to global scope) ---
-    function applyFilters() {
+    function applyFilters(resetPage = true) {
+      if (resetPage) tasksCurrentPage = 1;
+
       const searchInput = document.getElementById('searchInput');
       const priorityFilter = document.getElementById('priorityFilter');
       const categoryFilter = document.getElementById('categoryFilter');
@@ -285,7 +326,39 @@
           return matchesSearch && matchesPriority && matchesCategory;
       });
 
-      renderFilteredTasks(filtered);
+      // Sort tasks: High priority first, then by creation date
+      filtered.sort((a, b) => {
+        const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+        const pA = priorityOrder[a.priority] || 0;
+        const pB = priorityOrder[b.priority] || 0;
+        
+        if (pA !== pB) return pB - pA; 
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      // Pagination Logic
+      const totalItems = filtered.length;
+      const startIndex = (tasksCurrentPage - 1) * tasksItemsPerPage;
+      const endIndex = startIndex + tasksItemsPerPage;
+      const paginatedTasks = filtered.slice(startIndex, endIndex);
+
+      renderFilteredTasks(paginatedTasks);
+      renderTasksPaginationControls(totalItems);
+    }
+
+    function renderTasksPaginationControls(totalItems) {
+      const totalPages = Math.ceil(totalItems / tasksItemsPerPage);
+      const start = totalItems === 0 ? 0 : (tasksCurrentPage - 1) * tasksItemsPerPage + 1;
+      const end = Math.min(tasksCurrentPage * tasksItemsPerPage, totalItems);
+      
+      const infoEl = document.getElementById('tasksPaginationInfo');
+      const prevItem = document.getElementById('tasksPrevPageItem');
+      const nextItem = document.getElementById('tasksNextPageItem');
+      
+      if (infoEl) infoEl.textContent = `Showing ${start}-${end} of ${totalItems} tasks`;
+      
+      if (prevItem) prevItem.classList.toggle('disabled', tasksCurrentPage <= 1);
+      if (nextItem) nextItem.classList.toggle('disabled', tasksCurrentPage >= totalPages);
     }
 
     function renderFilteredTasks(tasks) {
@@ -380,7 +453,20 @@
         calendarData.currentDate.setDate(calendarData.currentDate.getDate() + 7);
         updateCalendar();
       });
+
+      // Go to Today button
+      document.getElementById('todayBtn').addEventListener('click', function() {
+        const today = new Date();
+        calendarData.currentDate = new Date(today);
+        calendarData.selectedDate = new Date(today);
+        scheduleCurrentPage = 1; // Reset pagination
+        updateCalendar();
+      });
       
+      // Schedule Pagination State
+      let scheduleCurrentPage = 1;
+      const scheduleItemsPerPage = 5;
+
       // Update calendar display
       async function updateCalendar() {
         const weekDates = calendarData.getWeekDates(calendarData.currentDate);
@@ -449,13 +535,19 @@
           return pB - pA;
         });
 
+        // Pagination Logic
+        const totalItems = tasks.length;
+        const start = (scheduleCurrentPage - 1) * scheduleItemsPerPage;
+        const end = start + scheduleItemsPerPage;
+        const paginatedTasks = tasks.slice(start, end);
+
         const today = new Date();
         const isToday = calendarData.isToday(calendarData.selectedDate);
         
         let tasksHTML = '';
         
-        if (tasks.length > 0) {
-          tasks.forEach(task => {
+        if (paginatedTasks.length > 0) {
+          paginatedTasks.forEach(task => {
             // Calculate time display from scheduled_date
             const taskDate = new Date(task.scheduled_date);
             let timeDisplay = taskDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
@@ -500,6 +592,22 @@
         }
         
         document.getElementById('upcomingTasksList').innerHTML = tasksHTML;
+        renderSchedulePaginationControls(totalItems);
+      }
+
+      function renderSchedulePaginationControls(totalItems) {
+        const totalPages = Math.ceil(totalItems / scheduleItemsPerPage);
+        const start = totalItems === 0 ? 0 : (scheduleCurrentPage - 1) * scheduleItemsPerPage + 1;
+        const end = Math.min(scheduleCurrentPage * scheduleItemsPerPage, totalItems);
+        
+        const infoEl = document.getElementById('schedulePaginationInfo');
+        const prevItem = document.getElementById('schedulePrevPageItem');
+        const nextItem = document.getElementById('scheduleNextPageItem');
+        
+        if (infoEl) infoEl.textContent = `Showing ${start}-${end} of ${totalItems} tasks`;
+        
+        if (prevItem) prevItem.classList.toggle('disabled', scheduleCurrentPage <= 1);
+        if (nextItem) nextItem.classList.toggle('disabled', scheduleCurrentPage >= totalPages);
       }
       
       // --- NEW: Listen for task updates from other scripts ---
@@ -528,6 +636,80 @@
               if (priorityFilter) priorityFilter.value = 'All';
               if (categoryFilter) categoryFilter.value = 'All';
               applyFilters();
+          });
+      }
+
+      // --- NEW: Tasks Tab Pagination Event Listeners ---
+      const tasksPrevBtn = document.getElementById('tasksPrevPageBtn');
+      const tasksNextBtn = document.getElementById('tasksNextPageBtn');
+      
+      if (tasksPrevBtn) {
+          tasksPrevBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              if (tasksCurrentPage > 1) {
+                  tasksCurrentPage--;
+                  applyFilters(false); // Don't reset page
+              }
+          });
+      }
+      
+      if (tasksNextBtn) {
+          tasksNextBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              // Check if disabled class is present on parent li
+              if (!e.target.parentElement.classList.contains('disabled')) {
+                  tasksCurrentPage++;
+                  applyFilters(false); // Don't reset page
+              }
+          });
+      }
+
+      // --- NEW: Schedule Pagination Event Listeners ---
+      const schedulePrevBtn = document.getElementById('schedulePrevPageBtn');
+      const scheduleNextBtn = document.getElementById('scheduleNextPageBtn');
+      
+      if (schedulePrevBtn) {
+          schedulePrevBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              if (scheduleCurrentPage > 1) {
+                  scheduleCurrentPage--;
+                  updateTasksList();
+              }
+          });
+      }
+      
+      if (scheduleNextBtn) {
+          scheduleNextBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              if (!e.target.parentElement.classList.contains('disabled')) {
+                  scheduleCurrentPage++;
+                  updateTasksList();
+              }
+          });
+      }
+
+      // --- NEW: Overview Pagination Event Listeners ---
+      const overviewPrevBtn = document.getElementById('overviewPrevPageBtn');
+      const overviewNextBtn = document.getElementById('overviewNextPageBtn');
+      
+      if (overviewPrevBtn) {
+          overviewPrevBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              if (overviewCurrentPage > 1) {
+                  overviewCurrentPage--;
+                  updateOverviewTasksList();
+              }
+          });
+      }
+      
+      if (overviewNextBtn) {
+          overviewNextBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              // Check if disabled class is present on parent li
+              if (!e.target.parentElement.classList.contains('disabled')) {
+                  overviewCurrentPage++;
+                  updateOverviewTasksList();
+              }
           });
       }
 

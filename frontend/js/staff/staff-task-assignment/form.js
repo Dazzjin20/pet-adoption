@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const categoryFilter = document.getElementById('categoryFilter');
   const priorityFilter = document.getElementById('priorityFilter');
   let allTasks = []; // Store all tasks locally for filtering
+  
+  // --- Pagination State ---
+  let currentFilteredTasks = [];
+  let currentPage = 1;
+  const itemsPerPage = 9; // Number of tasks per page
 
   const API_URL = 'http://localhost:3000/api'; // Backend server URL
 
@@ -100,19 +105,59 @@ document.addEventListener('DOMContentLoaded', () => {
       return matchesSearch && matchesCategory && matchesPriority;
     });
 
-    renderTasksList(filtered);
+    currentFilteredTasks = filtered;
+    currentPage = 1; // Reset to first page on filter change
+    renderTasksList();
   };
 
-  const renderTasksList = (tasksToRender) => {
+  const renderTasksList = () => {
     // Clear only dynamically loaded tasks (preserve any static headers if they exist inside container, though usually container is cleared)
     tasksContainer.querySelectorAll('.task-card[data-task-id]').forEach(card => card.remove());
     
-    if (tasksToRender.length === 0) {
+    // Remove existing pagination if it exists
+    const existingPagination = document.getElementById('staffTaskPagination');
+    if (existingPagination) existingPagination.remove();
+
+    if (currentFilteredTasks.length === 0) {
       // Optional: Show "No tasks found" message
       // tasksContainer.insertAdjacentHTML('beforeend', '<p class="text-muted ms-3">No tasks found matching your criteria.</p>');
     } else {
-      const allTasksHTML = tasksToRender.map(renderTaskCard).join('');
+      // Pagination Logic
+      const totalItems = currentFilteredTasks.length;
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedTasks = currentFilteredTasks.slice(startIndex, endIndex);
+
+      const allTasksHTML = paginatedTasks.map(renderTaskCard).join('');
       tasksContainer.insertAdjacentHTML('beforeend', allTasksHTML);
+
+      // Render Pagination Controls
+      const start = startIndex + 1;
+      const end = Math.min(endIndex, totalItems);
+      
+      const paginationHTML = `
+        <div id="staffTaskPagination" class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top w-100">
+          <span class="text-muted small">Showing ${start}-${end} of ${totalItems} tasks</span>
+          <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item ${currentPage <= 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" id="prevPageBtn">Previous</a>
+              </li>
+              <li class="page-item ${currentPage >= totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" id="nextPageBtn">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      `;
+      
+      // Insert after the container (assuming container is a grid/row)
+      tasksContainer.insertAdjacentHTML('afterend', paginationHTML);
+
+      // Add Event Listeners
+      document.getElementById('prevPageBtn')?.addEventListener('click', (e) => { e.preventDefault(); if(currentPage > 1) { currentPage--; renderTasksList(); } });
+      document.getElementById('nextPageBtn')?.addEventListener('click', (e) => { e.preventDefault(); if(currentPage < totalPages) { currentPage++; renderTasksList(); } });
     }
   };
 

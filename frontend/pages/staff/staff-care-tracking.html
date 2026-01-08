@@ -98,7 +98,9 @@
           <p>Latest updates on pet care tasks</p>
           
         </header>        
-        <!-- Recent tasks will be loaded here by switch-page.js -->
+        <div id="recentTasksList">
+          <!-- Recent tasks will be loaded here by switch-page.js -->
+        </div>
       </section>
 
       <!-- All Care Activities Card -->
@@ -107,7 +109,24 @@
           <h3>All Care Activities</h3>
           <p>Complete history of all tasks</p>
         </header>
-        <!-- All tasks will be loaded here by switch-page.js -->
+        <div id="overviewTasksList">
+          <!-- All tasks will be loaded here by switch-page.js -->
+        </div>
+
+        <!-- Pagination Controls for Overview -->
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top" id="overviewPaginationContainer">
+          <span class="text-muted small" id="overviewPaginationInfo">Showing 0-0 of 0 tasks</span>
+          <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item disabled" id="overviewPrevPageItem">
+                <a class="page-link" href="#" id="overviewPrevPageBtn">Previous</a>
+              </li>
+              <li class="page-item disabled" id="overviewNextPageItem">
+                <a class="page-link" href="#" id="overviewNextPageBtn">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </section>
     </div>
 
@@ -179,6 +198,21 @@
             <i class="fas fa-plus-circle"></i> Add Tasks
           </button>
         </div>
+
+        <!-- Pagination Controls for Tasks Tab -->
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top" id="tasksPaginationContainer">
+          <span class="text-muted small" id="tasksPaginationInfo">Showing 0-0 of 0 tasks</span>
+          <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item disabled" id="tasksPrevPageItem">
+                <a class="page-link" href="#" id="tasksPrevPageBtn">Previous</a>
+              </li>
+              <li class="page-item disabled" id="tasksNextPageItem">
+                <a class="page-link" href="#" id="tasksNextPageBtn">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </section>
     </div>
 
@@ -199,6 +233,7 @@
           <button class="calendar-nav-btn" id="nextWeekBtn">
             <i class="fas fa-chevron-right"></i>
           </button>
+          <button class="btn btn-sm btn-outline-primary ms-2" id="todayBtn">Today</button>
         </div>
         
         <!-- Week Calendar -->
@@ -217,6 +252,21 @@
         <!-- Upcoming Tasks List -->
         <div class="upcoming-tasks-list" id="upcomingTasksList">
           <!-- Will be filled by JavaScript based on selected date -->
+        </div>
+
+        <!-- Pagination Controls for Schedule -->
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top" id="schedulePaginationContainer">
+          <span class="text-muted small" id="schedulePaginationInfo">Showing 0-0 of 0 tasks</span>
+          <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item disabled" id="schedulePrevPageItem">
+                <a class="page-link" href="#" id="schedulePrevPageBtn">Previous</a>
+              </li>
+              <li class="page-item disabled" id="scheduleNextPageItem">
+                <a class="page-link" href="#" id="scheduleNextPageBtn">Next</a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </section>
     </div>
