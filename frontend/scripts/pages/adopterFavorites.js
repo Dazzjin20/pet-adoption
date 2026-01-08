@@ -1,7 +1,10 @@
 import { getPets } from '../utils/staffPetsApi.js';
 
+let allFavoritePets = []; // Store all favorites globally for filtering
+
 document.addEventListener('DOMContentLoaded', () => {
     loadFavoritePets();
+    setupFilters(); // Initialize filter listeners
 });
 
 /**
@@ -37,21 +40,149 @@ async function loadFavoritePets() {
     try {
         const data = await getPets();
         const allPets = data.pets || [];
-        const favoritePets = allPets.filter(pet => favoriteIds.includes(pet._id));
+        // Store in global variable
+        allFavoritePets = allPets.filter(pet => favoriteIds.includes(pet._id));
 
-        grid.innerHTML = ''; // Clear spinner
-
-        if (favoritePets.length === 0) {
-            grid.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Your favorited pets could not be found. They may have been removed.</p></div>';
-        } else {
-            favoritePets.forEach(pet => grid.appendChild(createFavoritePetCard(pet)));
-        }
-        updateStats(favoritePets);
+        // Update stats based on ALL favorites
+        updateStats(allFavoritePets);
+        // Render grid with initial filters (shows all)
+        applyFilters();
 
     } catch (error) {
         console.error('Failed to load favorite pets:', error);
         grid.innerHTML = '<div class="col-12"><div class="alert alert-danger">Could not load your favorite pets. Please try again later.</div></div>';
     }
+}
+
+/**
+ * Sets up event listeners for search, filter, and sort inputs.
+ * Assumes HTML elements with IDs: favSearch, favType, favAge, favSort
+ */
+function setupFilters() {
+    const searchInput = document.getElementById('favSearch');
+    const typeFilter = document.getElementById('favType');
+    const ageFilter = document.getElementById('favAge');
+    const sortFilter = document.getElementById('favSort');
+
+    // Debugging: Log what we found
+    console.log('Setup Filters - Elements found:', {
+        searchInput: !!searchInput,
+        typeFilter: !!typeFilter,
+        ageFilter: !!ageFilter,
+        sortFilter: !!sortFilter
+    });
+
+    // Add event listeners
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+    }
+    
+    if (typeFilter) {
+        typeFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (ageFilter) {
+        ageFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (sortFilter) {
+        sortFilter.addEventListener('change', applyFilters);
+    }
+}
+
+function applyFilters() {
+    console.log('applyFilters called'); // Debug log
+    
+    const searchInput = document.getElementById('favSearch');
+    const typeFilter = document.getElementById('favType');
+    const ageFilter = document.getElementById('favAge');
+    const sortFilter = document.getElementById('favSort');
+    
+    // Check if elements exist
+    if (!searchInput || !typeFilter || !ageFilter || !sortFilter) {
+        console.error('Filter elements not found!');
+        return;
+    }
+    
+    const searchTerm = searchInput.value.toLowerCase() || '';
+    const typeVal = typeFilter.value || 'All';
+    const ageVal = ageFilter.value || 'All';
+    const sortVal = sortFilter.value || 'Default';
+
+    console.log('Filtering with:', { searchTerm, typeVal, ageVal, sortVal });
+
+    let filtered = allFavoritePets.filter(pet => {
+        // 1. Search by Name, Type, or Sex
+        const searchLower = searchTerm.toLowerCase();
+        const nameMatch = (pet.pet_name || '').toLowerCase().includes(searchLower) || 
+                          (pet.pet_type || '').toLowerCase().includes(searchLower) ||
+                          (pet.sex || '').toLowerCase().includes(searchLower) ||
+                          (pet.age || '').toString().toLowerCase().includes(searchLower);
+
+        // 2. Filter by Type
+        let typeMatch = true;
+        if (typeVal !== 'All' && typeVal !== 'All Types') {
+            typeMatch = (pet.pet_type || '').toLowerCase() === typeVal.toLowerCase();
+        }
+
+        // 3. Filter by Age Group
+        let ageMatch = true;
+        if (ageVal !== 'All' && ageVal !== 'All Ages') {
+            const age = parseAge(pet.age);
+            const pType = (pet.pet_type || '').toLowerCase();
+
+            if (pType === 'dog') {
+                if (ageVal === 'Young') ageMatch = age <= 1;
+                else if (ageVal === 'Adult') ageMatch = age > 1 && age <= 6;
+                else if (ageVal === 'Senior') ageMatch = age >= 7;
+            } else if (pType === 'cat') {
+                if (ageVal === 'Young') ageMatch = age <= 1;
+                else if (ageVal === 'Adult') ageMatch = age > 1 && age <= 10;
+                else if (ageVal === 'Senior') ageMatch = age >= 11;
+            } else {
+                // Default for other animals
+                if (ageVal === 'Young') ageMatch = age <= 1;
+                else if (ageVal === 'Adult') ageMatch = age > 1 && age <= 6;
+                else if (ageVal === 'Senior') ageMatch = age >= 7;
+            }
+        }
+
+        return nameMatch && typeMatch && ageMatch;
+    });
+
+    // 4. Sorting
+    if (sortVal === 'Oldest') {
+        filtered.sort((a, b) => parseAge(b.age) - parseAge(a.age));
+    } else if (sortVal === 'A-Z') {
+        filtered.sort((a, b) => (a.pet_name || '').localeCompare(b.pet_name || ''));
+    }
+    // Default (Recently Added) - keep original order
+
+    console.log('Filtered results:', filtered.length, 'pets');
+    renderGrid(filtered);
+}
+
+
+function renderGrid(pets) {
+    const grid = document.getElementById('favoritesGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    if (pets.length === 0) {
+        grid.innerHTML = '<div class="col-12 text-center"><p class="text-muted">No pets found matching your criteria.</p></div>';
+        return;
+    }
+
+    pets.forEach(pet => grid.appendChild(createFavoritePetCard(pet)));
+}
+
+function parseAge(ageStr) {
+    if (!ageStr) return 0;
+    const str = String(ageStr).toLowerCase();
+    const val = parseFloat(str);
+    if (isNaN(val)) return 0;
+    if (str.includes('month')) return val / 12; // Convert months to years
+    return val;
 }
 
 /**

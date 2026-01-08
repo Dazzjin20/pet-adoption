@@ -109,44 +109,49 @@
   </section>
 
   <!-- Search & Filter -->
-  <section class="bg-white border rounded-4 p-4 mb-4">
-    <h5 class="fw-bold mb-3"><i class="fa-solid fa-filter"></i> Search & Filter</h5>
+<!-- Search & Filter -->
+<section class="bg-white border rounded-4 p-4 mb-4">
+  <h5 class="fw-bold mb-3"><i class="fa-solid fa-filter"></i> Search & Filter</h5>
 
-    <div class="row g-3">
-      <div class="col-md-3">
-        <label class="form-label">Search by Name</label>
-        <input type="text" class="form-control" placeholder="Search pets...">
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Pet Type</label>
-        <select class="form-select">
-          <option>All Types</option>
-          <option>Dog</option>
-          <option>Cat</option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Age Group</label>
-        <select class="form-select">
-          <option>All Status</option>
-          <option>Young</option>
-          <option>Adult</option>
-          <option>Senior</option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Sort</label>
-        <select class="form-select">
-          <option>Recently Added</option>
-          <option>Oldest</option>
-          <option>Name (A–Z)</option>
-        </select>
-      </div>
+  <div class="row g-3">
+    <div class="col-md-3">
+      <label class="form-label">Search by Name</label>
+      <!-- Add id="favSearch" -->
+      <input type="text" id="favSearch" class="form-control" placeholder="Search pets...">
     </div>
-  </section>
+
+    <div class="col-md-3">
+      <label class="form-label">Pet Type</label>
+      <!-- Add id="favType" -->
+      <select class="form-select" id="favType">
+        <option value="All">All Types</option>
+        <option value="Dog">Dog</option>
+        <option value="Cat">Cat</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Age Group</label>
+      <!-- Add id="favAge" -->
+      <select class="form-select" id="favAge">
+        <option value="All">All Ages</option>
+        <option value="Young">Young</option>
+        <option value="Adult">Adult</option>
+        <option value="Senior">Senior</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Sort</label>
+      <!-- Add id="favSort" -->
+      <select class="form-select" id="favSort">
+        <option value="Default">Recently Added</option>
+        <option value="Oldest">Oldest</option>
+        <option value="A-Z">Name (A–Z)</option>
+      </select>
+    </div>
+  </div>
+</section>
 
   <!-- PET CARDS -->
   <section>

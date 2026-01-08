@@ -8,6 +8,7 @@ export class RegisterStaff {
     if (!staffForm) return;
 
     this.createMessageElement(staffForm);
+    this.setupPhoneCounter(staffForm);
 
     staffForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -24,6 +25,36 @@ export class RegisterStaff {
       form.parentNode.insertBefore(msgEl, form.nextSibling);
     }
     this.msgEl = msgEl;
+  }
+
+  setupPhoneCounter(form) {
+    const phoneInput = form.querySelector('[name="staff_phone"]');
+    if (!phoneInput) return;
+
+    let counterEl = document.getElementById('staffPhoneCounter');
+    if (!counterEl) {
+      counterEl = document.createElement('div');
+      counterEl.id = 'staffPhoneCounter';
+      counterEl.className = 'form-text text-end mt-1';
+      counterEl.style.fontSize = '0.8rem';
+      phoneInput.parentNode.insertBefore(counterEl, phoneInput.nextSibling);
+    }
+
+    const updateCounter = () => {
+      const len = phoneInput.value.length;
+      counterEl.textContent = `${len} / 11`;
+
+      if (len === 11) {
+        counterEl.className = 'form-text text-end mt-1 text-success fw-bold';
+      } else if (len > 11) {
+        counterEl.className = 'form-text text-end mt-1 text-danger fw-bold';
+      } else {
+        counterEl.className = 'form-text text-end mt-1 text-muted';
+      }
+    };
+
+    updateCounter();
+    phoneInput.addEventListener('input', updateCounter);
   }
 
   async handleFormSubmission(form) {

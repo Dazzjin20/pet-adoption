@@ -8,6 +8,7 @@ export class SignupForm {
     if (!form) return;
 
     this.createMessageElement(form);
+    this.setupPhoneCounter(form);
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -24,6 +25,39 @@ export class SignupForm {
       form.parentNode.insertBefore(msgEl, form.nextSibling);
     }
     this.msgEl = msgEl;
+  }
+
+  setupPhoneCounter(form) {
+    const phoneInput = form.querySelector('[name="adopter_phone_number"]');
+    if (!phoneInput) return;
+
+    // Create counter element if it doesn't exist
+    let counterEl = document.getElementById('adopterPhoneCounter');
+    if (!counterEl) {
+      counterEl = document.createElement('div');
+      counterEl.id = 'adopterPhoneCounter';
+      counterEl.className = 'form-text text-end mt-1';
+      counterEl.style.fontSize = '0.8rem';
+      // Insert after the input field
+      phoneInput.parentNode.insertBefore(counterEl, phoneInput.nextSibling);
+    }
+
+    const updateCounter = () => {
+      const len = phoneInput.value.length;
+      counterEl.textContent = `${len} / 11`;
+
+      if (len === 11) {
+        counterEl.className = 'form-text text-end mt-1 text-success fw-bold';
+      } else if (len > 11) {
+        counterEl.className = 'form-text text-end mt-1 text-danger fw-bold';
+      } else {
+        counterEl.className = 'form-text text-end mt-1 text-muted';
+      }
+    };
+
+    // Initialize and listen for input
+    updateCounter();
+    phoneInput.addEventListener('input', updateCounter);
   }
 
   async handleFormSubmission(form) {

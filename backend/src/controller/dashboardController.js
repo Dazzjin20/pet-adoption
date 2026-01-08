@@ -4,6 +4,7 @@ const { Volunteer } = require('../models/index');
 const { Pet } = require('../models/base/infoPetSchema'); // Correctly import the Pet model
 const Application = require('../models/application.Schema');
 const MedicalRecord = require('../models/medicalRecordModel');
+const Task = require('../models/taskModel');
 
 const applicationRepository = new ApplicationRepository();
 
@@ -67,7 +68,10 @@ exports.getStaffDashboardStats = async (req, res) => {
             status: 'Adopted',
             last_update: { $gte: oneMonthAgo }
         });
-        const urgentCare = await Pet.countDocuments({ status: 'medical' });
+        const urgentCare = await Task.countDocuments({ 
+            title: { $regex: 'Urgent', $options: 'i' },
+            status: { $in: ['Pending', 'In Progress'] }
+        });
 
         const recentApplications = await Application.find()
             .sort({ date_submitted: -1 })

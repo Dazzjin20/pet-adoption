@@ -193,14 +193,17 @@
 
     // --- NEW: Functions to render dynamic content for tabs ---
 
+    let allTasksCache = []; // Moved to global scope so renderTasksTab can access it
+
     /**
      * Fetches all tasks and renders them in the "Tasks" tab.
      */
     async function renderTasksTab() {
-      const pendingSection = document.querySelector('#tasksView .task-section[data-status="pending"] .all-care-card');
-      const inProgressSection = document.querySelector('#tasksView .task-section[data-status="in-progress"] .all-care-card');
+      // FIX: Use IDs directly to ensure we select the correct containers
+      const pendingSection = document.getElementById('pendingTasksContainer');
+      const inProgressSection = document.getElementById('inProgressTasksContainer');
       // Completed section might not exist in HTML yet, so we make it optional to prevent errors
-      const completedSection = document.querySelector('#tasksView .task-section[data-status="completed"] .all-care-card');
+      const completedSection = document.querySelector('#tasksView .all-care-card[data-status="completed"]');
 
       if (!pendingSection || !inProgressSection) return;
 
@@ -215,26 +218,14 @@
         const result = await response.json();
         const tasks = result.tasks || [];
 
+        // --- NEW: Update Cache ---
+        allTasksCache = tasks;
+
         // Update stats using the shared function
         updateDashboardStats(tasks);
 
-        // Sort tasks: High priority first, then by creation date
-        tasks.sort((a, b) => {
-          const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
-          const pA = priorityOrder[a.priority] || 0;
-          const pB = priorityOrder[b.priority] || 0;
-          
-          if (pA !== pB) return pB - pA; // Higher priority first
-          return new Date(b.created_at) - new Date(a.created_at); // Most recent first
-        });
-
-        const pendingTasks = tasks.filter(t => (t.status || 'pending').toLowerCase() === 'pending');
-        const inProgressTasks = tasks.filter(t => (t.status || '').toLowerCase() === 'in progress');
-        const completedTasks = tasks.filter(t => (t.status || '').toLowerCase() === 'completed');
-
-        pendingSection.innerHTML = pendingTasks.length > 0 ? pendingTasks.map(createTaskCard).join('') : '<p class="text-muted">No pending tasks.</p>';
-        inProgressSection.innerHTML = inProgressTasks.length > 0 ? inProgressTasks.map(createTaskCard).join('') : '<p class="text-muted">No tasks in progress.</p>';
-        if (completedSection) completedSection.innerHTML = completedTasks.length > 0 ? completedTasks.map(createTaskCard).join('') : '<p class="text-muted">No completed tasks.</p>';
+        // Apply filters (which will render the tasks)
+        applyFilters();
 
       } catch (error) {
         console.error("Error rendering tasks tab:", error);
@@ -267,6 +258,58 @@
           </div>
         </article>
       `;
+    }
+
+    // --- NEW: Filter Logic for Tasks Tab (Moved to global scope) ---
+    function applyFilters() {
+      const searchInput = document.getElementById('searchInput');
+      const priorityFilter = document.getElementById('priorityFilter');
+      const categoryFilter = document.getElementById('categoryFilter');
+      
+      const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+      const priorityVal = priorityFilter ? priorityFilter.value : 'All';
+      const categoryVal = categoryFilter ? categoryFilter.value : 'All';
+
+      let filtered = allTasksCache.filter(task => {
+          // Search by Title or Pet Name
+          const title = (task.title || '').toLowerCase();
+          const petName = (task.pet_id?.pet_name || '').toLowerCase();
+          const matchesSearch = title.includes(searchTerm) || petName.includes(searchTerm);
+
+          // Filter by Priority
+          const matchesPriority = priorityVal === 'All' || task.priority === priorityVal;
+
+          // Filter by Task Title (Category Dropdown)
+          const matchesCategory = (categoryVal === 'All' || categoryVal === '') || task.title === categoryVal;
+
+          return matchesSearch && matchesPriority && matchesCategory;
+      });
+
+      renderFilteredTasks(filtered);
+    }
+
+    function renderFilteredTasks(tasks) {
+      // Sort tasks: High priority first, then by creation date
+      tasks.sort((a, b) => {
+        const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+        const pA = priorityOrder[a.priority] || 0;
+        const pB = priorityOrder[b.priority] || 0;
+        
+        if (pA !== pB) return pB - pA; 
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      const pendingSection = document.getElementById('pendingTasksContainer');
+      const inProgressSection = document.getElementById('inProgressTasksContainer');
+      const completedSection = document.querySelector('#tasksView .all-care-card[data-status="completed"]');
+
+      const pendingTasks = tasks.filter(t => (t.status || 'pending').toLowerCase() === 'pending');
+      const inProgressTasks = tasks.filter(t => (t.status || '').toLowerCase() === 'in progress');
+      const completedTasks = tasks.filter(t => (t.status || '').toLowerCase() === 'completed');
+
+      if (pendingSection) pendingSection.innerHTML = pendingTasks.length > 0 ? pendingTasks.map(createTaskCard).join('') : '<p class="text-muted p-3">No pending tasks found matching criteria.</p>';
+      if (inProgressSection) inProgressSection.innerHTML = inProgressTasks.length > 0 ? inProgressTasks.map(createTaskCard).join('') : '<p class="text-muted p-3">No tasks in progress found matching criteria.</p>';
+      if (completedSection) completedSection.innerHTML = completedTasks.length > 0 ? completedTasks.map(createTaskCard).join('') : '<p class="text-muted p-3">No completed tasks found matching criteria.</p>';
     }
 
     // Initialize the page
@@ -467,6 +510,26 @@
         await renderOverviewTab();
         await renderTasksTab();
       });
+
+      // --- NEW: Filter Event Listeners ---
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) searchInput.addEventListener('input', applyFilters);
+      
+      const priorityFilter = document.getElementById('priorityFilter');
+      if (priorityFilter) priorityFilter.addEventListener('change', applyFilters);
+      
+      const categoryFilter = document.getElementById('categoryFilter');
+      if (categoryFilter) categoryFilter.addEventListener('change', applyFilters);
+
+      const resetBtn = document.getElementById('resetFiltersBtn');
+      if (resetBtn) {
+          resetBtn.addEventListener('click', () => {
+              if (searchInput) searchInput.value = '';
+              if (priorityFilter) priorityFilter.value = 'All';
+              if (categoryFilter) categoryFilter.value = 'All';
+              applyFilters();
+          });
+      }
 
       // Initialize with Overview tab active
       await calendarData.fetchAndProcessTasks();
