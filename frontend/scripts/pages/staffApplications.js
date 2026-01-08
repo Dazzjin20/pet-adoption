@@ -40,9 +40,11 @@ function renderApplicationsTable(applications) {
       <td><span class="badge ${getStatusBadgeClass(app.status)}">${app.status}</span></td>
       <td>
         <button class="btn btn-sm btn-info view-btn" data-app-id="${app._id}">View</button>
-        ${app.status === 'Pending' ? `
+        ${(app.status === 'Pending' || app.status === 'Interview Scheduled') ? `
           <button class="btn btn-sm btn-success approve-btn" data-app-id="${app._id}">Approve</button>
           <button class="btn btn-sm btn-danger reject-btn" data-app-id="${app._id}">Reject</button>
+        ` : ''}
+        ${app.status === 'Pending' ? `
           <button class="btn btn-sm btn-warning interview-btn" data-app-id="${app._id}">Interview</button>
         ` : ''}
       </td>
