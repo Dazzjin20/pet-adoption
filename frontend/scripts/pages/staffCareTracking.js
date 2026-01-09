@@ -20,10 +20,13 @@ function populatePetSelect() {
   
   select.innerHTML = '<option selected disabled>Select pet</option>';
   allPets.forEach(pet => {
-    const option = document.createElement('option');
-    option.value = pet._id;
-    option.textContent = `${pet.pet_name} (${pet.pet_type})`;
-    select.appendChild(option);
+    // Filter out adopted pets
+    if ((pet.status || '').toLowerCase() !== 'adopted') {
+      const option = document.createElement('option');
+      option.value = pet._id;
+      option.textContent = `${pet.pet_name} (${pet.pet_type})`;
+      select.appendChild(option);
+    }
   });
 }
 

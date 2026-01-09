@@ -739,6 +739,15 @@ document.addEventListener('DOMContentLoaded', function() {
             button.classList.add('btn-outline-secondary');
         }
     };
+    
+    // Stop sound - GLOBAL FUNCTION
+    window.stopCompletionSound = function(button) {
+        completionSound.pause();
+        completionSound.currentTime = 0;
+        if (button) {
+            button.closest('div').remove(); // Remove the button container
+        }
+    };
 
     // Complete task
     async function completeTask(taskId, isAutoComplete, timeSpent) {
@@ -872,6 +881,18 @@ document.addEventListener('DOMContentLoaded', function() {
         completionDetails.className = 'completion-details mt-3 p-3 bg-light rounded';
         const timeSpentFormatted = formatTimeSpent(timeSpent);
         
+        // Check if sound is playing to show stop button
+        let stopSoundHtml = '';
+        if (!completionSound.paused && !isMuted) {
+            stopSoundHtml = `
+                <div class="mt-2">
+                    <button class="btn btn-danger btn-sm" onclick="stopCompletionSound(this)">
+                        <i class="fas fa-stop-circle me-1"></i> Stop Sound
+                    </button>
+                </div>
+            `;
+        }
+        
         completionDetails.innerHTML = `
             <div class="completion-success">
                 <strong>✓ Task Successfully Completed</strong>
@@ -879,6 +900,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="completion-time">Time spent: ${timeSpentFormatted}</div>
                 ${completedEarly ? '<div class="completion-early text-success">✓ Completed Early</div>' : ''}
                 <small class="text-muted">This task has been completed.</small>
+                ${stopSoundHtml}
             </div>
         `;
         
