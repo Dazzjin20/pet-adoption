@@ -187,7 +187,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // 2. Apply UI Filters
         const searchTerm = document.getElementById('taskSearchInput')?.value.toLowerCase() || '';
         const statusVal = document.getElementById('taskStatusFilter')?.value.toLowerCase() || '';
-        const categoryVal = document.getElementById('taskCategoryFilter')?.value.toLowerCase() || '';
+        const categoryElement = document.getElementById('taskCategoryFilter');
+        const categoryVal = categoryElement ? categoryElement.value : 'All';
 
         tasksToRender = tasksToRender.filter(task => {
             const title = (task.title || task.taskTitle || '').toLowerCase();
@@ -197,7 +198,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
             const matchesStatus = statusVal ? status === statusVal : true;
-            const matchesCategory = categoryVal ? category === categoryVal : true;
+            
+            // FIX: Filter by Title matching the dropdown value
+            const matchesCategory = categoryVal === 'All' || title === categoryVal.toLowerCase();
 
             return matchesSearch && matchesStatus && matchesCategory;
         });
@@ -581,6 +584,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Prepare update payload: Status AND Assignment
                 const updatePayload = { status: 'In Progress' };
+                updatePayload.assigned_to = VOLUNTEER_ID;
                 // Check if it's a pet task (Care Task) or Staff Task to use correct field
                 if (task.pet_id) {
                     updatePayload.assigned_to = VOLUNTEER_ID;

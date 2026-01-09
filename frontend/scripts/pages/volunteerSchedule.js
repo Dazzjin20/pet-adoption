@@ -8,10 +8,15 @@ const calendarData = {
     tasksByDate: {},
 };
 
+// Pagination State
+let currentPage = 1;
+const itemsPerPage = 5;
+
 async function initVolunteerSchedule() {
     // Initialize Calendar Navigation
     const prevBtn = document.getElementById('prevWeekBtn');
     const nextBtn = document.getElementById('nextWeekBtn');
+    const todayBtn = document.getElementById('todayBtn');
 
     if (prevBtn && nextBtn) {
         prevBtn.addEventListener('click', () => {
@@ -21,6 +26,16 @@ async function initVolunteerSchedule() {
 
         nextBtn.addEventListener('click', () => {
             calendarData.currentDate.setDate(calendarData.currentDate.getDate() + 7);
+            updateCalendar();
+        });
+    }
+
+    if (todayBtn) {
+        todayBtn.addEventListener('click', () => {
+            const today = new Date();
+            calendarData.currentDate = new Date(today);
+            calendarData.selectedDate = new Date(today);
+            currentPage = 1; // Reset pagination
             updateCalendar();
         });
     }
@@ -157,6 +172,8 @@ window.selectDate = (dateString) => {
     // Also update current date to keep calendar focused if user clicks a date
     calendarData.currentDate = new Date(dateString); 
     updateCalendar();
+    // Reset pagination to page 1 when date changes
+    currentPage = 1;
 };
 
 function renderTasksForSelectedDate() {
@@ -166,8 +183,12 @@ function renderTasksForSelectedDate() {
     const dateString = calendarData.selectedDate.toDateString();
     let tasks = calendarData.tasksByDate[dateString] || [];
 
-    // Sort: High Priority first, then by Time/Creation
+    // Sort: Time (Earliest first), then Priority
     tasks.sort((a, b) => {
+        const dateA = new Date(a.scheduled_date || a.dueDate || 0);
+        const dateB = new Date(b.scheduled_date || b.dueDate || 0);
+        if (dateA.getTime() !== dateB.getTime()) return dateA - dateB;
+        
         const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
         const pA = priorityOrder[a.priority] || 0;
         const pB = priorityOrder[b.priority] || 0;
@@ -175,19 +196,25 @@ function renderTasksForSelectedDate() {
         return new Date(a.created_at || 0) - new Date(b.created_at || 0);
     });
 
+    // Pagination Logic
+    const totalItems = tasks.length;
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const paginatedTasks = tasks.slice(start, end);
+
     const displayDate = calendarData.selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     
     let html = `<h5 class="mb-3 fw-bold text-dark border-bottom pb-2">Tasks for ${displayDate}</h5>`;
 
-    if (tasks.length === 0) {
+    if (paginatedTasks.length === 0) {
         html += `
             <div class="text-center py-5 text-muted">
                 <i class="fas fa-calendar-check fs-1 mb-3 opacity-50"></i>
-                <p>No tasks scheduled for this date.</p>
+                <p>${tasks.length === 0 ? 'No tasks scheduled for this date.' : 'No tasks on this page.'}</p>
             </div>
         `;
     } else {
-        tasks.forEach(task => {
+        paginatedTasks.forEach(task => {
             const title = task.title || task.taskTitle || 'Untitled Task';
             const petName = task.pet_id?.pet_name || task.pet_name || 'General Task';
             const priority = task.priority || 'Medium';
@@ -201,6 +228,9 @@ function renderTasksForSelectedDate() {
             else if (status === 'Assigned') statusClass = 'bg-info text-dark';
             else if (status === 'Pending') statusClass = 'bg-warning text-dark';
 
+            // Format Time
+            const timeString = new Date(task.scheduled_date || task.dueDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
             html += `
                 <div class="card mb-3 border-0 shadow-sm task-schedule-card">
                     <div class="card-body d-flex align-items-center">
@@ -211,8 +241,8 @@ function renderTasksForSelectedDate() {
                                 <span class="badge ${statusClass}" style="font-size: 0.7rem;">${status}</span>
                             </div>
                             <div class="text-muted small">
-                                <i class="fas fa-paw me-1"></i> ${petName} &bull; 
-                                <i class="fas fa-clock me-1 ms-2"></i> ${task.estimatedHours || 1}h estimated
+                                <i class="far fa-clock me-1"></i> ${timeString} &bull; 
+                                <i class="fas fa-paw me-1 ms-2"></i> ${petName}
                             </div>
                         </div>
                         <button class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="viewTaskDetails('${task._id || task.id}')">
@@ -225,6 +255,54 @@ function renderTasksForSelectedDate() {
     }
 
     container.innerHTML = html;
+    renderPaginationControls(totalItems);
+}
+
+function renderPaginationControls(totalItems) {
+    const container = document.getElementById('schedulePaginationContainer');
+    if (!container) return;
+
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+    // Update Info Text
+    const infoEl = document.getElementById('schedulePaginationInfo');
+    if (infoEl) infoEl.textContent = `Showing ${startItem}-${endItem} of ${totalItems} tasks`;
+
+    // Update Buttons
+    const prevBtn = document.getElementById('schedulePrevPageBtn');
+    const nextBtn = document.getElementById('scheduleNextPageBtn');
+    const prevItem = document.getElementById('schedulePrevPageItem');
+    const nextItem = document.getElementById('scheduleNextPageItem');
+
+    if (prevItem) prevItem.classList.toggle('disabled', currentPage <= 1);
+    if (nextItem) nextItem.classList.toggle('disabled', currentPage >= totalPages);
+
+    // Clone buttons to remove old event listeners
+    if (prevBtn) {
+        const newPrev = prevBtn.cloneNode(true);
+        prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+        newPrev.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                renderTasksForSelectedDate();
+            }
+        });
+    }
+
+    if (nextBtn) {
+        const newNext = nextBtn.cloneNode(true);
+        nextBtn.parentNode.replaceChild(newNext, nextBtn);
+        newNext.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTasksForSelectedDate();
+            }
+        });
+    }
 }
 
 window.viewTaskDetails = (taskId) => {

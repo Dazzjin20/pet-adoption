@@ -99,12 +99,19 @@
             <div class="filter-group">
               <label class="filter-label">All Categories</label>
               <select class="filter-select" id="taskCategoryFilter">
-                <option value="">Categories</option>
-                <option value="feeding">Feeding</option>
-                <option value="exercise">Exercise</option>
-                <option value="grooming">Grooming</option>
-                <option value="medical">Medical Care</option>
-                <option value="socialization">Socialization</option>
+                <option value="All" selected>All Tasks</option>
+                <option value="Urgent: Medical Attention" data-type="Medical" class="text-danger fw-bold">Urgent: Medical Attention</option>
+                <option value="Urgent: Injury Check" data-type="Medical" class="text-danger fw-bold">Urgent: Injury Check</option>
+                <option value="Urgent: Isolation Required" data-type="Medical" class="text-danger fw-bold">Urgent: Isolation Required</option>
+                <option value="Morning Feeding" data-type="Feeding">Morning Feeding</option>
+                <option value="Evening Feeding" data-type="Feeding">Evening Feeding</option>
+                <option value="Kennel Cleaning" data-type="Cleaning">Kennel Cleaning</option>
+                <option value="Litter Box Maintenance" data-type="Cleaning">Litter Box Maintenance</option>
+                <option value="Daily Grooming" data-type="Grooming">Daily Grooming</option>
+                <option value="Walk & Exercise" data-type="Exercise">Walk & Exercise</option>
+                <option value="Medication Administration" data-type="Medical">Medication Administration</option>
+                <option value="Physical Therapy Session" data-type="Physical Therapy">Physical Therapy Session</option>
+                <option value="Socialization" data-type="Special">Socialization</option>
               </select>
             </div>
           </div>
